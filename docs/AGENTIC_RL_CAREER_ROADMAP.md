@@ -17,14 +17,41 @@
 
 - 没有被训练的开源 policy model；
 - 没有 SFT、DPO、PPO 或 GRPO 训练过程；
-- 没有面向多轮 Agent 的标准环境接口；
-- 没有可学习、可分解、可防作弊的 reward；
+- 已有最小多轮环境接口，但尚未接入 policy token、logprob 和批量 rollout；
+- 已有第一版可分解 reward/verifier，但还需要防作弊压力测试；
 - 没有训练曲线、对照实验和消融分析；
 - 当前 LLM 通过 OpenAI-compatible API 返回文本，不能直接提供反向训练所需的 token IDs 和 logprobs。
 
 如果目标是 Agent 算法岗，项目主线应从“继续堆 Agent 功能”切换成：
 
 > 构建可验证的 Personal-RAG Agent 环境，并通过 SFT + GRPO 优化开源小模型的工具调用策略。
+
+### 1.1 已落地的无 GPU 检查点
+
+当前分支已经完成训练前的最小闭环：
+
+- `PersonalRAGEnv.reset()/step()`、严格 action schema、step budget、重复调用惩罚和可序列化轨迹；
+- HotpotQA distractor 数据转换，200 个任务、8171 条句级语料以及按金标文档分组的 172/17/11 划分；
+- HotpotQA 风格 Answer EM/F1、句级/文档级证据 verifier；
+- 不读取金标答案的确定性双轮检索 controller，并保存可复现 action trajectory；
+- 相关环境、数据、verifier 和 controller 测试全部通过。
+
+在相同的 8 条检索预算下，当前 200 条 smoke set 的检索结果为：
+
+| Controller | 预算分配 | Sentence Recall | 完整句级证据 | Document Recall | 完整文档证据 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 单轮 BM25 | `k=8` | 65.69% | 36.00% | 75.75% | 53.00% |
+| Scripted two-hop | `k=7 + k=1` | 66.78% | 38.00% | 76.75% | 55.50% |
+
+这只是用于验证环境和查询改写方向的 smoke baseline，不是最终论文级结果。当前 finalizer 主动 abstain，因此 Answer EM/F1 和 Joint Success 均为 0；不能把上述证据召回提升表述成端到端问答提升。validation 只有 17 条、test 只有 11 条，也不足以支撑显著性结论。下一步应扩大官方 held-out 数据并接入冻结的小模型答案生成器。
+
+复现命令：
+
+```bash
+python scripts/prepare_hotpotqa_agent_rl.py --limit 200 --output-dir data/agent_rl/hotpotqa_smoke
+python scripts/eval_hotpotqa_bm25.py --data-dir data/agent_rl/hotpotqa_smoke --partition all --ks 4,8,20
+python scripts/eval_hotpotqa_scripted_agent.py --data-dir data/agent_rl/hotpotqa_smoke --partition all
+```
 
 ## 2. 建议的项目研究问题
 
@@ -59,9 +86,9 @@ app/agent_rl/
 ├── env.py              # PersonalRAGEnv: reset / step
 ├── tasks.py            # 任务加载、切分和环境初始化
 ├── rewards.py          # 可验证 reward 与 reward breakdown
-├── rollout.py          # 批量、多样本 rollout
+├── scripted_agent.py   # 无 GPU 的确定性 controller 与 rollout
 ├── trajectory.py       # 训练所需 episode/transition schema
-├── verifier.py         # 答案、证据、工具和记忆安全验证
+├── verifiers.py        # 答案与句级/文档级证据验证
 └── adapters.py         # 复用现有 ToolRegistry/RAG/memory 的适配层
 
 scripts/

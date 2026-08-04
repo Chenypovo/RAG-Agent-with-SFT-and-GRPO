@@ -13,3 +13,4 @@ data/memory/
 data/uploads/*.pdf
 data/eval/*.jsonl
 !data/eval/*_example.jsonl
+data/agent_rl/hotpotqa_*/

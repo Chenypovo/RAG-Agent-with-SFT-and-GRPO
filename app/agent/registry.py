@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any, Dict, List
 
 from app.agent.tools.base import Tool, ToolResult
@@ -18,6 +19,21 @@ class ToolRegistry:
 
     def names(self) -> List[str]:
         return list(self._tools)
+
+    def specs(self, names: List[str] | None = None) -> List[Dict[str, Any]]:
+        """Return JSON-serializable tool specs without exposing mutable registry state."""
+        selected = names if names is not None else self.names()
+        specs: List[Dict[str, Any]] = []
+        for name in selected:
+            tool = self._tools.get(name)
+            if tool is None:
+                continue
+            specs.append({
+                "name": tool.name,
+                "description": tool.description,
+                "args_schema": deepcopy(tool.args_schema),
+            })
+        return specs
 
     def render_tools(self) -> str:
         blocks: List[str] = []

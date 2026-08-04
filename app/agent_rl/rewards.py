@@ -8,13 +8,14 @@ from app.agent_rl.tasks import AgentRLTask
 
 _NUMBER_RE = re.compile(r"-?\d+(?:\.\d+)?")
 _NORMALIZE_RE = re.compile(r"[\W_]+", flags=re.UNICODE)
+_ARTICLES_RE = re.compile(r"\b(a|an|the)\b", flags=re.IGNORECASE)
 
 
 @dataclass(frozen=True)
 class RewardConfig:
     task_success: float = 1.0
     evidence_coverage: float = 0.30
-    valid_action_format: float = 0.05
+    valid_action_format: float = 0.0
     tool_call_cost: float = -0.02
     invalid_action: float = -0.10
     duplicate_call: float = -0.10
@@ -69,4 +70,5 @@ def answer_is_correct(task: AgentRLTask, answer: str) -> bool:
 
 
 def _normalize(text: str) -> str:
-    return _NORMALIZE_RE.sub("", (text or "").casefold())
+    without_articles = _ARTICLES_RE.sub(" ", (text or "").casefold())
+    return _NORMALIZE_RE.sub("", without_articles)

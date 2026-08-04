@@ -22,6 +22,7 @@ def test_hotpot_answer_metrics_normalize_articles_and_punctuation():
     assert normalize_hotpot_answer("The Arthur's Magazine!") == "arthurs magazine"
     assert answer_exact_match("the Delhi", ("Delhi",)) == 1.0
     assert answer_f1("President Nixon", ("President Richard Nixon",)) == pytest.approx(0.8)
+    assert answer_f1("yes maybe", ("yes",)) == 0.0
 
 
 def test_verifier_reports_answer_and_evidence_separately():
@@ -38,9 +39,31 @@ def test_verifier_reports_answer_and_evidence_separately():
         evidence_ids=("docs/a#0", "docs/b#9"),
     )
     assert result.answer_em == 1.0
+    assert result.sentence_precision == 0.5
     assert result.sentence_recall == 0.5
     assert result.document_recall == 1.0
     assert result.joint_success == 0.0
+
+
+def test_extra_retrieved_evidence_reduces_precision_and_joint_em():
+    task = AgentRLTask(
+        task_id="verify_noise",
+        question="Where?",
+        gold_answers=("Delhi",),
+        gold_evidence_ids=("docs/a#0",),
+    )
+    result = verify_task(
+        task,
+        predicted_answer="Delhi",
+        evidence_ids=("docs/a#0", "docs/noise#0"),
+    )
+
+    assert result.sentence_recall == 1.0
+    assert result.sentence_precision == 0.5
+    assert result.complete_sentence_evidence == 1.0
+    assert result.sentence_em == 0.0
+    assert result.joint_em == 0.0
+    assert result.joint_success == 1.0
 
 
 def test_follow_up_query_extracts_visible_bridge_entity():

@@ -1,0 +1,27 @@
+{
+  "bm25_records": 8171,
+  "config": "distractor",
+  "corpus_records": 8171,
+  "dataset": "hotpotqa/hotpot_qa",
+  "evidence_granularity": "sentence",
+  "files": {
+    "bm25.json": "9dbecc116e89514194d226a6603fb85d77b6fe64817106ba053b7f9dfa530760",
+    "corpus.jsonl": "d991903945a14fba151244e1e67229825e21c8f02ad91aad2621c9035a463e49",
+    "tasks.jsonl": "961eabbcb112e0e56616296f2766b98e90a701cbb48a1da946b2cdbe2ff91c49",
+    "tasks_test.jsonl": "29db37e7fedf016ea69b43fc23a82a0d234287288c6b5524fcff2685688bcf0b",
+    "tasks_train.jsonl": "6e8b99e5fa1259f8e6e6aa6930f50b3ce6757750a7819ea69f1db76135400a36",
+    "tasks_validation.jsonl": "03d86e2fd7f2e7e34e1b6a02ecbf384906e03ec097d6a3bea7d25b112739f46c"
+  },
+  "license": "CC BY-SA 4.0",
+  "offset": 0,
+  "partition_counts": {
+    "test": 20,
+    "train": 162,
+    "validation": 18
+  },
+  "partition_strategy": "context_document_components_sha256_80_10_10",
+  "source_rows": 200,
+  "source_split": "train",
+  "source_url": "https://huggingface.co/datasets/hotpotqa/hotpot_qa",
+  "tasks": 200
+}

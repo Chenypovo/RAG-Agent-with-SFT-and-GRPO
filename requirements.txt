@@ -4,6 +4,7 @@ faiss-cpu>=1.8.0
 lancedb>=0.17.0
 python-dotenv>=1.0.1
 pypdf>=5.1.0
+pyarrow>=18.0.0
 transformers>=4.46.0
 torch>=2.3.0
 opencv-python>=4.10.0

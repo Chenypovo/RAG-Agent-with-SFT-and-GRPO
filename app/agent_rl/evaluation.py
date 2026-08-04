@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Iterable, List, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Sequence
 
 from app.agent_rl.rewards import evidence_coverage
 from app.agent_rl.tasks import AgentRLTask
+
+if TYPE_CHECKING:
+    from app.agent_rl.rollouts import PolicyRollout
 
 RetrieveFn = Callable[[str, int], Sequence[Dict[str, Any]]]
 
@@ -52,6 +55,53 @@ def evaluate_retrieval_baseline(
         metrics[f"DocumentRecall@{k}"] = totals[k]["document_recall"] / denominator
         metrics[f"CompleteDocumentEvidence@{k}"] = totals[k]["complete_document"] / denominator
     return {"n_tasks": len(task_list), "ks": normalized_ks, "metrics": metrics}
+
+
+def aggregate_policy_rollouts(rollouts: Iterable["PolicyRollout"]) -> Dict[str, Any]:
+    """Aggregate endpoint quality and controller behavior without hiding failures."""
+    from app.agent_rl.verifiers import aggregate_verifications
+
+    rows = list(rollouts)
+    decisions = [decision for row in rows for decision in row.decisions]
+    transitions = [transition for row in rows for transition in row.transitions]
+    tool_calls = sum(
+        1
+        for decision in decisions
+        if decision.action is not None and bool(decision.action.get("tool"))
+    )
+    invalid_actions = sum(
+        1
+        for decision, transition in zip(decisions, transitions)
+        if decision.parse_error is not None
+        or float(transition.get("reward_breakdown", {}).get("invalid_action", 0.0)) < 0.0
+    )
+    duplicate_calls = sum(
+        1
+        for transition in transitions
+        if float(transition.get("reward_breakdown", {}).get("duplicate_call", 0.0)) < 0.0
+    )
+    joint_successes = sum(row.verification.joint_success >= 1.0 for row in rows)
+    denominator = max(len(rows), 1)
+    decision_denominator = max(len(decisions), 1)
+    metrics: Dict[str, Any] = aggregate_verifications(row.verification for row in rows)
+    metrics.update({
+        "MeanEnvironmentReturn": sum(row.total_reward for row in rows) / denominator,
+        "InvalidActionRate": invalid_actions / decision_denominator,
+        "DuplicateCallRate": duplicate_calls / decision_denominator,
+        "MeanToolCalls": tool_calls / denominator,
+        "CallsPerJointSuccess": tool_calls / joint_successes if joint_successes else None,
+        "BudgetStopRate": sum(row.stop_reason == "budget" for row in rows) / denominator,
+        "FinalizerErrorRate": sum(bool(row.finalizer_error) for row in rows) / denominator,
+        "AbstainRate": sum(row.answer.strip() == "INSUFFICIENT_EVIDENCE" for row in rows)
+        / denominator,
+    })
+    return {
+        "n_tasks": len(rows),
+        "n_decisions": len(decisions),
+        "n_tool_calls": tool_calls,
+        "n_joint_successes": joint_successes,
+        "metrics": metrics,
+    }
 
 
 def _ranked_sentence_ids(items: Sequence[Dict[str, Any]]) -> List[str]:

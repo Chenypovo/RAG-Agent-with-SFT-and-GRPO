@@ -1,0 +1,66 @@
+{
+  "agent": "ScriptedTwoHopPolicy",
+  "answer_mode": "abstain_no_generator",
+  "config": {
+    "allowed_tools": [
+      "retrieve_docs"
+    ],
+    "answer_mode": "abstain_no_generator",
+    "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+    "env_version": "personal-rag-scripted-retrieval-v0",
+    "first_hop_k": 7,
+    "follow_up_k": 1,
+    "max_steps": 3,
+    "partition": "test",
+    "retrieval_hops": 2,
+    "task_filename": "tasks_test.jsonl",
+    "total_retrieval_budget": 8
+  },
+  "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+  "data_input_sha256": {
+    "bm25.json": "97166fdfc062669a4d22c78f51f8d184074b6df34fe3cc578c447b85fdd360f8",
+    "corpus.jsonl": "fc52f56f478130927c8f2726c5a224abb0c97c3091dad884cbc3798ba3ebf0e8",
+    "tasks.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2",
+    "tasks_test.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2"
+  },
+  "data_manifest_path": "data/agent_rl/hotpotqa_validation_1k/manifest.json",
+  "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+  "dependencies": {
+    "packages": {
+      "rank-bm25": "0.2.2"
+    },
+    "python": "3.11.14"
+  },
+  "first_hop_k": 7,
+  "follow_up_k": 1,
+  "mean_environment_return": 0.15477357142857207,
+  "n_tasks": 1000,
+  "one_shot_same_budget_metrics": {
+    "CompleteDocumentEvidence@8": 0.55,
+    "CompleteSentenceEvidence@8": 0.347,
+    "DocumentRecall@8": 0.758,
+    "SentenceRecall@8": 0.6461619047619046
+  },
+  "partition": "test",
+  "retrieval_hops": 2,
+  "schema_version": "hotpotqa-scripted-eval-v1",
+  "scripted_metrics": {
+    "AnswerEM": 0.0,
+    "AnswerF1": 0.0,
+    "CompleteDocumentEvidence": 0.551,
+    "CompleteSentenceEvidence": 0.357,
+    "DocumentEM": 0.003,
+    "DocumentF1": 0.4024388888888897,
+    "DocumentPrecision": 0.27969642857142823,
+    "DocumentRecall": 0.7565,
+    "JointEM": 0.0,
+    "JointF1": 0.0,
+    "JointSuccess": 0.0,
+    "SentenceEM": 0.0,
+    "SentenceF1": 0.31118793428793545,
+    "SentencePrecision": 0.20787499999999895,
+    "SentenceRecall": 0.6492452380952383
+  },
+  "total_retrieval_budget": 8,
+  "tracked_manifest_copy": "data/agent_rl/manifests/hotpotqa_validation_1k.json"
+}

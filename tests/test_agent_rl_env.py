@@ -60,17 +60,17 @@ def test_retrieve_calculate_and_finish_successfully():
 
     obs, reward, done, info = env.step({"tool": "retrieve_docs", "args": {"query": "value"}})
     assert not done and info["evidence_ids"] == ["facts.md#1"]
-    assert reward == pytest.approx(0.03)  # valid format minus tool cost
+    assert reward == pytest.approx(-0.02)  # valid formatting is a metric, not profit
 
     obs, reward, done, _ = env.step({"tool": "calculator", "args": {"expression": "40 + 2"}})
     assert not done and obs["history"][-1]["data"]["result"] == 42
-    assert reward == pytest.approx(0.03)
+    assert reward == pytest.approx(-0.02)
 
     obs, reward, done, info = env.step({"final_answer": True})
     assert done and obs["answer"] == "42" and info["stop_reason"] == "final_answer"
     assert info["reward_breakdown"]["task_success"] == 1.0
     assert info["reward_breakdown"]["evidence_coverage"] == 0.3
-    assert reward == pytest.approx(1.35)
+    assert reward == pytest.approx(1.3)
     assert len(env.transitions) == 3
 
 
@@ -84,7 +84,7 @@ def test_duplicate_call_is_observed_and_penalized():
     assert not done
     assert obs["history"][-1]["error"] == "duplicate call"
     assert info["reward_breakdown"]["duplicate_call"] == -0.1
-    assert reward == pytest.approx(-0.05)
+    assert reward == pytest.approx(-0.1)
 
 
 def test_unknown_tool_at_budget_boundary_terminates_cleanly():
@@ -96,7 +96,22 @@ def test_unknown_tool_at_budget_boundary_terminates_cleanly():
     assert "not allowed" in obs["last_message"]
     assert info["reward_breakdown"]["invalid_action"] == -0.1
     assert info["reward_breakdown"]["budget_exhausted"] == -0.3
-    assert reward == pytest.approx(-0.35)
+    assert reward == pytest.approx(-0.4)
+
+
+def test_budget_stop_still_runs_frozen_finalizer_for_endpoint_metrics():
+    env = make_env(max_steps=1)
+    env.reset(calc_task())
+
+    obs, reward, done, info = env.step(
+        {"tool": "retrieve_docs", "args": {"query": "value"}}
+    )
+
+    assert done and info["stop_reason"] == "budget"
+    assert obs["answer"] == "40" and info["answer"] == "40"
+    assert info["finalizer_error"] is None
+    assert info["reward_breakdown"]["task_success"] == 0.0
+    assert reward == pytest.approx(-0.32)
 
 
 def test_non_object_action_becomes_observable_error():
@@ -125,7 +140,41 @@ def test_premature_final_answer_gets_partial_coverage_and_penalty():
     assert done
     assert info["reward_breakdown"]["evidence_coverage"] == pytest.approx(0.15)
     assert info["reward_breakdown"]["premature_final_answer"] == -0.3
-    assert reward == pytest.approx(0.9)  # success + valid + partial coverage - premature stop
+    assert info["reward_breakdown"]["task_success"] == 0.0
+    assert reward == pytest.approx(-0.15)
+
+
+def test_guessing_answer_without_required_evidence_never_gets_success_reward():
+    task = AgentRLTask(
+        task_id="guess_1",
+        question="What is the recorded value?",
+        gold_answers=("40",),
+        gold_evidence_ids=("facts.md#1",),
+    )
+    env = make_env()
+    env.reset(task)
+
+    _, reward, done, info = env.step({"final_answer": True})
+
+    assert done
+    assert info["reward_breakdown"]["task_success"] == 0.0
+    assert reward == pytest.approx(-0.3)
+
+
+def test_finalizer_failure_has_separate_stop_reason_and_info():
+    def fail_finalizer(task, events):
+        raise RuntimeError("backend down")
+
+    env = PersonalRAGEnv(
+        registry=build_minimal_registry(retrieve),
+        finalize_fn=fail_finalizer,
+    )
+    env.reset(calc_task())
+
+    _, _, done, info = env.step({"final_answer": True})
+
+    assert done and info["stop_reason"] == "finalizer_error"
+    assert info["finalizer_error"] == "backend down"
 
 
 def test_reset_isolates_episode_state():

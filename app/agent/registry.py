@@ -62,6 +62,9 @@ class ToolRegistry:
 
     @staticmethod
     def _validate(tool: Tool, args: Dict[str, Any]) -> str:
+        unknown = sorted(set(args) - set(tool.args_schema))
+        if unknown:
+            return f"unknown args: {', '.join(unknown)}"
         for arg, spec in tool.args_schema.items():
             if args.get(arg) is None:
                 if spec.get("required"):

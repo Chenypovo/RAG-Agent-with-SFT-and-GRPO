@@ -12,6 +12,11 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from app.agent_rl.adapters import build_minimal_registry  # noqa: E402
+from app.agent_rl.artifacts import (  # noqa: E402
+    dependency_versions,
+    ensure_outputs_available,
+    validate_evaluation_inputs,
+)
 from app.agent_rl.env import PersonalRAGEnv  # noqa: E402
 from app.agent_rl.evaluation import evaluate_retrieval_baseline  # noqa: E402
 from app.agent_rl.rewards import RewardConfig  # noqa: E402
@@ -34,10 +39,23 @@ def main() -> None:
     parser.add_argument("--follow-up-k", type=int, default=1)
     parser.add_argument("--output", default="")
     parser.add_argument("--trajectories", default="")
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
+
+    if args.retrieval_hops <= 0 or args.first_hop_k <= 0 or args.follow_up_k <= 0:
+        parser.error("retrieval-hops, first-hop-k and follow-up-k must be positive")
 
     data_dir = Path(args.data_dir)
     task_name = "tasks.jsonl" if args.partition == "all" else f"tasks_{args.partition}.jsonl"
+    output_path = Path(args.output) if args.output else data_dir / f"scripted_agent_{args.partition}.json"
+    trajectory_path = (
+        Path(args.trajectories)
+        if args.trajectories
+        else data_dir / f"scripted_trajectories_{args.partition}.jsonl"
+    )
+    ensure_outputs_available((output_path, trajectory_path), overwrite=args.overwrite)
+    provenance = validate_evaluation_inputs(data_dir, task_filename=task_name)
+
     tasks = load_tasks(data_dir / task_name)
     store = BM25Store.load(str(data_dir / "bm25.json"))
     config = ScriptedAgentConfig(
@@ -69,6 +87,7 @@ def main() -> None:
         ks=(total_budget,),
     )
     report = {
+        "schema_version": "hotpotqa-scripted-eval-v1",
         "agent": "ScriptedTwoHopPolicy",
         "answer_mode": "abstain_no_generator",
         "data_dir": str(data_dir),
@@ -85,14 +104,25 @@ def main() -> None:
             rollout.verification for rollout in rollouts
         ),
         "one_shot_same_budget_metrics": one_shot["metrics"],
+        "config": {
+            "data_dir": str(data_dir),
+            "partition": args.partition,
+            "task_filename": task_name,
+            "retrieval_hops": config.retrieval_hops,
+            "first_hop_k": config.first_hop_k,
+            "follow_up_k": config.follow_up_k,
+            "total_retrieval_budget": total_budget,
+            "allowed_tools": ["retrieve_docs"],
+            "max_steps": config.retrieval_hops + 1,
+            "env_version": env.env_version,
+            "answer_mode": "abstain_no_generator",
+        },
+        "dependencies": dependency_versions(("rank-bm25",)),
+        **provenance,
     }
 
-    output_path = Path(args.output) if args.output else data_dir / f"scripted_agent_{args.partition}.json"
-    trajectory_path = (
-        Path(args.trajectories)
-        if args.trajectories
-        else data_dir / f"scripted_trajectories_{args.partition}.jsonl"
-    )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    trajectory_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",

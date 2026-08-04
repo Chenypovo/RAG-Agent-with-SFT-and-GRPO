@@ -15,12 +15,12 @@
 
 因此，它目前适合证明“Agent 系统设计与工程落地”能力，但还不足以证明“Agent 算法/后训练”能力。主要缺口是：
 
-- 没有被训练的开源 policy model；
-- 没有 SFT、DPO、PPO 或 GRPO 训练过程；
+- 已完成 Qwen3-1.7B 的 75 条 decision QLoRA SFT 小样本训练，但 held-out 效果退化，尚无有效的后训练 policy；
+- 尚未完成扩大数据后的 SFT，也没有 DPO、PPO 或 GRPO 训练结果；
 - 已有最小多轮环境接口，但尚未接入 policy token、logprob 和批量 rollout；
 - 已有第一版可分解 reward/verifier，但还需要防作弊压力测试；
-- 没有训练曲线、对照实验和消融分析；
-- 当前 LLM 通过 OpenAI-compatible API 返回文本，不能直接提供反向训练所需的 token IDs 和 logprobs。
+- 缺少足够规模的训练曲线、多 seed 对照和消融分析；
+- 已接入本地 Transformers + PEFT 完成 SFT；GRPO 所需的 on-policy token、logprob 和批量 rollout 仍未接通。
 
 如果目标是 Agent 算法岗，项目主线应从“继续堆 Agent 功能”切换成：
 
@@ -31,19 +31,54 @@
 当前分支已经完成训练前的最小闭环：
 
 - `PersonalRAGEnv.reset()/step()`、严格 action schema、step budget、重复调用惩罚和可序列化轨迹；
-- HotpotQA distractor 数据转换，200 个任务、8171 条句级语料以及按金标文档分组的 172/17/11 划分；
+- HotpotQA distractor 数据转换，200 个任务、8171 条句级语料，以及按全部可见 context 文档连通分量隔离的 162/18/20 划分；
 - HotpotQA 风格 Answer EM/F1、句级/文档级证据 verifier；
 - 不读取金标答案的确定性双轮检索 controller，并保存可复现 action trajectory；
 - 相关环境、数据、verifier 和 controller 测试全部通过。
 
-在相同的 8 条检索预算下，当前 200 条 smoke set 的检索结果为：
+2026-08-04 已按全部可见 context 文档连通分量重新构建 smoke 数据，并复现 all partition 的
+BM25 与 scripted 结果。新划分为 train/validation/test = 162/18/20；同一可见 context 文档
+关联的任务不会跨集合。数据本体因体积不入库，但 manifest 和结果报告已跟踪：
+
+- `data/agent_rl/manifests/hotpotqa_smoke.json`；
+- `data/agent_rl/reports/hotpotqa_smoke_bm25.json`；
+- `data/agent_rl/reports/hotpotqa_smoke_scripted.json`。
+
+另外已准备 1,000 条官方 HotpotQA validation 作为纯 test held-out，包含 40,330 条句级语料；
+其 manifest 为 `data/agent_rl/manifests/hotpotqa_validation_1k.json`。这批数据不再参与内部
+train/validation 哈希切分，避免将官方 held-out 重新混回训练集合。
+
+在相同的 8 条检索预算下，200 条 smoke set 的检索结果为：
 
 | Controller | 预算分配 | Sentence Recall | 完整句级证据 | Document Recall | 完整文档证据 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 单轮 BM25 | `k=8` | 65.69% | 36.00% | 75.75% | 53.00% |
 | Scripted two-hop | `k=7 + k=1` | 66.78% | 38.00% | 76.75% | 55.50% |
 
-这只是用于验证环境和查询改写方向的 smoke baseline，不是最终论文级结果。当前 finalizer 主动 abstain，因此 Answer EM/F1 和 Joint Success 均为 0；不能把上述证据召回提升表述成端到端问答提升。validation 只有 17 条、test 只有 11 条，也不足以支撑显著性结论。下一步应扩大官方 held-out 数据并接入冻结的小模型答案生成器。
+这只是用于验证环境和查询改写方向的 smoke baseline，不是最终论文级结果。当前 finalizer 主动 abstain，因此 Answer EM/F1 和 Joint Success 均为 0；不能把上述证据召回提升表述成端到端问答提升。smoke 内部 validation 只有 18 条、test 只有 20 条，也不足以支撑显著性结论；可信度判断以下面的官方 validation 1,000 条纯 test held-out 为准。
+
+官方 validation 1,000 条纯 test held-out 已完成 BM25 与 scripted two-hop 评测。数据包含
+40,330 条句级语料；两种方法都使用 8 条检索结果，避免用更多召回条数制造表面增益：
+
+| Controller | 预算分配 | Sentence Recall | 完整句级证据 | Document Recall | 完整文档证据 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 单轮 BM25 | `k=8` | 64.62% | 34.70% | 75.80% | 55.00% |
+| Scripted two-hop | `k=7 + k=1` | 64.92% | 35.70% | 75.65% | 55.10% |
+| Scripted - BM25 | — | +0.31 个百分点 | +1.00 个百分点 | -0.15 个百分点 | +0.10 个百分点 |
+
+Scripted 的句级 Precision/F1 为 20.79% / 31.12%，文档级 Precision/F1 为
+27.97% / 40.24%。这组结果的提升很小，而且 Document Recall 略有下降；它只能证明
+两跳查询改写和轨迹评测链路已经跑通，不能据此宣称 scripted controller 稳定优于 BM25。
+由于这一阶段没有答案生成器，策略会主动拒答，Answer EM/F1、Joint EM/F1 和
+Joint Success 都是 0。上述数字不是端到端问答效果，也不是 SFT 或 GRPO 效果。
+
+对应的可机读报告为：
+
+- `data/agent_rl/reports/hotpotqa_validation_1k_bm25.json`；
+- `data/agent_rl/reports/hotpotqa_validation_1k_scripted.json`。
+
+报告记录了输入文件 SHA-256、manifest SHA-256、Python 与 `rank-bm25` 版本；仓库内
+`data/agent_rl/manifests/hotpotqa_validation_1k.json` 是运行目录 `manifest.json` 的同哈希副本。
 
 复现命令：
 
@@ -51,7 +86,77 @@
 python scripts/prepare_hotpotqa_agent_rl.py --limit 200 --output-dir data/agent_rl/hotpotqa_smoke
 python scripts/eval_hotpotqa_bm25.py --data-dir data/agent_rl/hotpotqa_smoke --partition all --ks 4,8,20
 python scripts/eval_hotpotqa_scripted_agent.py --data-dir data/agent_rl/hotpotqa_smoke --partition all
+
+# 官方 validation 1k 纯 test held-out；数据需先按 tracked manifest 恢复到对应目录
+python scripts/eval_hotpotqa_bm25.py \
+  --data-dir data/agent_rl/hotpotqa_validation_1k --partition test --ks 4,8,20 \
+  --output data/agent_rl/reports/hotpotqa_validation_1k_bm25.json --overwrite
+python scripts/eval_hotpotqa_scripted_agent.py \
+  --data-dir data/agent_rl/hotpotqa_validation_1k --partition test \
+  --output data/agent_rl/reports/hotpotqa_validation_1k_scripted.json \
+  --trajectories data/agent_rl/hotpotqa_validation_1k/scripted_trajectories_test.jsonl --overwrite
 ```
+
+### 1.2 Prompt-only 端到端评测检查点
+
+当前分支已补齐不依赖训练的端到端评测代码：
+
+- 严格 JSON 的 `PromptOnlyPolicy`，非法输出不做静默修复，而是交给环境记录和惩罚；
+- 与 controller 分离的冻结答案生成器，只接收问题和工具观察，不读取金标答案；
+- 通用 policy rollout，保存模型原始输出、完整 prompt、解析错误、环境 transition、分项 reward、seed 和版本；
+- 同时报 Answer EM/F1、证据覆盖、Joint Success、非法动作率、重复调用率、平均工具调用数、预算终止率和拒答率；
+- 数据 manifest 哈希、controller/finalizer 模型名、温度、prompt 版本和环境版本进入实验报告。
+
+评测入口：
+
+```bash
+python scripts/eval_hotpotqa_prompt_policy.py \
+  --data-dir data/agent_rl/hotpotqa_smoke \
+  --partition test \
+  --env-file /path/to/.env \
+  --controller-model <model> \
+  --finalizer-model <model>
+```
+
+GPU 机器也可使用 `--completion-backend transformers` 直接加载同一个开源模型；controller 与
+finalizer 共享权重但使用独立 prompt，并关闭 thinking mode。这样无需部署额外 API 服务，也避免
+同一模型在显存中重复加载。
+
+Qwen3-1.7B controller 与同模型 frozen finalizer 已在官方 validation 的固定 100 条 held-out
+任务上完成 prompt-only 和 SFT 对照。两组 sampling 实验均使用
+`temperature=0.7, top_p=0.8, top_k=20`，greedy SFT 使用 `temperature=0`：
+
+| Controller | Answer EM | Answer F1 | Joint Success | 完整句级证据 | 重复调用率 | 预算终止率 | 非法动作率 | 平均工具调用 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Prompt-only，sampling | 21.00% | 26.94% | 13.00% | 38.00% | 63.00% | 100.00% | 0.00% | 5.00 |
+| QLoRA SFT-75，sampling | 12.00% | 16.96% | 4.00% | 11.00% | 1.32% | 0.00% | 12.33% | 1.07 |
+| QLoRA SFT-75，greedy | 13.00% | 18.73% | 4.00% | 16.00% | 1.36% | 5.00% | 13.64% | 0.98 |
+
+Prompt-only 基线暴露出两个明确问题：每题都跑满 5 次工具调用，预算终止率 100%，重复调用率
+63%。它仍取得 Answer EM 21%、Answer F1 26.94%、Joint Success 13%，因此是当前端到端基线，
+不是可直接部署的策略。
+
+报告已跟踪：
+
+- `data/agent_rl/reports/qwen3_1.7b_prompt_validation100.json`；
+- `data/agent_rl/reports/qwen3_1.7b_sft75_validation100.json`；
+- `data/agent_rl/reports/qwen3_1.7b_sft75_validation100_greedy.json`。
+
+### 1.3 QLoRA SFT 小样本诊断
+
+Teacher 在 162 个 train episodes 上生成 486 条 decision，其中 25 个 episode 达到
+`JointSuccess=1`。严格筛选成功且无解析错误的轨迹后，得到 75 条 controller decision；QLoRA
+训练使用 2 epochs / 10 steps，用时 60.37 秒，最终 train loss 为 1.261。
+
+这次小数据 SFT 没有带来端到端提升。Sampling 下，平均工具调用从 5.00 降到 1.07、预算终止率
+从 100% 降到 0%，但 Answer EM 从 21% 降到 12%、Joint Success 从 13% 降到 4%、完整句级
+证据从 38% 降到 11%，并新增 12.33% 非法动作。Greedy 复验仍只有 13% Answer EM、4%
+Joint Success 和 16% 完整句级证据，说明退化不是 sampling 波动能够解释的。
+
+结论是：只用 25 个成功 episode / 75 条 decision 训练，使 policy 倾向过早停止，且数据不足以
+稳定学习严格动作格式。本轮价值在于发现失败模式，不能写成“SFT 提升”。下一轮必须扩大 teacher
+轨迹，加入不同长度、失败恢复和 hard-negative 决策，并先证明 SFT 在 held-out 上不退化，再进入
+GRPO。当前没有 GRPO 训练结果。
 
 ## 2. 建议的项目研究问题
 
@@ -86,6 +191,9 @@ app/agent_rl/
 ├── env.py              # PersonalRAGEnv: reset / step
 ├── tasks.py            # 任务加载、切分和环境初始化
 ├── rewards.py          # 可验证 reward 与 reward breakdown
+├── policies.py         # prompt-only controller 与严格动作解析
+├── finalizers.py       # 冻结、不可见金标答案的终局合成
+├── rollouts.py         # policy 决策、transition 与版本化轨迹
 ├── scripted_agent.py   # 无 GPU 的确定性 controller 与 rollout
 ├── trajectory.py       # 训练所需 episode/transition schema
 ├── verifiers.py        # 答案与句级/文档级证据验证
@@ -268,13 +376,17 @@ RL policy 会主动寻找这些规则的漏洞，因此需要同时验证：
 
 ## 8. 必须完成的实验矩阵
 
-主结果至少包含：
+当前已完成的 100 条 held-out 阶段结果为：
 
-| 方法 | Task Success | Multi-hop Coverage | Tool F1 | Invalid Call Rate | Calls / Success | Unsafe Memory Write Rate |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Prompt-only | 待实验 | 待实验 | 待实验 | 待实验 | 待实验 | 待实验 |
-| SFT | 待实验 | 待实验 | 待实验 | 待实验 | 待实验 | 待实验 |
-| SFT + GRPO | 待实验 | 待实验 | 待实验 | 待实验 | 待实验 | 待实验 |
+| 方法 | Joint Success | Answer F1 | 完整句级证据 | Invalid Call Rate | Mean Tool Calls | 结论 |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Prompt-only sampling | 13.00% | 26.94% | 38.00% | 0.00% | 5.00 | 当前基线，重复调用和预算耗尽严重 |
+| SFT-75 sampling | 4.00% | 16.96% | 11.00% | 12.33% | 1.07 | 小数据导致过早停止，端到端退化 |
+| SFT-75 greedy | 4.00% | 18.73% | 16.00% | 13.64% | 0.98 | 退化在 greedy 下仍存在 |
+| SFT + GRPO | 未完成 | 未完成 | 未完成 | 未完成 | 未完成 | 不得写入简历成果 |
+
+正式主结果仍需在更大 held-out、多 seed 下补齐 Tool F1、Calls / Success、Unsafe Memory Write Rate，
+并完成 SFT + GRPO 后才可形成算法提升结论。
 
 至少完成三组消融：
 
@@ -320,7 +432,10 @@ RL policy 会主动寻找这些规则的漏洞，因此需要同时验证：
 
 ## 10. 简历表达模板
 
-真实实验完成后，可以写成：
+当前可写的真实版本见 `docs/RESUME_AGENTIC_RL_CN.md`。本轮应写“完成环境、基线、QLoRA
+小样本试验并定位过早停止”，不能写“SFT 或 GRPO 提升了效果”。
+
+扩大数据并完成真实实验后，才可以升级成：
 
 > 构建可复现的 Personal-RAG Agent 训练环境，将多跳检索、长期记忆和计算工具建模为多轮决策过程；构造 X 条可验证任务及基于答案正确性、证据覆盖、工具成本和记忆安全的组合奖励，基于 Qwen-XB 完成 LoRA SFT 与 GRPO 后训练，使 held-out 任务成功率由 X% 提升至 Y%，非法工具调用率下降 Z%，并通过 reward、步数预算和数据规模消融分析长程训练稳定性。
 
@@ -340,17 +455,19 @@ RL policy 会主动寻找这些规则的漏洞，因此需要同时验证：
 
 ### P0：先让评测可信
 
-- 修正 calculator 结果丢失；
-- 扩展 verifier；
-- 建立严格 train/dev/test 切分；
-- 生成 prompt-only baseline 数字；
-- 实现 episode 隔离和可复现轨迹。
+- 已完成：修正 calculator 结果丢失；
+- 部分完成：答案与句级/文档级证据 verifier 已落地，reward hacking 压力测试仍待做；
+- 已完成：按全部可见 context 文档连通分量建立 train/validation/test 切分，并重建 smoke 数据与报告；
+- 已完成：准备并评测 1,000 条官方 validation 纯 test held-out，保存内容哈希 manifest 与 BM25/scripted 报告；
+- 已完成：AutoDL 上的 Qwen3-1.7B frozen finalizer + prompt-only controller 100 条 held-out 完整指标报告；
+- 部分完成：环境状态 reset、seed 和可复现轨迹已落地，memory store 独立快照仍待做。
 
 ### P1：完成训练闭环
 
-- 接入开源小模型；
-- 构造并筛选 teacher trajectories；
-- 完成 LoRA/QLoRA SFT；
+- 已完成小规模：接入 Qwen3-1.7B，并从 162 个 teacher episodes 筛选 25 个成功 episode；
+- 已完成诊断但效果退化：75 条 decision 的 QLoRA SFT 与 sampling/greedy held-out 对照；
+- 进行中：已准备 1,999 个有效任务的官方 train 扩展集（`1617/191/191`），正在生成 teacher trajectories 并训练扩大版 SFT；
+- 待验证：扩大版 SFT 在官方 1,000 条 held-out 上的指标至少不低于 prompt-only；
 - 接入 GRPO rollout、reward 和参数更新；
 - 跑通 Prompt-only、SFT、SFT + GRPO 三组对照。
 

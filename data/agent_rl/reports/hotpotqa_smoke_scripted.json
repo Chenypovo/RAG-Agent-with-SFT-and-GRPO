@@ -1,0 +1,65 @@
+{
+  "agent": "ScriptedTwoHopPolicy",
+  "answer_mode": "abstain_no_generator",
+  "config": {
+    "allowed_tools": [
+      "retrieve_docs"
+    ],
+    "answer_mode": "abstain_no_generator",
+    "data_dir": "data/agent_rl/hotpotqa_smoke",
+    "env_version": "personal-rag-scripted-retrieval-v0",
+    "first_hop_k": 7,
+    "follow_up_k": 1,
+    "max_steps": 3,
+    "partition": "all",
+    "retrieval_hops": 2,
+    "task_filename": "tasks.jsonl",
+    "total_retrieval_budget": 8
+  },
+  "data_dir": "data/agent_rl/hotpotqa_smoke",
+  "data_input_sha256": {
+    "bm25.json": "9dbecc116e89514194d226a6603fb85d77b6fe64817106ba053b7f9dfa530760",
+    "corpus.jsonl": "d991903945a14fba151244e1e67229825e21c8f02ad91aad2621c9035a463e49",
+    "tasks.jsonl": "961eabbcb112e0e56616296f2766b98e90a701cbb48a1da946b2cdbe2ff91c49"
+  },
+  "data_manifest_path": "data/agent_rl/hotpotqa_smoke/manifest.json",
+  "data_manifest_sha256": "589d657dc5433bcd0d572dd51dab33ead5f506e34b82cad70f9595dbf7e70ac0",
+  "dependencies": {
+    "packages": {
+      "rank-bm25": "0.2.2"
+    },
+    "python": "3.11.14"
+  },
+  "first_hop_k": 7,
+  "follow_up_k": 1,
+  "mean_environment_return": 0.1603250000000001,
+  "n_tasks": 200,
+  "one_shot_same_budget_metrics": {
+    "CompleteDocumentEvidence@8": 0.53,
+    "CompleteSentenceEvidence@8": 0.36,
+    "DocumentRecall@8": 0.7575,
+    "SentenceRecall@8": 0.6569166666666668
+  },
+  "partition": "all",
+  "retrieval_hops": 2,
+  "schema_version": "hotpotqa-scripted-eval-v1",
+  "scripted_metrics": {
+    "AnswerEM": 0.0,
+    "AnswerF1": 0.0,
+    "CompleteDocumentEvidence": 0.555,
+    "CompleteSentenceEvidence": 0.38,
+    "DocumentEM": 0.0,
+    "DocumentF1": 0.4041944444444446,
+    "DocumentPrecision": 0.27850000000000014,
+    "DocumentRecall": 0.7675,
+    "JointEM": 0.0,
+    "JointF1": 0.0,
+    "JointSuccess": 0.0,
+    "SentenceEM": 0.0,
+    "SentenceF1": 0.32099106449106435,
+    "SentencePrecision": 0.21482142857142855,
+    "SentenceRecall": 0.6677500000000001
+  },
+  "total_retrieval_budget": 8,
+  "tracked_manifest_copy": "data/agent_rl/manifests/hotpotqa_smoke.json"
+}

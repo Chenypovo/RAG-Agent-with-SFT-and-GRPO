@@ -1,0 +1,52 @@
+{
+  "config": {
+    "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+    "ks": [
+      4,
+      8,
+      20
+    ],
+    "partition": "test",
+    "retriever": "BM25Okapi",
+    "task_filename": "tasks_test.jsonl"
+  },
+  "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+  "data_input_sha256": {
+    "bm25.json": "97166fdfc062669a4d22c78f51f8d184074b6df34fe3cc578c447b85fdd360f8",
+    "corpus.jsonl": "fc52f56f478130927c8f2726c5a224abb0c97c3091dad884cbc3798ba3ebf0e8",
+    "tasks.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2",
+    "tasks_test.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2"
+  },
+  "data_manifest_path": "data/agent_rl/hotpotqa_validation_1k/manifest.json",
+  "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+  "dependencies": {
+    "packages": {
+      "rank-bm25": "0.2.2"
+    },
+    "python": "3.11.14"
+  },
+  "ks": [
+    4,
+    8,
+    20
+  ],
+  "metrics": {
+    "CompleteDocumentEvidence@20": 0.736,
+    "CompleteDocumentEvidence@4": 0.38,
+    "CompleteDocumentEvidence@8": 0.55,
+    "CompleteSentenceEvidence@20": 0.552,
+    "CompleteSentenceEvidence@4": 0.221,
+    "CompleteSentenceEvidence@8": 0.347,
+    "DocumentRecall@20": 0.86,
+    "DocumentRecall@4": 0.653,
+    "DocumentRecall@8": 0.758,
+    "SentenceRecall@20": 0.7781809523809519,
+    "SentenceRecall@4": 0.5455452380952379,
+    "SentenceRecall@8": 0.6461619047619046
+  },
+  "n_tasks": 1000,
+  "partition": "test",
+  "retriever": "BM25Okapi",
+  "schema_version": "hotpotqa-bm25-eval-v1",
+  "tracked_manifest_copy": "data/agent_rl/manifests/hotpotqa_validation_1k.json"
+}

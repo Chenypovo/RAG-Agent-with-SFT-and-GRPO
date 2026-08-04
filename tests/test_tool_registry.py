@@ -52,6 +52,11 @@ def test_wrong_arg_type():
     assert not r.ok and "bad args" in r.error and "k" in r.error
 
 
+def test_unknown_args():
+    r = make_registry().dispatch("echo", {"query": "hi", "unused": 1})
+    assert not r.ok and "unknown args: unused" in r.error
+
+
 def test_args_not_a_dict():
     r = make_registry().dispatch("echo", "hi")
     assert not r.ok and "bad args" in r.error

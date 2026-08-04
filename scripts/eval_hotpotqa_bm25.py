@@ -11,6 +11,11 @@ PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+from app.agent_rl.artifacts import (  # noqa: E402
+    dependency_versions,
+    ensure_outputs_available,
+    validate_evaluation_inputs,
+)
 from app.agent_rl.evaluation import evaluate_retrieval_baseline  # noqa: E402
 from app.agent_rl.tasks import load_tasks  # noqa: E402
 from app.vectordb.bm25_store import BM25Store  # noqa: E402
@@ -22,23 +27,42 @@ def main() -> None:
     parser.add_argument("--partition", choices=["all", "train", "validation", "test"], default="all")
     parser.add_argument("--ks", default="4,8,20")
     parser.add_argument("--output", default="")
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
     data_dir = Path(args.data_dir)
     task_name = "tasks.jsonl" if args.partition == "all" else f"tasks_{args.partition}.jsonl"
-    tasks = load_tasks(data_dir / task_name)
     ks = [int(value.strip()) for value in args.ks.split(",") if value.strip()]
+    if not ks or any(value <= 0 for value in ks):
+        parser.error("ks must contain one or more positive integers")
+    output_path = Path(args.output) if args.output else data_dir / f"bm25_baseline_{args.partition}.json"
+    ensure_outputs_available((output_path,), overwrite=args.overwrite)
+    provenance = validate_evaluation_inputs(data_dir, task_filename=task_name)
+
+    tasks = load_tasks(data_dir / task_name)
     store = BM25Store.load(str(data_dir / "bm25.json"))
     report = evaluate_retrieval_baseline(
         tasks,
         lambda query, top_k: store.search(query=query, top_k=top_k),
         ks=ks,
     )
-    report["retriever"] = "BM25Okapi"
-    report["partition"] = args.partition
-    report["data_dir"] = str(data_dir)
+    report.update({
+        "schema_version": "hotpotqa-bm25-eval-v1",
+        "retriever": "BM25Okapi",
+        "partition": args.partition,
+        "data_dir": str(data_dir),
+        "config": {
+            "data_dir": str(data_dir),
+            "partition": args.partition,
+            "task_filename": task_name,
+            "ks": ks,
+            "retriever": "BM25Okapi",
+        },
+        "dependencies": dependency_versions(("rank-bm25",)),
+        **provenance,
+    })
 
-    output_path = Path(args.output) if args.output else data_dir / f"bm25_baseline_{args.partition}.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
 

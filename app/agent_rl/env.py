@@ -63,6 +63,7 @@ class PersonalRAGEnv:
         self.terminated = False
         self.answer = ""
         self.stop_reason: Optional[str] = None
+        self.finalizer_error: Optional[str] = None
         self._last_message = ""
 
     def reset(self, task: Optional[AgentRLTask] = None, *, seed: Optional[int] = None) -> Dict[str, Any]:
@@ -78,13 +79,12 @@ class PersonalRAGEnv:
         self.terminated = False
         self.answer = ""
         self.stop_reason = None
+        self.finalizer_error = None
         self._last_message = "episode reset"
         self._rng = random.Random(self._initial_seed if seed is None else seed)
         return self._observation()
 
-    def step(
-        self, raw_action: AgentAction | Mapping[str, Any]
-    ) -> Tuple[Dict[str, Any], float, bool, Dict[str, Any]]:
+    def step(self, raw_action: Any) -> Tuple[Dict[str, Any], float, bool, Dict[str, Any]]:
         if self.task is None:
             raise RuntimeError("call reset before step")
         if self.terminated:
@@ -169,32 +169,50 @@ class PersonalRAGEnv:
 
     def _finish_episode(self, breakdown: RewardBreakdown) -> None:
         assert self.task is not None
-        finalizer_error: Optional[str] = None
-        try:
-            self.answer = str(self.finalize_fn(self.task, tuple(self.events)))
-        except Exception as exc:  # environment failures are observable but do not crash a rollout worker
-            self.answer = ""
-            finalizer_error = str(exc)
+        finalizer_error = self._run_finalizer()
 
         coverage = evidence_coverage(self.task.gold_evidence_ids, self.evidence_ids)
         if self.task.gold_evidence_ids:
             breakdown.evidence_coverage = self.reward_config.evidence_coverage * coverage
-        if answer_is_correct(self.task, self.answer):
+        evidence_complete = not self.task.gold_evidence_ids or coverage >= 1.0
+        if answer_is_correct(self.task, self.answer) and evidence_complete:
             breakdown.task_success = self.reward_config.task_success
         if self.task.gold_evidence_ids and coverage < 1.0:
             breakdown.premature_final_answer = self.reward_config.premature_final_answer
 
         self.terminated = True
-        self.stop_reason = "final_answer"
+        self.finalizer_error = finalizer_error
+        self.stop_reason = "final_answer" if finalizer_error is None else "finalizer_error"
         self._last_message = "final_answer" if finalizer_error is None else f"finalizer error: {finalizer_error}"
 
     def _terminate_if_budget(self, breakdown: RewardBreakdown) -> None:
         if self.step_count < self.max_steps:
             return
+        # Always synthesize an endpoint answer from the evidence collected so
+        # controller stop failures and answer-generation quality remain
+        # separately measurable. Budget exhaustion is still penalized and kept
+        # as the stop reason; it is never converted into a successful stop.
+        finalizer_error = self._run_finalizer()
         self.terminated = True
         self.stop_reason = "budget"
         breakdown.budget_exhausted = self.reward_config.budget_exhausted
-        self._last_message = f"{self._last_message}; step budget exhausted"
+        suffix = (
+            f"; finalizer error: {finalizer_error}"
+            if finalizer_error is not None
+            else ""
+        )
+        self._last_message = f"{self._last_message}; step budget exhausted{suffix}"
+
+    def _run_finalizer(self) -> Optional[str]:
+        assert self.task is not None
+        try:
+            self.answer = str(self.finalize_fn(self.task, tuple(self.events)))
+            self.finalizer_error = None
+            return None
+        except Exception as exc:  # observable worker failure, not a rollout crash
+            self.answer = ""
+            self.finalizer_error = str(exc)
+            return self.finalizer_error
 
     def _finish_step(
         self,
@@ -219,6 +237,7 @@ class PersonalRAGEnv:
             "reward_breakdown": breakdown.to_dict(),
             "stop_reason": self.stop_reason,
             "evidence_ids": sorted(self.evidence_ids),
+            "finalizer_error": self.finalizer_error,
         }
         if self.terminated:
             info["answer"] = self.answer

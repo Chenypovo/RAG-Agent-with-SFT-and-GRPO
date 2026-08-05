@@ -147,8 +147,8 @@ python scripts/eval_agent.py --tasks data/eval/agent_tasks_synth.jsonl
 ## Agentic RL 训练与评测环境
 
 项目已增加独立的 `app/agent_rl/`，用于把检索 Agent 表达成可训练、可验证的多轮环境。目前已完成
-prompt-only 基线与一次 75 条 decision 的 QLoRA SFT 小样本诊断实验；SFT 端到端效果退化，
-GRPO 尚未完成，不能把“训练跑通”写成“性能提升”：
+prompt-only 基线、75 条 decision 的小样本诊断，以及 741 条 decision 的扩大版 QLoRA SFT。
+扩大版 SFT 修复了重复调用和预算耗尽，但没有显著提升端到端成功率；GRPO 尚未完成：
 
 - `reset()/step()` 环境、严格 JSON action、step budget、重复调用惩罚和分项 reward；
 - HotpotQA 转换、按全部可见 context 文档连通分量隔离的数据切分、BM25 与确定性双轮检索 baseline；
@@ -218,7 +218,26 @@ Qwen3-1.7B controller 与同模型 frozen finalizer 已在官方 validation 的�
 小数据 SFT 虽然减少了重复调用和预算耗尽，却明显过早停止，并引入 12%～14% 非法动作，导致
 Answer 与 Joint Success 退化；因此本轮是失败诊断，不是 SFT 提升结论。
 
-原始可复现报告位于 `data/agent_rl/reports/qwen3_1.7b_*validation100*.json`。今晚可用于简历的
+原始可复现报告位于 `data/agent_rl/reports/qwen3_1.7b_*validation100*.json`。当前可用于简历的
+
+扩大版 teacher 在 1,617 个 train episodes 上生成轨迹，其中 247 个达到 `JointSuccess=1`；严格
+筛选后得到 741 条 controller decision。QLoRA 训练 2 epochs / 94 steps，用时 587.37 秒，
+train loss 为 0.21865。最终在同一批官方 validation 1,000 条纯 held-out、同一 sampling 参数下
+完成配对对照：
+
+| Controller | Answer EM | Answer F1 | Joint Success | 完整句级证据 | 重复调用率 | 预算终止率 | 非法动作率 | 平均工具调用 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Prompt-only | 18.80% | 25.31% | 11.70% | 41.30% | 63.68% | 100.00% | 0.04% | 5.00 |
+| QLoRA SFT-741 | 19.90% | 26.44% | 11.50% | 35.00% | 0.00% | 0.00% | 0.00% | 1.71 |
+| 差值 | +1.10pp | +1.13pp | -0.20pp | -6.30pp | -63.68pp | -100.00pp | -0.04pp | -3.29 |
+
+SFT 将平均工具调用减少 65.7%，并消除重复调用与预算耗尽；但 Answer EM 的差异不显著
+（配对 McNemar exact p=0.300），Joint Success 也没有改善（p=0.908）。完整句级证据从
+41.3% 降至 35.0%（p=4.29e-8），说明策略学会了及时停止，但有时停得过早。因此可将本轮
+表述为 Agent 行为控制和推理成本优化，不能表述为问答准确率或端到端成功率提升。
+
+扩大版原始报告为 `data/agent_rl/reports/qwen3_1.7b_{teacher_train2k,sft2k_*,prompt_validation1000}.json`；
+配对统计见 `data/agent_rl/reports/qwen3_1.7b_sft2k_paired_analysis.json`。
 
 完整进度、实验边界和 SFT/GRPO 计划见
 

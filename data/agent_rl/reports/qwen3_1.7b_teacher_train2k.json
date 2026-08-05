@@ -1,0 +1,89 @@
+{
+  "agent": "ScriptedTeacherPolicy",
+  "config": {
+    "allowed_tools": [
+      "retrieve_docs"
+    ],
+    "data_dir": "data/agent_rl/hotpotqa_train_2k_v3",
+    "device_map": "auto",
+    "dtype": "bfloat16",
+    "env_version": "personal-rag-hotpotqa-teacher-v1",
+    "evaluated_tasks": 1617,
+    "finalizer_max_new_tokens": 64,
+    "finalizer_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "finalizer_revision": null,
+    "finalizer_version": "grounded-answer-finalizer-v0",
+    "first_hop_k": 7,
+    "follow_up_k": 1,
+    "max_steps": 3,
+    "max_tasks": 0,
+    "partition": "train",
+    "policy_version": "scripted-two-hop-teacher-v1",
+    "retrieval_hops": 2,
+    "seed": 42,
+    "task_filename": "tasks_train.jsonl",
+    "thinking_enabled": false,
+    "total_retrieval_budget": 8
+  },
+  "data_dir": "data/agent_rl/hotpotqa_train_2k_v3",
+  "data_input_sha256": {
+    "bm25.json": "cd0d0d17ec13418f7bc551a2b83ee52f12fda3657f464f7ff9d809ecf34c5324",
+    "corpus.jsonl": "ed72218eed0ed98b85bd7dd02a6f5a6ead75938725b65bbee40e73144185159d",
+    "tasks.jsonl": "831e48a818242c683bb3d76f62844c0428e8ec02508c166a1a3db2ba4b3d9947",
+    "tasks_train.jsonl": "df305837d21cd19b315531f78cc62bf89faeb0a3f250128f1adf1870b6f0d2c3"
+  },
+  "data_manifest_path": "data/agent_rl/hotpotqa_train_2k_v3/manifest.json",
+  "data_manifest_sha256": "092f928c87d6d344ade599c84edc6d3e9ecf546f82aabbf922050fdc2ce59404",
+  "dependencies": {
+    "packages": {
+      "rank-bm25": "0.2.2",
+      "torch": "2.8.0+cu128",
+      "transformers": "4.57.6"
+    },
+    "python": "3.12.3"
+  },
+  "device_map": "auto",
+  "dtype": "bfloat16",
+  "evaluation": {
+    "metrics": {
+      "AbstainRate": 0.24737167594310452,
+      "AnswerEM": 0.26097711811997526,
+      "AnswerF1": 0.30717880142780696,
+      "BudgetStopRate": 0.0,
+      "CallsPerJointSuccess": 13.093117408906883,
+      "CompleteDocumentEvidence": 0.536178107606679,
+      "CompleteSentenceEvidence": 0.36054421768707484,
+      "DocumentEM": 0.0012368583797155227,
+      "DocumentF1": 0.3889507318078747,
+      "DocumentPrecision": 0.2670347792796772,
+      "DocumentRecall": 0.7504638218923934,
+      "DuplicateCallRate": 0.0,
+      "FinalizerErrorRate": 0.0,
+      "InvalidActionRate": 0.0,
+      "JointEM": 0.0,
+      "JointF1": 0.1171663563932865,
+      "JointSuccess": 0.15275200989486704,
+      "MeanEnvironmentReturn": 0.11462010778337309,
+      "MeanToolCalls": 2.0,
+      "SentenceEM": 0.0,
+      "SentenceF1": 0.3054342620205329,
+      "SentencePrecision": 0.20349633359837443,
+      "SentenceRecall": 0.6436213446417528
+    },
+    "n_decisions": 4851,
+    "n_joint_successes": 247,
+    "n_tasks": 1617,
+    "n_tool_calls": 3234
+  },
+  "finalizer": "FrozenAnswerFinalizer",
+  "finalizer_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+  "finalizer_resolved_commit": null,
+  "finalizer_revision": null,
+  "finalizer_version": "grounded-answer-finalizer-v0",
+  "output": "/root/autodl-tmp/results/teacher-train2k/train-rollouts.jsonl",
+  "partition": "train",
+  "policy_version": "scripted-two-hop-teacher-v1",
+  "schema_version": "agent-teacher-rollouts-report-v1",
+  "seed": 42,
+  "thinking_enabled": false
+}

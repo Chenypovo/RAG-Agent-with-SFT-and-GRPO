@@ -1,23 +1,24 @@
 # Personal RAG / Agentic RL 简历表述（中文）
 
-> 更新时间：2026-08-04。下面分为“现在可写”和“完成扩大实验后才能写”两版，不能混用。
+> 更新时间：2026-08-05。下面分为“现在可写”和“完成 GRPO 后才能写”两版，不能混用。
 
-## 今晚可以写的真实版本
+## 现在可以写的真实版本
 
 项目名称：Personal RAG Agent 训练与评测环境
 
 - 构建可复现的多轮 RAG Agent 环境，将检索、停止决策和最终回答拆成严格 JSON action、环境 transition 与分项 reward；实现输入哈希校验、完整轨迹落盘及 Answer、证据覆盖、Joint Success、非法/重复调用等端到端指标。
-- 基于 Qwen3-1.7B 在 HotpotQA 官方 validation 独立测试集完成 100 题 prompt-only 基线：Answer EM 21.0%、Answer F1 26.94%、Joint Success 13.0%、完整句级证据覆盖 38.0%；同时定位重复调用率 63.0%、预算终止率 100% 的策略缺陷。
-- 从 162 条训练任务中筛选 25 条 Joint Success 轨迹、生成 75 条 controller 决策样本，完成 QLoRA SFT 小样本试验（2 epochs、10 steps、60.37 秒、loss 1.261）；held-out 结果显示模型出现过早停止，Joint Success 从 13.0% 降至 4.0%，据此将扩大轨迹规模与失败恢复数据列为后续重点。
+- 基于 HotpotQA 构建文档隔离的训练/验证切分；在 1,617 条 teacher 轨迹中筛选 247 条 Joint Success 轨迹，生成 741 条 controller 决策样本，完成 Qwen3-1.7B QLoRA SFT（2 epochs、94 steps、587 秒）。
+- 在官方 validation 1,000 条独立 held-out 的同任务配对评测中，将预算耗尽率从 100% 降至 0、重复调用率从 63.68% 降至 0、平均工具调用从 4.998 降至 1.712（减少 65.7%）；Answer EM 为 19.9% 对 18.8%，差异不显著（p=0.300），Joint Success 为 11.5% 对 11.7%。
+- 对逐题轨迹执行配对检验与失败分析，定位扩大版 SFT 的主要边界：停止和调用成本得到控制，但完整句级证据从 41.3% 降至 35.0%，下一阶段需补充长轨迹、困难样本和失败恢复训练。
 
 ### 面试时必须主动说明
 
-- 当前 SFT 是 75 条 decision 的小样本诊断实验，端到端效果退化，不能写成“性能提升”。
-- Prompt-only 与 SFT 使用同一 Qwen3-1.7B base model、同一 frozen finalizer、同一批 100 条 held-out 输入和相同 seed；sampling 对照的 controller 参数均为 `temperature=0.7, top_p=0.8, top_k=20`。
+- 当前扩大版 SFT 是 741 条 decision、单个 sampling seed 的实验；它改善的是停止策略与工具成本，不是端到端成功率。
+- Prompt-only 与 SFT 使用同一 Qwen3-1.7B base model、同一 frozen finalizer、同一批 1,000 条 held-out 输入和相同 seed；sampling 对照参数均为 `temperature=0.7, top_p=0.8, top_k=20`。
 - 当前尚未完成 GRPO 训练、SFT + GRPO 主结果和消融实验，简历中不得出现“通过 GRPO 提升了 X%”。
-- 100 条 held-out 只能作为阶段结果；正式结论仍需扩大训练数据，并在完整 held-out 或多 seed 上复验。
+- Answer EM 的 +1.1 个百分点不显著，Joint Success 还下降 0.2 个百分点；不得写成“准确率提升”或“SFT 全面优于基线”。
 
-## 扩大数据并验证后才能升级的版本
+## 完成 GRPO 并验证后才能升级的版本
 
 以下是模板，不是当前成果。只有当占位数字都由可复现实验报告支持后才能使用：
 
@@ -27,8 +28,8 @@
 
 升级前最低条件：
 
-1. 扩大 teacher 成功轨迹，覆盖正常结束、失败恢复和不同调用长度，而不是只复制少量成功模板；
-2. SFT 在同一 held-out、多 seed 下至少不低于 prompt-only，再进入 GRPO；
+1. 补充长轨迹、困难样本和失败恢复数据，避免 SFT 只学习到更早停止；
+2. 在多 seed 下复验行为收益，并把完整证据率恢复到不低于 prompt-only；
 3. 跑通 SFT + GRPO，并保存训练曲线、reward 分量、KL/entropy、stop reason 与完整评测报告；
 4. 完成至少三组消融和人工失败案例审查；
 5. 所有简历数字都能对应到仓库报告与输入哈希。

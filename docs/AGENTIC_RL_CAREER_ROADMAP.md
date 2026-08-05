@@ -1,6 +1,6 @@
 # Personal RAG 面向 Agent 算法岗的 Agentic RL 演进路线
 
-> 更新时间：2026-08-04
+> 更新时间：2026-08-05
 > 目标：把当前的 Personal RAG + 长期记忆 Agent，从完整的 Agent 应用工程项目升级为能够支撑 Agent 算法岗面试的训练与实验项目。
 
 ## 1. 核心判断
@@ -15,8 +15,9 @@
 
 因此，它目前适合证明“Agent 系统设计与工程落地”能力，但还不足以证明“Agent 算法/后训练”能力。主要缺口是：
 
-- 已完成 Qwen3-1.7B 的 75 条 decision QLoRA SFT 小样本训练，但 held-out 效果退化，尚无有效的后训练 policy；
-- 尚未完成扩大数据后的 SFT，也没有 DPO、PPO 或 GRPO 训练结果；
+- 已完成 Qwen3-1.7B 的 75 条 decision 小样本诊断和 741 条 decision 扩大版 QLoRA SFT；
+- 扩大版 SFT 修复了重复调用和预算耗尽，但 1,000 条 held-out 的 Joint Success 未提升，尚无端到端效果更强的后训练 policy；
+- 尚未完成 DPO、PPO 或 GRPO 训练结果；
 - 已有最小多轮环境接口，但尚未接入 policy token、logprob 和批量 rollout；
 - 已有第一版可分解 reward/verifier，但还需要防作弊压力测试；
 - 缺少足够规模的训练曲线、多 seed 对照和消融分析；
@@ -157,6 +158,39 @@ Joint Success 和 16% 完整句级证据，说明退化不是 sampling 波动能
 稳定学习严格动作格式。本轮价值在于发现失败模式，不能写成“SFT 提升”。下一轮必须扩大 teacher
 轨迹，加入不同长度、失败恢复和 hard-negative 决策，并先证明 SFT 在 held-out 上不退化，再进入
 GRPO。当前没有 GRPO 训练结果。
+
+### 1.4 扩大版 QLoRA SFT 主结果
+
+官方 train 前 2,000 行中显式审计并跳过 1 条支持句编号越界记录，得到 1,999 个有效任务和
+`1617/191/191` 的文档隔离切分。Scripted teacher 在 1,617 个 train episodes 上生成轨迹，
+其中 247 个达到 `JointSuccess=1`；严格筛选后形成 741 条 controller decision。Qwen3-1.7B
+QLoRA 使用 2 epochs / 94 steps，训练耗时 587.37 秒，train loss 为 0.21865。
+
+扩大版 SFT 与 prompt-only 在同一批官方 validation 1,000 条纯 held-out 上使用相同 sampling
+参数 `temperature=0.7, top_p=0.8, top_k=20`：
+
+| Controller | Answer EM | Answer F1 | Joint Success | 完整句级证据 | 完整文档证据 | 重复调用率 | 预算终止率 | 平均工具调用 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Prompt-only | 18.80% | 25.31% | 11.70% | 41.30% | 61.10% | 63.68% | 100.00% | 4.998 |
+| QLoRA SFT-741 | 19.90% | 26.44% | 11.50% | 35.00% | 56.50% | 0.00% | 0.00% | 1.712 |
+| SFT - Prompt | +1.10pp | +1.13pp | -0.20pp | -6.30pp | -4.60pp | -63.68pp | -100.00pp | -3.286 |
+
+配对检查确认 1,000 个 task id 完全一致。Answer EM 的反转计数为 41/52，McNemar exact
+p=0.300；Joint Success 为 38/36，p=0.908，均不能支持端到端提升。完整句级证据的反转计数
+为 98/35（p=4.29e-8），完整文档证据为 94/48（p=1.41e-4），下降具有统计证据。
+
+行为控制改善明确：1000/1000 个 prompt-only episode 因预算耗尽停止，而 SFT 的 1000/1000
+个 episode 都主动结束；按 episode 统计，含重复调用的任务从 999 个降到 0 个。平均工具调用
+减少 65.7%，每次 Joint Success 对应的工具调用从 42.72 降到 14.89。代价是证据收集不足，
+所以本轮只能证明停止策略和调用成本被优化，不能证明问答准确率或 Joint Success 提升。
+
+报告已跟踪：
+
+- `data/agent_rl/reports/qwen3_1.7b_teacher_train2k.json`；
+- `data/agent_rl/reports/qwen3_1.7b_sft2k_train.json`；
+- `data/agent_rl/reports/qwen3_1.7b_prompt_validation1000.json`；
+- `data/agent_rl/reports/qwen3_1.7b_sft2k_validation1000.json`；
+- `data/agent_rl/reports/qwen3_1.7b_sft2k_paired_analysis.json`。
 
 ## 2. 建议的项目研究问题
 
@@ -376,14 +410,16 @@ RL policy 会主动寻找这些规则的漏洞，因此需要同时验证：
 
 ## 8. 必须完成的实验矩阵
 
-当前已完成的 100 条 held-out 阶段结果为：
+当前已完成的主结果以 1,000 条 held-out 配对实验为准；100 条结果仅保留作诊断：
 
-| 方法 | Joint Success | Answer F1 | 完整句级证据 | Invalid Call Rate | Mean Tool Calls | 结论 |
-| --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Prompt-only sampling | 13.00% | 26.94% | 38.00% | 0.00% | 5.00 | 当前基线，重复调用和预算耗尽严重 |
-| SFT-75 sampling | 4.00% | 16.96% | 11.00% | 12.33% | 1.07 | 小数据导致过早停止，端到端退化 |
-| SFT-75 greedy | 4.00% | 18.73% | 16.00% | 13.64% | 0.98 | 退化在 greedy 下仍存在 |
-| SFT + GRPO | 未完成 | 未完成 | 未完成 | 未完成 | 未完成 | 不得写入简历成果 |
+| 方法 | N | Joint Success | Answer F1 | 完整句级证据 | Invalid Call Rate | Mean Tool Calls | 结论 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Prompt-only sampling | 1,000 | 11.70% | 25.31% | 41.30% | 0.04% | 5.00 | 正式基线，重复调用和预算耗尽严重 |
+| SFT-741 sampling | 1,000 | 11.50% | 26.44% | 35.00% | 0.00% | 1.71 | 行为与成本改善，Joint Success 未提升 |
+| Prompt-only sampling（诊断） | 100 | 13.00% | 26.94% | 38.00% | 0.00% | 5.00 | 与 SFT-75 的同批基线 |
+| SFT-75 sampling（诊断） | 100 | 4.00% | 16.96% | 11.00% | 12.33% | 1.07 | 小数据导致过早停止，端到端退化 |
+| SFT-75 greedy（诊断） | 100 | 4.00% | 18.73% | 16.00% | 13.64% | 0.98 | 退化在 greedy 下仍存在 |
+| SFT + GRPO | — | 未完成 | 未完成 | 未完成 | 未完成 | 未完成 | 不得写入简历成果 |
 
 正式主结果仍需在更大 held-out、多 seed 下补齐 Tool F1、Calls / Success、Unsafe Memory Write Rate，
 并完成 SFT + GRPO 后才可形成算法提升结论。
@@ -432,8 +468,9 @@ RL policy 会主动寻找这些规则的漏洞，因此需要同时验证：
 
 ## 10. 简历表达模板
 
-当前可写的真实版本见 `docs/RESUME_AGENTIC_RL_CN.md`。本轮应写“完成环境、基线、QLoRA
-小样本试验并定位过早停止”，不能写“SFT 或 GRPO 提升了效果”。
+当前可写的真实版本见 `docs/RESUME_AGENTIC_RL_CN.md`。本轮可写“在 1,000 条 held-out 上将
+预算耗尽与重复调用降至 0、平均工具调用减少 65.7%”；同时必须说明 Answer EM 差异不显著、
+Joint Success 未提升，不能写“SFT 提高了问答效果”或“已完成 GRPO”。
 
 扩大数据并完成真实实验后，才可以升级成：
 
@@ -464,10 +501,11 @@ RL policy 会主动寻找这些规则的漏洞，因此需要同时验证：
 
 ### P1：完成训练闭环
 
-- 已完成小规模：接入 Qwen3-1.7B，并从 162 个 teacher episodes 筛选 25 个成功 episode；
-- 已完成诊断但效果退化：75 条 decision 的 QLoRA SFT 与 sampling/greedy held-out 对照；
-- 进行中：已准备 1,999 个有效任务的官方 train 扩展集（`1617/191/191`），正在生成 teacher trajectories 并训练扩大版 SFT；
-- 待验证：扩大版 SFT 在官方 1,000 条 held-out 上的指标至少不低于 prompt-only；
+- 已完成小规模诊断：从 162 个 teacher episodes 筛选 25 个成功 episode，训练 75 条 decision；
+- 已完成扩大版：从 1,617 个 teacher episodes 筛选 247 个成功 episode，训练 741 条 decision；
+- 已完成：扩大版 SFT 与 prompt-only 在官方 1,000 条 held-out 上的完整配对评测；
+- 已确认：停止策略和调用成本明显改善，但 Joint Success 未提升、证据完整度下降；
+- 待改进：补充长轨迹、困难样本和失败恢复数据，降低过早停止；
 - 接入 GRPO rollout、reward 和参数更新；
 - 跑通 Prompt-only、SFT、SFT + GRPO 三组对照。
 

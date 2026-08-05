@@ -22,12 +22,25 @@ class SFTBuildConfig:
     min_success: float = 1.0
     output_format: str = "messages"
     require_clean_transitions: bool = True
+    evidence_metric: Optional[str] = None
+    min_evidence: float = 1.0
+    pre_final_tool_repeat: int = 1
 
     def __post_init__(self) -> None:
         if not self.success_metric.strip():
             raise ValueError("success_metric must not be empty")
         if not math.isfinite(self.min_success):
             raise ValueError("min_success must be finite")
+        if self.evidence_metric is not None and not self.evidence_metric.strip():
+            raise ValueError("evidence_metric must not be empty when provided")
+        if not math.isfinite(self.min_evidence):
+            raise ValueError("min_evidence must be finite")
+        if (
+            isinstance(self.pre_final_tool_repeat, bool)
+            or not isinstance(self.pre_final_tool_repeat, int)
+            or self.pre_final_tool_repeat < 1
+        ):
+            raise ValueError("pre_final_tool_repeat must be a positive integer")
         if self.output_format not in OUTPUT_FORMATS:
             raise ValueError(
                 f"output_format must be one of {', '.join(OUTPUT_FORMATS)}"
@@ -181,6 +194,13 @@ def _verifier_provenance(
             if _as_float(value) is not None
         },
     }
+    if config.evidence_metric is not None:
+        evidence_score = _as_float(verification.get(config.evidence_metric))
+        provenance["evidence_gate"] = {
+            "metric": config.evidence_metric,
+            "score": evidence_score,
+            "min_evidence": config.min_evidence,
+        }
     source = _safe_source_provenance(rollout.get("verifier_provenance"))
     if source is not None:
         provenance["source_provenance"] = source
@@ -199,6 +219,7 @@ def _training_example(
     verification: Mapping[str, Any],
     score: float,
     config: SFTBuildConfig,
+    augmentation_replica: int = 0,
 ) -> Dict[str, Any]:
     system_prompt = str(decision["system_prompt"])
     user_prompt = str(decision["user_prompt"])
@@ -231,7 +252,52 @@ def _training_example(
             {"role": "user", "content": user_prompt},
         ]
         example["response"] = response
+    if augmentation_replica:
+        example["augmentation"] = {
+            "kind": "pre_final_tool_repeat",
+            "replica": augmentation_replica,
+            "total_repeats": config.pre_final_tool_repeat,
+        }
     return example
+
+
+def _is_final_action(decision: Mapping[str, Any]) -> bool:
+    action = decision.get("action")
+    return isinstance(action, Mapping) and bool(action.get("final_answer"))
+
+
+def _is_pre_final_tool_decision(
+    decisions: Sequence[Any],
+    step: int,
+) -> bool:
+    """Return true for the continuation action immediately before a clean stop.
+
+    Repeating only this row strengthens the supervision at the exact state where
+    the SFT-741 controller stopped too early.  Earlier retrievals and final-answer
+    rows retain their original frequency.
+    """
+
+    if step + 1 >= len(decisions):
+        return False
+    decision = decisions[step]
+    next_decision = decisions[step + 1]
+    if not isinstance(decision, Mapping) or not isinstance(next_decision, Mapping):
+        return False
+    action = decision.get("action")
+    return (
+        isinstance(action, Mapping)
+        and bool(action.get("tool"))
+        and _is_final_action(next_decision)
+    )
+
+
+def _action_category(decision: Mapping[str, Any]) -> str:
+    if _is_final_action(decision):
+        return "final_answer"
+    action = decision.get("action")
+    if isinstance(action, Mapping) and action.get("tool"):
+        return "tool"
+    return "other"
 
 
 def build_sft_examples(
@@ -249,6 +315,8 @@ def build_sft_examples(
     examples: List[Dict[str, Any]] = []
     filter_counts: Counter[str] = Counter()
     policy_counts: Counter[str] = Counter()
+    base_action_counts: Counter[str] = Counter()
+    output_action_counts: Counter[str] = Counter()
     episodes_seen = 0
     decisions_seen = 0
     episodes_kept = 0
@@ -293,21 +361,41 @@ def build_sft_examples(
         if score < resolved_config.min_success:
             filter_counts["below_success_threshold"] += 1
             continue
+        if resolved_config.evidence_metric is not None:
+            evidence_score = _as_float(
+                verification.get(resolved_config.evidence_metric)
+            )
+            if evidence_score is None:
+                filter_counts["missing_evidence_metric"] += 1
+                continue
+            if evidence_score < resolved_config.min_evidence:
+                filter_counts["below_evidence_threshold"] += 1
+                continue
 
         episodes_kept += 1
         rollout_policy = str(rollout.get("policy_version") or "unknown")
         policy_counts[rollout_policy] += 1
         for step, decision in enumerate(decisions):
-            examples.append(
-                _training_example(
-                    rollout,
-                    decision,
-                    step=step,
-                    verification=verification,
-                    score=score,
-                    config=resolved_config,
-                )
+            category = _action_category(decision)
+            base_action_counts[category] += 1
+            repeats = (
+                resolved_config.pre_final_tool_repeat
+                if _is_pre_final_tool_decision(decisions, step)
+                else 1
             )
+            for replica in range(repeats):
+                examples.append(
+                    _training_example(
+                        rollout,
+                        decision,
+                        step=step,
+                        verification=verification,
+                        score=score,
+                        config=resolved_config,
+                        augmentation_replica=replica,
+                    )
+                )
+                output_action_counts[category] += 1
 
     report: Dict[str, Any] = {
         "schema_version": SFT_REPORT_SCHEMA_VERSION,
@@ -316,12 +404,19 @@ def build_sft_examples(
             "min_success": resolved_config.min_success,
             "output_format": resolved_config.output_format,
             "require_clean_transitions": resolved_config.require_clean_transitions,
+            "evidence_metric": resolved_config.evidence_metric,
+            "min_evidence": resolved_config.min_evidence,
+            "pre_final_tool_repeat": resolved_config.pre_final_tool_repeat,
         },
         "episodes_seen": episodes_seen,
         "episodes_kept": episodes_kept,
         "episodes_filtered": episodes_seen - episodes_kept,
         "decisions_seen": decisions_seen,
         "examples_written": len(examples),
+        "base_examples": sum(base_action_counts.values()),
+        "augmented_examples": len(examples) - sum(base_action_counts.values()),
+        "base_action_counts": dict(sorted(base_action_counts.items())),
+        "output_action_counts": dict(sorted(output_action_counts.items())),
         "filter_counts": dict(sorted(filter_counts.items())),
         "kept_policy_versions": dict(sorted(policy_counts.items())),
     }

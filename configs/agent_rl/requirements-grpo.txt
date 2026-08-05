@@ -1,0 +1,7 @@
+# Install on top of requirements.txt. The training loop is intentionally pinned
+# to the same Transformers/PEFT stack as SFT; TRL agent APIs currently require a
+# different major Transformers version and are not needed for this implementation.
+accelerate>=1.14.0,<1.15
+bitsandbytes>=0.50.0,<0.51
+peft>=0.20.0,<0.21
+transformers>=4.57.6,<4.58

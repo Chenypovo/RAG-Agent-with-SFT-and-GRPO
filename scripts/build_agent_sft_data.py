@@ -25,6 +25,26 @@ def main() -> None:
     parser.add_argument("--success-metric", default="JointSuccess")
     parser.add_argument("--min-success", type=float, default=1.0)
     parser.add_argument(
+        "--evidence-metric",
+        default=None,
+        help="optional verifier metric that every kept episode must satisfy",
+    )
+    parser.add_argument(
+        "--min-evidence",
+        type=float,
+        default=1.0,
+        help="minimum value for --evidence-metric",
+    )
+    parser.add_argument(
+        "--pre-final-tool-repeat",
+        type=int,
+        default=1,
+        help=(
+            "repeat the tool decision immediately before final_answer; values above "
+            "1 counter early stopping while keeping all successful stop examples"
+        ),
+    )
+    parser.add_argument(
         "--format",
         dest="output_format",
         choices=("messages", "prompt_response"),
@@ -52,6 +72,9 @@ def main() -> None:
             success_metric=args.success_metric,
             min_success=args.min_success,
             output_format=args.output_format,
+            evidence_metric=args.evidence_metric,
+            min_evidence=args.min_evidence,
+            pre_final_tool_repeat=args.pre_final_tool_repeat,
         )
         report = build_sft_jsonl(
             input_path,

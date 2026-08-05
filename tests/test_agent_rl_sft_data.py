@@ -28,20 +28,23 @@ def decision(step, *, parse_error=None):
 
 def rollout(task_id, score, *, decisions=None):
     selected_decisions = decisions if decisions is not None else [decision(0), decision(1)]
-    tool_event = {
-        "step_index": 0,
-        "tool": "retrieve_docs",
-        "args": {"query": "Alpha founder"},
-        "observation": "Alpha was founded by Beta Person.",
-        "ok": True,
-        "data": {"evidence_ids": ["docs/alpha#0"]},
-        "error": None,
-    }
     transitions = []
     history = []
     for step, selected_decision in enumerate(selected_decisions):
-        if selected_decision.get("action", {}).get("tool"):
-            history = [*history, {**tool_event, "step_index": step}]
+        selected_action = selected_decision.get("action", {})
+        if selected_action.get("tool"):
+            history = [
+                *history,
+                {
+                    "step_index": step,
+                    "tool": selected_action["tool"],
+                    "args": selected_action.get("args", {}),
+                    "observation": "Alpha was founded by Beta Person.",
+                    "ok": True,
+                    "data": {"evidence_ids": [f"docs/alpha#{step}"]},
+                    "error": None,
+                },
+            ]
         transitions.append({
             "step_index": step,
             "action": selected_decision.get("action"),
@@ -128,6 +131,9 @@ def test_builder_supports_configurable_metric_threshold_and_prompt_response():
         "min_success": 0.5,
         "output_format": "prompt_response",
         "require_clean_transitions": True,
+        "evidence_metric": None,
+        "min_evidence": 1.0,
+        "pre_final_tool_repeat": 1,
     }
     assert report["filter_counts"] == {"below_success_threshold": 1}
 
@@ -217,6 +223,66 @@ def test_final_answer_transition_does_not_require_tool_event():
 
     assert len(examples) == 2
     assert report["episodes_kept"] == 1
+
+
+def test_evidence_gate_rejects_answer_correct_episode_with_incomplete_evidence():
+    complete = rollout("complete", 1.0)
+    incomplete = rollout("incomplete", 1.0)
+    complete["verification"]["CompleteSentenceEvidence"] = 1.0
+    incomplete["verification"]["CompleteSentenceEvidence"] = 0.0
+
+    examples, report = build_sft_examples(
+        [complete, incomplete],
+        config=SFTBuildConfig(
+            success_metric="AnswerEM",
+            evidence_metric="CompleteSentenceEvidence",
+        ),
+    )
+
+    assert {row["task_id"] for row in examples} == {"complete"}
+    assert report["episodes_kept"] == 1
+    assert report["filter_counts"] == {"below_evidence_threshold": 1}
+    assert examples[0]["verifier_provenance"]["evidence_gate"] == {
+        "metric": "CompleteSentenceEvidence",
+        "score": 1.0,
+        "min_evidence": 1.0,
+    }
+
+
+def test_pre_final_tool_repeat_targets_partial_evidence_continuation_only():
+    first_tool = decision(0)
+    second_tool = decision(0)
+    second_tool["action"] = {
+        "tool": "retrieve_docs",
+        "args": {"query": "Beta birthplace"},
+    }
+    second_tool["raw_output"] = json.dumps(second_tool["action"])
+    final = decision(1)
+    row = rollout("continue-before-stop", 1.0, decisions=[first_tool, second_tool, final])
+    row["verification"]["CompleteSentenceEvidence"] = 1.0
+
+    examples, report = build_sft_examples(
+        [row],
+        config=SFTBuildConfig(
+            evidence_metric="CompleteSentenceEvidence",
+            pre_final_tool_repeat=2,
+        ),
+    )
+
+    assert [example["step"] for example in examples] == [0, 1, 1, 2]
+    assert [
+        example["parsed_action"].get("final_answer", False) for example in examples
+    ] == [False, False, False, True]
+    assert "augmentation" not in examples[1]
+    assert examples[2]["augmentation"] == {
+        "kind": "pre_final_tool_repeat",
+        "replica": 1,
+        "total_repeats": 2,
+    }
+    assert report["base_examples"] == 3
+    assert report["augmented_examples"] == 1
+    assert report["base_action_counts"] == {"final_answer": 1, "tool": 2}
+    assert report["output_action_counts"] == {"final_answer": 1, "tool": 3}
 
 
 def test_cli_refuses_overwrite_unless_explicitly_enabled(tmp_path):

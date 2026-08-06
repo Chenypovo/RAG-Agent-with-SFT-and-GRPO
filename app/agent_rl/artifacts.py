@@ -20,6 +20,22 @@ def sha256_file(path: str | Path) -> str:
     return digest.hexdigest()
 
 
+def sha256_tree(path: str | Path) -> str:
+    """Hash relative paths and file contents for a deterministic directory digest."""
+    root = Path(path)
+    if not root.is_dir():
+        raise ValueError(f"directory does not exist: {root}")
+    digest = hashlib.sha256()
+    for file_path in sorted(candidate for candidate in root.rglob("*") if candidate.is_file()):
+        relative = file_path.relative_to(root).as_posix().encode("utf-8")
+        digest.update(len(relative).to_bytes(8, "big"))
+        digest.update(relative)
+        with file_path.open("rb") as handle:
+            for block in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(block)
+    return digest.hexdigest()
+
+
 def validate_evaluation_inputs(
     data_dir: str | Path,
     *,

@@ -1,0 +1,77 @@
+{
+  "config": {
+    "candidate_top_k": 15,
+    "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+    "embedding_device": "cuda",
+    "embedding_model": "/root/autodl-tmp/models/bge-small-en-v1.5",
+    "ks": [
+      3,
+      5,
+      6,
+      8,
+      15
+    ],
+    "lancedb_table": "chunks",
+    "partition": "test",
+    "reranker_batch_size": 16,
+    "reranker_device": null,
+    "reranker_model": null,
+    "rrf_k": 60,
+    "task_filename": "tasks_test.jsonl",
+    "vector_store": "lancedb"
+  },
+  "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+  "data_input_sha256": {
+    "bm25.json": "97166fdfc062669a4d22c78f51f8d184074b6df34fe3cc578c447b85fdd360f8",
+    "corpus.jsonl": "fc52f56f478130927c8f2726c5a224abb0c97c3091dad884cbc3798ba3ebf0e8",
+    "tasks.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2",
+    "tasks_test.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2"
+  },
+  "data_manifest_path": "data/agent_rl/hotpotqa_validation_1k/manifest.json",
+  "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+  "dependencies": {
+    "packages": {
+      "lancedb": "0.36.0",
+      "rank-bm25": "0.2.2",
+      "torch": "2.8.0+cu128",
+      "transformers": "4.57.6"
+    },
+    "python": "3.12.3"
+  },
+  "ks": [
+    3,
+    5,
+    6,
+    8,
+    15
+  ],
+  "metrics": {
+    "CompleteDocumentEvidence@15": 0.835,
+    "CompleteDocumentEvidence@3": 0.455,
+    "CompleteDocumentEvidence@5": 0.627,
+    "CompleteDocumentEvidence@6": 0.667,
+    "CompleteDocumentEvidence@8": 0.724,
+    "CompleteSentenceEvidence@15": 0.674,
+    "CompleteSentenceEvidence@3": 0.271,
+    "CompleteSentenceEvidence@5": 0.428,
+    "CompleteSentenceEvidence@6": 0.468,
+    "CompleteSentenceEvidence@8": 0.532,
+    "DocumentRecall@15": 0.917,
+    "DocumentRecall@3": 0.7125,
+    "DocumentRecall@5": 0.8055,
+    "DocumentRecall@6": 0.829,
+    "DocumentRecall@8": 0.86,
+    "SentenceRecall@15": 0.85087619047619,
+    "SentenceRecall@3": 0.6007714285714287,
+    "SentenceRecall@5": 0.7070214285714286,
+    "SentenceRecall@6": 0.7333714285714286,
+    "SentenceRecall@8": 0.7716833333333332
+  },
+  "n_tasks": 1000,
+  "partition": "test",
+  "retrieval_artifact_sha256": {
+    "lancedb": "38e43612448a4ada423f5b0c9b7af7cef83018181e54c1914b0198489aa07611"
+  },
+  "retriever": "FAISS+BM25+RRF",
+  "schema_version": "hotpotqa-hybrid-eval-v1"
+}

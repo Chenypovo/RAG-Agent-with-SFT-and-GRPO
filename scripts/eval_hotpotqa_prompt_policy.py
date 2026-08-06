@@ -14,10 +14,12 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from app.agent.llm import make_complete_fn  # noqa: E402
-from app.agent_rl.adapters import build_minimal_registry  # noqa: E402
+from app.agent_rl.adapters import build_hybrid_registry, build_minimal_registry  # noqa: E402
 from app.agent_rl.artifacts import (  # noqa: E402
     dependency_versions,
     ensure_outputs_available,
+    sha256_file,
+    sha256_tree,
     validate_evaluation_inputs,
 )
 from app.agent_rl.env import PersonalRAGEnv  # noqa: E402
@@ -56,7 +58,26 @@ def main() -> None:
     parser.add_argument("--controller-temperature", type=float, default=0.7)
     parser.add_argument("--controller-top-p", type=float, default=0.8)
     parser.add_argument("--controller-top-k", type=int, default=20)
+    parser.add_argument(
+        "--retrieval-backend",
+        choices=["bm25", "hybrid", "hybrid-rerank"],
+        default="bm25",
+    )
     parser.add_argument("--retrieval-top-k", type=int, default=20)
+    parser.add_argument("--retrieval-candidate-top-k", type=int, default=15)
+    parser.add_argument("--retrieval-rrf-k", type=int, default=60)
+    parser.add_argument("--embedding-model", default="BAAI/bge-small-en-v1.5")
+    parser.add_argument("--embedding-device", default="cpu")
+    parser.add_argument("--embedding-batch-size", type=int, default=64)
+    parser.add_argument("--vector-store", choices=["lancedb", "faiss"], default="lancedb")
+    parser.add_argument("--faiss-index-name", default="faiss.index")
+    parser.add_argument("--faiss-metadata-name", default="faiss_metadatas.json")
+    parser.add_argument("--lancedb-uri-name", default="lancedb")
+    parser.add_argument("--lancedb-table", default="chunks")
+    parser.add_argument("--reranker-model", default="BAAI/bge-reranker-base")
+    parser.add_argument("--reranker-device", default="")
+    parser.add_argument("--reranker-batch-size", type=int, default=16)
+    parser.add_argument("--reranker-top-k", type=int, default=6)
     parser.add_argument("--max-steps", type=int, default=5)
     parser.add_argument("--max-tasks", type=int, default=0)
     parser.add_argument("--seed", type=int, default=42)
@@ -67,6 +88,11 @@ def main() -> None:
 
     if (
         args.retrieval_top_k <= 0
+        or args.retrieval_candidate_top_k <= 0
+        or args.retrieval_rrf_k <= 0
+        or args.embedding_batch_size <= 0
+        or args.reranker_batch_size <= 0
+        or args.reranker_top_k <= 0
         or args.max_steps <= 0
         or args.max_tasks < 0
         or args.controller_max_new_tokens <= 0
@@ -76,6 +102,8 @@ def main() -> None:
         or args.controller_top_k < 0
     ):
         parser.error("retrieval-top-k and max-steps must be positive; max-tasks cannot be negative")
+    if args.reranker_top_k > args.retrieval_candidate_top_k:
+        parser.error("reranker-top-k cannot exceed retrieval-candidate-top-k")
     if not args.finalizer_model.strip():
         parser.error("finalizer-model must not be empty")
     if args.completion_backend == "openai" and (
@@ -111,10 +139,49 @@ def main() -> None:
     if args.max_tasks:
         tasks = tasks[: args.max_tasks]
 
-    store = BM25Store.load(str(data_dir / "bm25.json"))
-    registry = build_minimal_registry(
-        lambda query: store.search(query=query, top_k=args.retrieval_top_k)
-    )
+    retrieval_artifacts = {}
+    if args.retrieval_backend == "bm25":
+        store = BM25Store.load(str(data_dir / "bm25.json"))
+        registry = build_minimal_registry(
+            lambda query: store.search(query=query, top_k=args.retrieval_top_k)
+        )
+    else:
+        faiss_index_path = data_dir / args.faiss_index_name
+        faiss_metadata_path = data_dir / args.faiss_metadata_name
+        lancedb_uri = data_dir / args.lancedb_uri_name
+        if args.vector_store == "lancedb":
+            if not lancedb_uri.is_dir():
+                parser.error(f"LanceDB artifact does not exist: {lancedb_uri}")
+            retrieval_artifacts = {
+                args.lancedb_uri_name: sha256_tree(lancedb_uri),
+            }
+        else:
+            for path in (faiss_index_path, faiss_metadata_path):
+                if not path.is_file():
+                    parser.error(f"FAISS artifact does not exist: {path}")
+            retrieval_artifacts = {
+                args.faiss_index_name: sha256_file(faiss_index_path),
+                args.faiss_metadata_name: sha256_file(faiss_metadata_path),
+            }
+        registry = build_hybrid_registry(
+            bm25_path=str(data_dir / "bm25.json"),
+            vector_store=args.vector_store,
+            faiss_index_path=str(faiss_index_path),
+            faiss_metadata_path=str(faiss_metadata_path),
+            lancedb_uri=str(lancedb_uri),
+            lancedb_table=args.lancedb_table,
+            embedding_model=args.embedding_model,
+            embedding_device=args.embedding_device,
+            embedding_batch_size=args.embedding_batch_size,
+            candidate_top_k=args.retrieval_candidate_top_k,
+            output_top_k=args.reranker_top_k,
+            rrf_k=args.retrieval_rrf_k,
+            reranker_model=(
+                args.reranker_model if args.retrieval_backend == "hybrid-rerank" else ""
+            ),
+            reranker_device=args.reranker_device or None,
+            reranker_batch_size=args.reranker_batch_size,
+        )
     if args.completion_backend == "transformers":
         controller_backend = TransformersChatBackend(
             controller_model,
@@ -203,7 +270,27 @@ def main() -> None:
         "seed": args.seed,
         "data_dir": str(data_dir),
         "partition": args.partition,
+        "retrieval_backend": args.retrieval_backend,
         "retrieval_top_k": args.retrieval_top_k,
+        "retrieval_candidate_top_k": args.retrieval_candidate_top_k,
+        "retrieval_output_top_k": (
+            args.retrieval_top_k
+            if args.retrieval_backend == "bm25"
+            else args.reranker_top_k
+        ),
+        "retrieval_rrf_k": args.retrieval_rrf_k,
+        "vector_store": (
+            args.vector_store if args.retrieval_backend != "bm25" else None
+        ),
+        "embedding_model": (
+            args.embedding_model if args.retrieval_backend != "bm25" else None
+        ),
+        "reranker_model": (
+            args.reranker_model
+            if args.retrieval_backend == "hybrid-rerank"
+            else None
+        ),
+        "retrieval_artifact_sha256": retrieval_artifacts,
         "max_steps": args.max_steps,
         "evaluation": aggregate_policy_rollouts(rollouts),
         "config": {
@@ -230,7 +317,51 @@ def main() -> None:
             "thinking_enabled": False,
             "device_map": args.device_map if args.completion_backend == "transformers" else None,
             "dtype": args.dtype if args.completion_backend == "transformers" else None,
+            "retrieval_backend": args.retrieval_backend,
             "retrieval_top_k": args.retrieval_top_k,
+            "retrieval_candidate_top_k": args.retrieval_candidate_top_k,
+            "retrieval_output_top_k": (
+                args.retrieval_top_k
+                if args.retrieval_backend == "bm25"
+                else args.reranker_top_k
+            ),
+            "retrieval_rrf_k": args.retrieval_rrf_k,
+            "vector_store": (
+                args.vector_store if args.retrieval_backend != "bm25" else None
+            ),
+            "lancedb_table": (
+                args.lancedb_table
+                if args.retrieval_backend != "bm25"
+                and args.vector_store == "lancedb"
+                else None
+            ),
+            "embedding_model": (
+                args.embedding_model if args.retrieval_backend != "bm25" else None
+            ),
+            "embedding_device": (
+                args.embedding_device if args.retrieval_backend != "bm25" else None
+            ),
+            "embedding_batch_size": (
+                args.embedding_batch_size if args.retrieval_backend != "bm25" else None
+            ),
+            "reranker_model": (
+                args.reranker_model
+                if args.retrieval_backend == "hybrid-rerank"
+                else None
+            ),
+            "reranker_device": (
+                args.reranker_device or None
+                if args.retrieval_backend == "hybrid-rerank"
+                else None
+            ),
+            "reranker_batch_size": (
+                args.reranker_batch_size
+                if args.retrieval_backend == "hybrid-rerank"
+                else None
+            ),
+            "reranker_top_k": (
+                args.reranker_top_k if args.retrieval_backend != "bm25" else None
+            ),
             "max_steps": args.max_steps,
             "max_tasks": args.max_tasks,
             "evaluated_tasks": len(tasks),
@@ -241,13 +372,31 @@ def main() -> None:
             "allowed_tools": ["retrieve_docs"],
         },
         "dependencies": dependency_versions(
-            (
-                ("python-dotenv", "rank-bm25", "torch", "transformers", "peft")
-                if controller_adapter is not None
-                else ("python-dotenv", "rank-bm25", "torch", "transformers")
-            )
-            if args.completion_backend == "transformers"
-            else ("openai", "python-dotenv", "rank-bm25")
+            {
+                "python-dotenv",
+                "rank-bm25",
+                *(
+                    (
+                        ("torch", "transformers", "peft")
+                        if controller_adapter is not None
+                        else ("torch", "transformers")
+                    )
+                    if args.completion_backend == "transformers"
+                    else ("openai",)
+                ),
+                *(
+                    (
+                        "lancedb",
+                    )
+                    if args.retrieval_backend != "bm25"
+                    and args.vector_store == "lancedb"
+                    else (
+                        ("faiss-cpu",)
+                        if args.retrieval_backend != "bm25"
+                        else ()
+                    )
+                ),
+            }
         ),
         **provenance,
     }

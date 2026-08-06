@@ -1,0 +1,1806 @@
+{
+  "comparability": {
+    "data_manifest_sha256_identical": true,
+    "n_shared_tasks": 1000,
+    "task_ids_identical": true
+  },
+  "comparisons": [
+    {
+      "baseline": "prompt",
+      "bootstrap_seed": 42,
+      "candidate": "sft741",
+      "core_metric_differences": {
+        "AnswerEM": {
+          "baseline": 0.442,
+          "candidate": 0.433,
+          "difference": -0.009000000000000008
+        },
+        "AnswerF1": {
+          "baseline": 0.553077420047273,
+          "candidate": 0.5402380825256363,
+          "difference": -0.012839337521636685
+        },
+        "BudgetStopRate": {
+          "baseline": 1.0,
+          "candidate": 0.0,
+          "difference": -1.0
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.794,
+          "candidate": 0.818,
+          "difference": 0.02399999999999991
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.642,
+          "candidate": 0.621,
+          "difference": -0.02100000000000002
+        },
+        "DuplicateCallRate": {
+          "baseline": 0.6178,
+          "candidate": 0.0,
+          "difference": -0.6178
+        },
+        "InvalidActionRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "JointSuccess": {
+          "baseline": 0.361,
+          "candidate": 0.335,
+          "difference": -0.025999999999999968
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": -0.64712,
+          "candidate": 0.43322285714285713,
+          "difference": 1.080342857142857
+        },
+        "MeanToolCalls": {
+          "baseline": 5.0,
+          "candidate": 1.722,
+          "difference": -3.278
+        }
+      },
+      "n_paired_tasks": 1000,
+      "paired_metrics": {
+        "AnswerEM": {
+          "baseline": 0.442,
+          "bootstrap_95_ci": {
+            "high": 0.012,
+            "low": -0.032,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.433,
+          "difference": -0.009,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 69,
+            "baseline_higher": 69,
+            "candidate_better": 60,
+            "candidate_higher": 60,
+            "ties": 871
+          }
+        },
+        "AnswerF1": {
+          "baseline": 0.553077420047273,
+          "bootstrap_95_ci": {
+            "high": 0.009237042165350987,
+            "low": -0.03488688943409531,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.5402380825256363,
+          "difference": -0.01283933752163666,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 104,
+            "baseline_higher": 104,
+            "candidate_better": 86,
+            "candidate_higher": 86,
+            "ties": 810
+          }
+        },
+        "BudgetStopRate": {
+          "baseline": 1.0,
+          "bootstrap_95_ci": {
+            "high": -1.0,
+            "low": -1.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": -1.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 1000,
+            "candidate_better": 1000,
+            "candidate_higher": 0,
+            "ties": 0
+          }
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.794,
+          "bootstrap_95_ci": {
+            "high": 0.043,
+            "low": 0.006,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.818,
+          "difference": 0.024,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 32,
+            "baseline_higher": 32,
+            "candidate_better": 56,
+            "candidate_higher": 56,
+            "ties": 912
+          }
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.642,
+          "bootstrap_95_ci": {
+            "high": -0.001,
+            "low": -0.042,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.621,
+          "difference": -0.021,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 67,
+            "baseline_higher": 67,
+            "candidate_better": 46,
+            "candidate_higher": 46,
+            "ties": 887
+          }
+        },
+        "DuplicateCallCount": {
+          "baseline": 3.089,
+          "bootstrap_95_ci": {
+            "high": -3.04,
+            "low": -3.139,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": -3.089,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 998,
+            "candidate_better": 998,
+            "candidate_higher": 0,
+            "ties": 2
+          }
+        },
+        "InvalidActionCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "JointSuccess": {
+          "baseline": 0.361,
+          "bootstrap_95_ci": {
+            "high": -0.004,
+            "low": -0.05,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.335,
+          "difference": -0.026,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 77,
+            "baseline_higher": 77,
+            "candidate_better": 51,
+            "candidate_higher": 51,
+            "ties": 872
+          }
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": -0.64712,
+          "bootstrap_95_ci": {
+            "high": 1.1192440357142857,
+            "low": 1.0428935714285716,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.43322285714285713,
+          "difference": 1.080342857142857,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 1000,
+            "candidate_higher": 1000,
+            "ties": 0
+          }
+        },
+        "MeanToolCalls": {
+          "baseline": 5.0,
+          "bootstrap_95_ci": {
+            "high": -3.250975,
+            "low": -3.306,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 1.722,
+          "difference": -3.278,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 1000,
+            "candidate_better": 1000,
+            "candidate_higher": 0,
+            "ties": 0
+          }
+        }
+      }
+    },
+    {
+      "baseline": "prompt",
+      "bootstrap_seed": 43,
+      "candidate": "sftv2",
+      "core_metric_differences": {
+        "AnswerEM": {
+          "baseline": 0.442,
+          "candidate": 0.436,
+          "difference": -0.006000000000000005
+        },
+        "AnswerF1": {
+          "baseline": 0.553077420047273,
+          "candidate": 0.5456250704360998,
+          "difference": -0.007452349611173248
+        },
+        "BudgetStopRate": {
+          "baseline": 1.0,
+          "candidate": 0.006,
+          "difference": -0.994
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.794,
+          "candidate": 0.85,
+          "difference": 0.05599999999999994
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.642,
+          "candidate": 0.677,
+          "difference": 0.03500000000000003
+        },
+        "DuplicateCallRate": {
+          "baseline": 0.6178,
+          "candidate": 0.11419491525423729,
+          "difference": -0.5036050847457627
+        },
+        "InvalidActionRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "JointSuccess": {
+          "baseline": 0.361,
+          "candidate": 0.362,
+          "difference": 0.0010000000000000009
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": -0.64712,
+          "candidate": 0.3946828571428571,
+          "difference": 1.0418028571428573
+        },
+        "MeanToolCalls": {
+          "baseline": 5.0,
+          "candidate": 3.726,
+          "difference": -1.274
+        }
+      },
+      "n_paired_tasks": 1000,
+      "paired_metrics": {
+        "AnswerEM": {
+          "baseline": 0.442,
+          "bootstrap_95_ci": {
+            "high": 0.019,
+            "low": -0.031,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.436,
+          "difference": -0.006,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 84,
+            "baseline_higher": 84,
+            "candidate_better": 78,
+            "candidate_higher": 78,
+            "ties": 838
+          }
+        },
+        "AnswerF1": {
+          "baseline": 0.553077420047273,
+          "bootstrap_95_ci": {
+            "high": 0.017505845894301774,
+            "low": -0.030600448505742627,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.5456250704360998,
+          "difference": -0.00745234961117314,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 122,
+            "baseline_higher": 122,
+            "candidate_better": 112,
+            "candidate_higher": 112,
+            "ties": 766
+          }
+        },
+        "BudgetStopRate": {
+          "baseline": 1.0,
+          "bootstrap_95_ci": {
+            "high": -0.989,
+            "low": -0.998,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.006,
+          "difference": -0.994,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 994,
+            "candidate_better": 994,
+            "candidate_higher": 0,
+            "ties": 6
+          }
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.794,
+          "bootstrap_95_ci": {
+            "high": 0.07802499999999986,
+            "low": 0.036,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.85,
+          "difference": 0.056,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 31,
+            "baseline_higher": 31,
+            "candidate_better": 87,
+            "candidate_higher": 87,
+            "ties": 882
+          }
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.642,
+          "bootstrap_95_ci": {
+            "high": 0.059,
+            "low": 0.011,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.677,
+          "difference": 0.035,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 58,
+            "baseline_higher": 58,
+            "candidate_better": 93,
+            "candidate_higher": 93,
+            "ties": 849
+          }
+        },
+        "DuplicateCallCount": {
+          "baseline": 3.089,
+          "bootstrap_95_ci": {
+            "high": -2.483975,
+            "low": -2.62,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.539,
+          "difference": -2.55,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 7,
+            "baseline_higher": 957,
+            "candidate_better": 957,
+            "candidate_higher": 7,
+            "ties": 36
+          }
+        },
+        "InvalidActionCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "JointSuccess": {
+          "baseline": 0.361,
+          "bootstrap_95_ci": {
+            "high": 0.026024999999999864,
+            "low": -0.023,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.362,
+          "difference": 0.001,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 82,
+            "baseline_higher": 82,
+            "candidate_better": 83,
+            "candidate_higher": 83,
+            "ties": 835
+          }
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": -0.64712,
+          "bootstrap_95_ci": {
+            "high": 1.080122982142857,
+            "low": 1.0039312857142857,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.3946828571428571,
+          "difference": 1.0418028571428573,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 1000,
+            "candidate_higher": 1000,
+            "ties": 0
+          }
+        },
+        "MeanToolCalls": {
+          "baseline": 5.0,
+          "bootstrap_95_ci": {
+            "high": -1.244,
+            "low": -1.302,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 3.726,
+          "difference": -1.274,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 994,
+            "candidate_better": 994,
+            "candidate_higher": 0,
+            "ties": 6
+          }
+        }
+      }
+    },
+    {
+      "baseline": "prompt",
+      "bootstrap_seed": 44,
+      "candidate": "grpo",
+      "core_metric_differences": {
+        "AnswerEM": {
+          "baseline": 0.442,
+          "candidate": 0.425,
+          "difference": -0.017000000000000015
+        },
+        "AnswerF1": {
+          "baseline": 0.553077420047273,
+          "candidate": 0.5359762373247667,
+          "difference": -0.01710118272250627
+        },
+        "BudgetStopRate": {
+          "baseline": 1.0,
+          "candidate": 0.0,
+          "difference": -1.0
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.794,
+          "candidate": 0.836,
+          "difference": 0.041999999999999926
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.642,
+          "candidate": 0.655,
+          "difference": 0.013000000000000012
+        },
+        "DuplicateCallRate": {
+          "baseline": 0.6178,
+          "candidate": 0.01281640499839795,
+          "difference": -0.604983595001602
+        },
+        "InvalidActionRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "JointSuccess": {
+          "baseline": 0.361,
+          "candidate": 0.35,
+          "difference": -0.01100000000000001
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": -0.64712,
+          "candidate": 0.45349285714285714,
+          "difference": 1.100612857142857
+        },
+        "MeanToolCalls": {
+          "baseline": 5.0,
+          "candidate": 2.121,
+          "difference": -2.879
+        }
+      },
+      "n_paired_tasks": 1000,
+      "paired_metrics": {
+        "AnswerEM": {
+          "baseline": 0.442,
+          "bootstrap_95_ci": {
+            "high": 0.007,
+            "low": -0.041,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.425,
+          "difference": -0.017,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 83,
+            "baseline_higher": 83,
+            "candidate_better": 66,
+            "candidate_higher": 66,
+            "ties": 851
+          }
+        },
+        "AnswerF1": {
+          "baseline": 0.553077420047273,
+          "bootstrap_95_ci": {
+            "high": 0.0049834458433723,
+            "low": -0.04087493960288078,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.5359762373247667,
+          "difference": -0.017101182722506252,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 120,
+            "baseline_higher": 120,
+            "candidate_better": 98,
+            "candidate_higher": 98,
+            "ties": 782
+          }
+        },
+        "BudgetStopRate": {
+          "baseline": 1.0,
+          "bootstrap_95_ci": {
+            "high": -1.0,
+            "low": -1.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": -1.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 1000,
+            "candidate_better": 1000,
+            "candidate_higher": 0,
+            "ties": 0
+          }
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.794,
+          "bootstrap_95_ci": {
+            "high": 0.061,
+            "low": 0.022,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.836,
+          "difference": 0.042,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 32,
+            "baseline_higher": 32,
+            "candidate_better": 74,
+            "candidate_higher": 74,
+            "ties": 894
+          }
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.642,
+          "bootstrap_95_ci": {
+            "high": 0.034,
+            "low": -0.01,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.655,
+          "difference": 0.013,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 59,
+            "baseline_higher": 59,
+            "candidate_better": 72,
+            "candidate_higher": 72,
+            "ties": 869
+          }
+        },
+        "DuplicateCallCount": {
+          "baseline": 3.089,
+          "bootstrap_95_ci": {
+            "high": -2.995,
+            "low": -3.1,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.04,
+          "difference": -3.049,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 997,
+            "candidate_better": 997,
+            "candidate_higher": 0,
+            "ties": 3
+          }
+        },
+        "InvalidActionCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "JointSuccess": {
+          "baseline": 0.361,
+          "bootstrap_95_ci": {
+            "high": 0.014,
+            "low": -0.035,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.35,
+          "difference": -0.011,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 82,
+            "baseline_higher": 82,
+            "candidate_better": 71,
+            "candidate_higher": 71,
+            "ties": 847
+          }
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": -0.64712,
+          "bootstrap_95_ci": {
+            "high": 1.1395664107142855,
+            "low": 1.0617973035714285,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.45349285714285714,
+          "difference": 1.100612857142857,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 1000,
+            "candidate_higher": 1000,
+            "ties": 0
+          }
+        },
+        "MeanToolCalls": {
+          "baseline": 5.0,
+          "bootstrap_95_ci": {
+            "high": -2.858,
+            "low": -2.899025,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 2.121,
+          "difference": -2.879,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 1000,
+            "candidate_better": 1000,
+            "candidate_higher": 0,
+            "ties": 0
+          }
+        }
+      }
+    },
+    {
+      "baseline": "sft741",
+      "bootstrap_seed": 45,
+      "candidate": "sftv2",
+      "core_metric_differences": {
+        "AnswerEM": {
+          "baseline": 0.433,
+          "candidate": 0.436,
+          "difference": 0.0030000000000000027
+        },
+        "AnswerF1": {
+          "baseline": 0.5402380825256363,
+          "candidate": 0.5456250704360998,
+          "difference": 0.005386987910463437
+        },
+        "BudgetStopRate": {
+          "baseline": 0.0,
+          "candidate": 0.006,
+          "difference": 0.006
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.818,
+          "candidate": 0.85,
+          "difference": 0.03200000000000003
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.621,
+          "candidate": 0.677,
+          "difference": 0.05600000000000005
+        },
+        "DuplicateCallRate": {
+          "baseline": 0.0,
+          "candidate": 0.11419491525423729,
+          "difference": 0.11419491525423729
+        },
+        "InvalidActionRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "JointSuccess": {
+          "baseline": 0.335,
+          "candidate": 0.362,
+          "difference": 0.02699999999999997
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": 0.43322285714285713,
+          "candidate": 0.3946828571428571,
+          "difference": -0.03854000000000002
+        },
+        "MeanToolCalls": {
+          "baseline": 1.722,
+          "candidate": 3.726,
+          "difference": 2.004
+        }
+      },
+      "n_paired_tasks": 1000,
+      "paired_metrics": {
+        "AnswerEM": {
+          "baseline": 0.433,
+          "bootstrap_95_ci": {
+            "high": 0.023,
+            "low": -0.018,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.436,
+          "difference": 0.003,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 46,
+            "baseline_higher": 46,
+            "candidate_better": 49,
+            "candidate_higher": 49,
+            "ties": 905
+          }
+        },
+        "AnswerF1": {
+          "baseline": 0.5402380825256363,
+          "bootstrap_95_ci": {
+            "high": 0.023077523131509403,
+            "low": -0.012134883145309975,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.5456250704360998,
+          "difference": 0.00538698791046352,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 66,
+            "baseline_higher": 66,
+            "candidate_better": 72,
+            "candidate_higher": 72,
+            "ties": 862
+          }
+        },
+        "BudgetStopRate": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.011,
+            "low": 0.002,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.006,
+          "difference": 0.006,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 6,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 6,
+            "ties": 994
+          }
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.818,
+          "bootstrap_95_ci": {
+            "high": 0.048,
+            "low": 0.016,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.85,
+          "difference": 0.032,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 18,
+            "baseline_higher": 18,
+            "candidate_better": 50,
+            "candidate_higher": 50,
+            "ties": 932
+          }
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.621,
+          "bootstrap_95_ci": {
+            "high": 0.073,
+            "low": 0.04,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.677,
+          "difference": 0.056,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 8,
+            "baseline_higher": 8,
+            "candidate_better": 64,
+            "candidate_higher": 64,
+            "ties": 928
+          }
+        },
+        "DuplicateCallCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.583,
+            "low": 0.497975,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.539,
+          "difference": 0.539,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 432,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 432,
+            "ties": 568
+          }
+        },
+        "InvalidActionCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "JointSuccess": {
+          "baseline": 0.335,
+          "bootstrap_95_ci": {
+            "high": 0.048,
+            "low": 0.009,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.362,
+          "difference": 0.027,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 35,
+            "baseline_higher": 35,
+            "candidate_better": 62,
+            "candidate_higher": 62,
+            "ties": 903
+          }
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": 0.43322285714285713,
+          "bootstrap_95_ci": {
+            "high": -0.014574750000000029,
+            "low": -0.06322350000000002,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.3946828571428571,
+          "difference": -0.038540000000000005,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 901,
+            "baseline_higher": 901,
+            "candidate_better": 96,
+            "candidate_higher": 96,
+            "ties": 3
+          }
+        },
+        "MeanToolCalls": {
+          "baseline": 1.722,
+          "bootstrap_95_ci": {
+            "high": 2.041,
+            "low": 1.965,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 3.726,
+          "difference": 2.004,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 997,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 997,
+            "ties": 3
+          }
+        }
+      }
+    },
+    {
+      "baseline": "sft741",
+      "bootstrap_seed": 46,
+      "candidate": "grpo",
+      "core_metric_differences": {
+        "AnswerEM": {
+          "baseline": 0.433,
+          "candidate": 0.425,
+          "difference": -0.008000000000000007
+        },
+        "AnswerF1": {
+          "baseline": 0.5402380825256363,
+          "candidate": 0.5359762373247667,
+          "difference": -0.004261845200869585
+        },
+        "BudgetStopRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.818,
+          "candidate": 0.836,
+          "difference": 0.018000000000000016
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.621,
+          "candidate": 0.655,
+          "difference": 0.03400000000000003
+        },
+        "DuplicateCallRate": {
+          "baseline": 0.0,
+          "candidate": 0.01281640499839795,
+          "difference": 0.01281640499839795
+        },
+        "InvalidActionRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "JointSuccess": {
+          "baseline": 0.335,
+          "candidate": 0.35,
+          "difference": 0.014999999999999958
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": 0.43322285714285713,
+          "candidate": 0.45349285714285714,
+          "difference": 0.02027000000000001
+        },
+        "MeanToolCalls": {
+          "baseline": 1.722,
+          "candidate": 2.121,
+          "difference": 0.399
+        }
+      },
+      "n_paired_tasks": 1000,
+      "paired_metrics": {
+        "AnswerEM": {
+          "baseline": 0.433,
+          "bootstrap_95_ci": {
+            "high": 0.01,
+            "low": -0.025,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.425,
+          "difference": -0.008,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 41,
+            "baseline_higher": 41,
+            "candidate_better": 33,
+            "candidate_higher": 33,
+            "ties": 926
+          }
+        },
+        "AnswerF1": {
+          "baseline": 0.5402380825256363,
+          "bootstrap_95_ci": {
+            "high": 0.012277608929011368,
+            "low": -0.019802501590550373,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.5359762373247667,
+          "difference": -0.004261845200869591,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 56,
+            "baseline_higher": 56,
+            "candidate_better": 51,
+            "candidate_higher": 51,
+            "ties": 893
+          }
+        },
+        "BudgetStopRate": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.818,
+          "bootstrap_95_ci": {
+            "high": 0.032,
+            "low": 0.004,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.836,
+          "difference": 0.018,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 16,
+            "baseline_higher": 16,
+            "candidate_better": 34,
+            "candidate_higher": 34,
+            "ties": 950
+          }
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.621,
+          "bootstrap_95_ci": {
+            "high": 0.048,
+            "low": 0.02,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.655,
+          "difference": 0.034,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 10,
+            "baseline_higher": 10,
+            "candidate_better": 44,
+            "candidate_higher": 44,
+            "ties": 946
+          }
+        },
+        "DuplicateCallCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.053,
+            "low": 0.028,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.04,
+          "difference": 0.04,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 38,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 38,
+            "ties": 962
+          }
+        },
+        "InvalidActionCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "JointSuccess": {
+          "baseline": 0.335,
+          "bootstrap_95_ci": {
+            "high": 0.032,
+            "low": -0.002,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.35,
+          "difference": 0.015,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 31,
+            "baseline_higher": 31,
+            "candidate_better": 46,
+            "candidate_higher": 46,
+            "ties": 923
+          }
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": 0.43322285714285713,
+          "bootstrap_95_ci": {
+            "high": 0.04165324999999998,
+            "low": -0.0018212500000000013,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.45349285714285714,
+          "difference": 0.02027,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 360,
+            "baseline_higher": 360,
+            "candidate_better": 76,
+            "candidate_higher": 76,
+            "ties": 564
+          }
+        },
+        "MeanToolCalls": {
+          "baseline": 1.722,
+          "bootstrap_95_ci": {
+            "high": 0.432,
+            "low": 0.366,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 2.121,
+          "difference": 0.399,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 370,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 370,
+            "ties": 630
+          }
+        }
+      }
+    },
+    {
+      "baseline": "sftv2",
+      "bootstrap_seed": 47,
+      "candidate": "grpo",
+      "core_metric_differences": {
+        "AnswerEM": {
+          "baseline": 0.436,
+          "candidate": 0.425,
+          "difference": -0.01100000000000001
+        },
+        "AnswerF1": {
+          "baseline": 0.5456250704360998,
+          "candidate": 0.5359762373247667,
+          "difference": -0.009648833111333022
+        },
+        "BudgetStopRate": {
+          "baseline": 0.006,
+          "candidate": 0.0,
+          "difference": -0.006
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.85,
+          "candidate": 0.836,
+          "difference": -0.014000000000000012
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.677,
+          "candidate": 0.655,
+          "difference": -0.02200000000000002
+        },
+        "DuplicateCallRate": {
+          "baseline": 0.11419491525423729,
+          "candidate": 0.01281640499839795,
+          "difference": -0.10137851025583934
+        },
+        "InvalidActionRate": {
+          "baseline": 0.0,
+          "candidate": 0.0,
+          "difference": 0.0
+        },
+        "JointSuccess": {
+          "baseline": 0.362,
+          "candidate": 0.35,
+          "difference": -0.01200000000000001
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": 0.3946828571428571,
+          "candidate": 0.45349285714285714,
+          "difference": 0.05881000000000003
+        },
+        "MeanToolCalls": {
+          "baseline": 3.726,
+          "candidate": 2.121,
+          "difference": -1.605
+        }
+      },
+      "n_paired_tasks": 1000,
+      "paired_metrics": {
+        "AnswerEM": {
+          "baseline": 0.436,
+          "bootstrap_95_ci": {
+            "high": 0.005,
+            "low": -0.027,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.425,
+          "difference": -0.011,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 38,
+            "baseline_higher": 38,
+            "candidate_better": 27,
+            "candidate_higher": 27,
+            "ties": 935
+          }
+        },
+        "AnswerF1": {
+          "baseline": 0.5456250704360998,
+          "bootstrap_95_ci": {
+            "high": 0.004607448454323444,
+            "low": -0.02448712148962149,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.5359762373247667,
+          "difference": -0.009648833111333112,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 52,
+            "baseline_higher": 52,
+            "candidate_better": 41,
+            "candidate_higher": 41,
+            "ties": 907
+          }
+        },
+        "BudgetStopRate": {
+          "baseline": 0.006,
+          "bootstrap_95_ci": {
+            "high": -0.002,
+            "low": -0.011,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": -0.006,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 6,
+            "candidate_better": 6,
+            "candidate_higher": 0,
+            "ties": 994
+          }
+        },
+        "CompleteDocumentEvidence": {
+          "baseline": 0.85,
+          "bootstrap_95_ci": {
+            "high": -0.004,
+            "low": -0.024,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.836,
+          "difference": -0.014,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 19,
+            "baseline_higher": 19,
+            "candidate_better": 5,
+            "candidate_higher": 5,
+            "ties": 976
+          }
+        },
+        "CompleteSentenceEvidence": {
+          "baseline": 0.677,
+          "bootstrap_95_ci": {
+            "high": -0.011,
+            "low": -0.034,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.655,
+          "difference": -0.022,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 28,
+            "baseline_higher": 28,
+            "candidate_better": 6,
+            "candidate_higher": 6,
+            "ties": 966
+          }
+        },
+        "DuplicateCallCount": {
+          "baseline": 0.539,
+          "bootstrap_95_ci": {
+            "high": -0.456,
+            "low": -0.541,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.04,
+          "difference": -0.499,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 12,
+            "baseline_higher": 415,
+            "candidate_better": 415,
+            "candidate_higher": 12,
+            "ties": 573
+          }
+        },
+        "InvalidActionCount": {
+          "baseline": 0.0,
+          "bootstrap_95_ci": {
+            "high": 0.0,
+            "low": 0.0,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.0,
+          "difference": 0.0,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 0,
+            "candidate_better": 0,
+            "candidate_higher": 0,
+            "ties": 1000
+          }
+        },
+        "JointSuccess": {
+          "baseline": 0.362,
+          "bootstrap_95_ci": {
+            "high": 0.002,
+            "low": -0.028,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.35,
+          "difference": -0.012,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 37,
+            "baseline_higher": 37,
+            "candidate_better": 25,
+            "candidate_higher": 25,
+            "ties": 938
+          }
+        },
+        "MeanEnvironmentReturn": {
+          "baseline": 0.3946828571428571,
+          "bootstrap_95_ci": {
+            "high": 0.08066699999999999,
+            "low": 0.038122500000000004,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 0.45349285714285714,
+          "difference": 0.05881,
+          "higher_is_better": true,
+          "paired_counts": {
+            "baseline_better": 62,
+            "baseline_higher": 62,
+            "candidate_better": 914,
+            "candidate_higher": 914,
+            "ties": 24
+          }
+        },
+        "MeanToolCalls": {
+          "baseline": 3.726,
+          "bootstrap_95_ci": {
+            "high": -1.57,
+            "low": -1.641,
+            "method": "paired percentile bootstrap over task_id",
+            "samples": 2000
+          },
+          "candidate": 2.121,
+          "difference": -1.605,
+          "higher_is_better": false,
+          "paired_counts": {
+            "baseline_better": 0,
+            "baseline_higher": 966,
+            "candidate_better": 966,
+            "candidate_higher": 0,
+            "ties": 34
+          }
+        }
+      }
+    }
+  ],
+  "config": {
+    "bootstrap_confidence": 0.95,
+    "bootstrap_method": "paired percentile bootstrap over task_id",
+    "bootstrap_samples": 2000,
+    "seed": 42
+  },
+  "runs": [
+    {
+      "aggregate_consistency": {
+        "AnswerEM": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.442,
+          "trajectory_mean": 0.442
+        },
+        "AnswerF1": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.553077420047273,
+          "trajectory_mean": 0.553077420047273
+        },
+        "BudgetStopRate": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 1.0,
+          "trajectory_mean": 1.0
+        },
+        "CompleteDocumentEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.794,
+          "trajectory_mean": 0.794
+        },
+        "CompleteSentenceEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.642,
+          "trajectory_mean": 0.642
+        },
+        "JointSuccess": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.361,
+          "trajectory_mean": 0.361
+        },
+        "MeanEnvironmentReturn": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": -0.64712,
+          "trajectory_mean": -0.64712
+        },
+        "MeanToolCalls": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 5.0,
+          "trajectory_mean": 5.0
+        }
+      },
+      "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+      "label": "prompt",
+      "n_tasks": 1000,
+      "report_metrics": {
+        "AnswerEM": 0.442,
+        "AnswerF1": 0.553077420047273,
+        "BudgetStopRate": 1.0,
+        "CompleteDocumentEvidence": 0.794,
+        "CompleteSentenceEvidence": 0.642,
+        "DuplicateCallRate": 0.6178,
+        "InvalidActionRate": 0.0,
+        "JointSuccess": 0.361,
+        "MeanEnvironmentReturn": -0.64712,
+        "MeanToolCalls": 5.0
+      },
+      "report_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/prompt_hybrid_rerank_7b_validation1000.json",
+      "report_sha256": "c7630ab01c5f89a28956c4be8512cf38ceac3977f394963c043ae01eeab72e2a",
+      "schema_version": "prompt-policy-eval-v1",
+      "trajectory_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/prompt_hybrid_rerank_7b_validation1000.jsonl",
+      "trajectory_sha256": "7fa03110639c2b21db5ca4230b1bf8fe752721ed1e6039f3dc1b934148211e3a"
+    },
+    {
+      "aggregate_consistency": {
+        "AnswerEM": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.433,
+          "trajectory_mean": 0.433
+        },
+        "AnswerF1": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.5402380825256363,
+          "trajectory_mean": 0.5402380825256363
+        },
+        "BudgetStopRate": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.0,
+          "trajectory_mean": 0.0
+        },
+        "CompleteDocumentEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.818,
+          "trajectory_mean": 0.818
+        },
+        "CompleteSentenceEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.621,
+          "trajectory_mean": 0.621
+        },
+        "JointSuccess": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.335,
+          "trajectory_mean": 0.335
+        },
+        "MeanEnvironmentReturn": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.43322285714285713,
+          "trajectory_mean": 0.43322285714285713
+        },
+        "MeanToolCalls": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 1.722,
+          "trajectory_mean": 1.722
+        }
+      },
+      "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+      "label": "sft741",
+      "n_tasks": 1000,
+      "report_metrics": {
+        "AnswerEM": 0.433,
+        "AnswerF1": 0.5402380825256363,
+        "BudgetStopRate": 0.0,
+        "CompleteDocumentEvidence": 0.818,
+        "CompleteSentenceEvidence": 0.621,
+        "DuplicateCallRate": 0.0,
+        "InvalidActionRate": 0.0,
+        "JointSuccess": 0.335,
+        "MeanEnvironmentReturn": 0.43322285714285713,
+        "MeanToolCalls": 1.722
+      },
+      "report_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/sft741_hybrid_rerank_7b_validation1000.json",
+      "report_sha256": "da0de24636f3aa32815e9fe8c8f3bfa4b349666a4975201f94af29ab57682504",
+      "schema_version": "prompt-policy-eval-v1",
+      "trajectory_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/sft741_hybrid_rerank_7b_validation1000.jsonl",
+      "trajectory_sha256": "0a9efb544259bed6c1ab88f3419c9bb430584803004a2f1f762bad722124de61"
+    },
+    {
+      "aggregate_consistency": {
+        "AnswerEM": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.436,
+          "trajectory_mean": 0.436
+        },
+        "AnswerF1": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.5456250704360998,
+          "trajectory_mean": 0.5456250704360998
+        },
+        "BudgetStopRate": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.006,
+          "trajectory_mean": 0.006
+        },
+        "CompleteDocumentEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.85,
+          "trajectory_mean": 0.85
+        },
+        "CompleteSentenceEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.677,
+          "trajectory_mean": 0.677
+        },
+        "JointSuccess": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.362,
+          "trajectory_mean": 0.362
+        },
+        "MeanEnvironmentReturn": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.3946828571428571,
+          "trajectory_mean": 0.3946828571428571
+        },
+        "MeanToolCalls": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 3.726,
+          "trajectory_mean": 3.726
+        }
+      },
+      "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+      "label": "sftv2",
+      "n_tasks": 1000,
+      "report_metrics": {
+        "AnswerEM": 0.436,
+        "AnswerF1": 0.5456250704360998,
+        "BudgetStopRate": 0.006,
+        "CompleteDocumentEvidence": 0.85,
+        "CompleteSentenceEvidence": 0.677,
+        "DuplicateCallRate": 0.11419491525423729,
+        "InvalidActionRate": 0.0,
+        "JointSuccess": 0.362,
+        "MeanEnvironmentReturn": 0.3946828571428571,
+        "MeanToolCalls": 3.726
+      },
+      "report_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/sftv2_hybrid_rerank_7b_validation1000.json",
+      "report_sha256": "dc161f5200b1df9733ed300226b9c45c5ed889ce3732334eda3234cd7e4d37f8",
+      "schema_version": "prompt-policy-eval-v1",
+      "trajectory_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/sftv2_hybrid_rerank_7b_validation1000.jsonl",
+      "trajectory_sha256": "cc329dd5c52f324c4a31610fbc97da0d0532c223ce40dcbb49864745647eca69"
+    },
+    {
+      "aggregate_consistency": {
+        "AnswerEM": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.425,
+          "trajectory_mean": 0.425
+        },
+        "AnswerF1": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.5359762373247667,
+          "trajectory_mean": 0.5359762373247667
+        },
+        "BudgetStopRate": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.0,
+          "trajectory_mean": 0.0
+        },
+        "CompleteDocumentEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.836,
+          "trajectory_mean": 0.836
+        },
+        "CompleteSentenceEvidence": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.655,
+          "trajectory_mean": 0.655
+        },
+        "JointSuccess": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.35,
+          "trajectory_mean": 0.35
+        },
+        "MeanEnvironmentReturn": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 0.45349285714285714,
+          "trajectory_mean": 0.45349285714285714
+        },
+        "MeanToolCalls": {
+          "consistent": true,
+          "difference": 0.0,
+          "report": 2.121,
+          "trajectory_mean": 2.121
+        }
+      },
+      "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+      "label": "grpo",
+      "n_tasks": 1000,
+      "report_metrics": {
+        "AnswerEM": 0.425,
+        "AnswerF1": 0.5359762373247667,
+        "BudgetStopRate": 0.0,
+        "CompleteDocumentEvidence": 0.836,
+        "CompleteSentenceEvidence": 0.655,
+        "DuplicateCallRate": 0.01281640499839795,
+        "InvalidActionRate": 0.0,
+        "JointSuccess": 0.35,
+        "MeanEnvironmentReturn": 0.45349285714285714,
+        "MeanToolCalls": 2.121
+      },
+      "report_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/grpo_hybrid_rerank_7b_validation1000.json",
+      "report_sha256": "1188c5561798259eee66182f71f79415771d613d4399711ca217689767071aa7",
+      "schema_version": "prompt-policy-eval-v1",
+      "trajectory_path": "/root/autodl-tmp/results/agent-rl-hybrid-7b/grpo_hybrid_rerank_7b_validation1000.jsonl",
+      "trajectory_sha256": "7bc8db3da4477e74edf6442a31f0332fb6f680f63f9780db6b329f9e1f25c47e"
+    }
+  ],
+  "schema_version": "agent-policy-eval-comparison-v1"
+}

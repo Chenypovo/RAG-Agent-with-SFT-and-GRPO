@@ -1,0 +1,48 @@
+{
+  "artifacts": {
+    "input": {
+      "path": "/Users/starrystark/项目/Personal_RAG/results/agent_rl/2026-08-05/results/teacher-train2k/train-rollouts.jsonl",
+      "sha256": "a894125b6da85f1dba5df97d64c4711d8be225de815b0343c824fccb57fdb547"
+    },
+    "output": {
+      "path": "/Users/starrystark/项目/Personal_RAG/results/agent_rl/2026-08-05/sft-v2/train.jsonl",
+      "sha256": "fb5a7325d355afbbad1eb633f4c386ca92c9326b531b05c2e67e4f16bd05ed91"
+    },
+    "report": {
+      "path": "/Users/starrystark/项目/Personal_RAG/results/agent_rl/2026-08-05/sft-v2/train.report.json",
+      "sha256": "fe039082b22415b6b545b71393a45681e99f4e67f1e630710a3f37b07a59f5ef",
+      "sha256_scope": "canonical JSON before the artifacts.report checksum field"
+    }
+  },
+  "augmented_examples": 1166,
+  "base_action_counts": {
+    "final_answer": 583,
+    "tool": 1166
+  },
+  "base_examples": 1749,
+  "config": {
+    "evidence_metric": "CompleteSentenceEvidence",
+    "min_evidence": 1.0,
+    "min_success": 1.0,
+    "output_format": "messages",
+    "pre_final_tool_repeat": 3,
+    "require_clean_transitions": true,
+    "success_metric": "CompleteSentenceEvidence"
+  },
+  "decisions_seen": 4851,
+  "episodes_filtered": 1034,
+  "episodes_kept": 583,
+  "episodes_seen": 1617,
+  "examples_written": 2915,
+  "filter_counts": {
+    "below_success_threshold": 1034
+  },
+  "kept_policy_versions": {
+    "scripted-two-hop-teacher-v1": 583
+  },
+  "output_action_counts": {
+    "final_answer": 583,
+    "tool": 2332
+  },
+  "schema_version": "agent-sft-build-report-v1"
+}

@@ -1,35 +1,37 @@
 # Personal RAG / Agentic RL 简历表述（中文）
 
-> 更新时间：2026-08-05。下面分为“现在可写”和“完成 GRPO 后才能写”两版，不能混用。
+> 更新时间：2026-08-06。以下数字均来自可复现报告；不包含尚未完成的多 seed 或消融结论。
 
-## 现在可以写的真实版本
+## 推荐直接粘贴版
 
-项目名称：Personal RAG Agent 训练与评测环境
+项目名称：可验证多轮 RAG Agent 后训练系统
 
-- 构建可复现的多轮 RAG Agent 环境，将检索、停止决策和最终回答拆成严格 JSON action、环境 transition 与分项 reward；实现输入哈希校验、完整轨迹落盘及 Answer、证据覆盖、Joint Success、非法/重复调用等端到端指标。
-- 基于 HotpotQA 构建文档隔离的训练/验证切分；在 1,617 条 teacher 轨迹中筛选 247 条 Joint Success 轨迹，生成 741 条 controller 决策样本，完成 Qwen3-1.7B QLoRA SFT（2 epochs、94 steps、587 秒）。
-- 在官方 validation 1,000 条独立 held-out 的同任务配对评测中，将预算耗尽率从 100% 降至 0、重复调用率从 63.68% 降至 0、平均工具调用从 4.998 降至 1.712（减少 65.7%）；Answer EM 为 19.9% 对 18.8%，差异不显著（p=0.300），Joint Success 为 11.5% 对 11.7%。
-- 对逐题轨迹执行配对检验与失败分析，定位扩大版 SFT 的主要边界：停止和调用成本得到控制，但完整句级证据从 41.3% 降至 35.0%，下一阶段需补充长轨迹、困难样本和失败恢复训练。
+- 构建可复现的多轮 RAG Agent 环境，将检索与停止决策建模为严格 JSON action、环境 transition 和分项 reward；实现 action-token 轨迹、输入/模型/代码哈希，以及 Answer、证据覆盖、Joint Success、非法/重复调用等端到端评测。
+- 基于开源 HotpotQA 构建文档连通分量隔离的数据链路，从 1,617 条官方 teacher 轨迹筛选 583 条完整句级证据轨迹，重平衡为 2,915 条 controller 决策（工具/停止=2,332/583）；训练内容逐行回溯原始 rollout，不合成问题、答案或证据。
+- 基于 Qwen3-1.7B 完成 QLoRA SFT 与 20-update 多轮 GRPO；从 1,617 条训练任务中限制 128-task pool，实际使用 40 个唯一任务组，生成 160 个 rollout episodes / 525 条决策；实现同任务分组 advantage、action-token clipped objective、冻结 reference KL、数值稳定性检查、adapter 保存重载和全链路 provenance。
+- 在官方 validation 1,000 条固定 benchmark/dev 的逐题配对评测中，相比 prompt-only 将平均工具调用从 4.998 降至 2.096（-58.1%）、重复调用率从 63.68% 降至 1.23%、预算耗尽率从 100% 降至 0；Joint Success 为 11.9% 对 11.7%，Answer EM 为 19.9% 对 18.8%。
+- 对正式 reward 配置执行防刷审计与 paired bootstrap：无关、重复、失败和伪造证据行为不能增加 coverage；Answer EM 与 Joint Success 差值的 95% CI 均跨 0，不宣称准确率显著提升，并明确报告完整句级证据下降 3.9pp 的代价。
 
-### 面试时必须主动说明
+## 更短的三条版本
 
-- 当前扩大版 SFT 是 741 条 decision、单个 sampling seed 的实验；它改善的是停止策略与工具成本，不是端到端成功率。
-- Prompt-only 与 SFT 使用同一 Qwen3-1.7B base model、同一 frozen finalizer、同一批 1,000 条 held-out 输入和相同 seed；sampling 对照参数均为 `temperature=0.7, top_p=0.8, top_k=20`。
-- 当前尚未完成 GRPO 训练、SFT + GRPO 主结果和消融实验，简历中不得出现“通过 GRPO 提升了 X%”。
-- Answer EM 的 +1.1 个百分点不显著，Joint Success 还下降 0.2 个百分点；不得写成“准确率提升”或“SFT 全面优于基线”。
+- 构建可验证多轮 RAG Agent 后训练环境，基于官方 HotpotQA 完成文档隔离的数据构造、严格 action/trajectory、分项 reward、防刷审计及逐题配对评测。
+- 基于 Qwen3-1.7B 完成 2,915 条决策的 QLoRA SFT 与 20-update GRPO，实现同任务分组 rollout、action-token clipped objective、冻结 reference KL、adapter 保存重载和全链路哈希追踪。
+- 在 1,000 条官方固定 benchmark/dev 上将平均工具调用减少 58.1%、重复调用率从 63.68% 降至 1.23%、预算耗尽率降至 0，同时维持 Joint Success 11.9% 对 11.7%；主动披露准确率差异不显著及证据完整度下降边界。
 
-## 完成 GRPO 并验证后才能升级的版本
+## 面试时必须主动说明
 
-以下是模板，不是当前成果。只有当占位数字都由可复现实验报告支持后才能使用：
+- Prompt-only、SFT-v2 和 GRPO 使用同一 Qwen3-1.7B base model、同一 frozen finalizer、同一批 1,000 条输入和相同 seed；sampling 参数均为 `temperature=0.7, top_p=0.8, top_k=20`。这批数据与训练集隔离，但曾用于失败诊断和方案迭代，不是 untouched final test。
+- 这是单个 sampling seed。工具成本和预算终止的差异很大且配对区间不跨 0，但不能推广为多 seed 稳定结论。
+- GRPO 相比 prompt-only 的 Answer EM 为 +1.1pp，95% CI `[-0.8pp, +3.1pp]`；Joint Success 为 +0.2pp，95% CI `[-1.6pp, +1.8pp]`，不能写成准确率显著提升。
+- 完整句级证据从 41.3% 降至 37.4%，差值 -3.9pp，95% CI `[-6.3pp, -1.4pp]`。项目结论是行为效率优化，不是全面质量提升。
+- SFT-v2 相比旧 SFT-741 将完整句级/文档级证据从 35.0%/56.5% 恢复到 39.6%/61.2%，但平均工具调用从 1.712 回升到 3.690；GRPO 再将调用降到 2.096，同时牺牲 2.2pp 句级完整证据。
 
-- 构建可复现的 Personal-RAG Agent 后训练环境，在按全部可见 context 文档隔离的数据切分上生成并筛选 **X 条任务 / Y 条成功轨迹 / Z 条决策样本**，完成 Qwen3-1.7B QLoRA SFT 与 GRPO 多轮工具调用训练。
-- 在 **N 条 held-out 任务、M 个随机种子**上，将 Joint Success 从 prompt-only 的 **A%** 提升至 **B%**，Answer F1 从 **C%** 提升至 **D%**，同时将非法动作率从 **E%** 降至 **F%**、每次成功平均工具调用数从 **G** 降至 **H**。
-- 完成 outcome-only/shaped reward、工具成本、步数预算和数据规模消融，并通过失败轨迹分析验证收益不是来自提前停止、重复调用或 verifier 漏洞。
+## 下一阶段才能增加的表述
 
-升级前最低条件：
+只有完成以下工作后，才可增加“稳定提升端到端效果”或“完成系统消融”的描述：
 
-1. 补充长轨迹、困难样本和失败恢复数据，避免 SFT 只学习到更早停止；
-2. 在多 seed 下复验行为收益，并把完整证据率恢复到不低于 prompt-only；
-3. 跑通 SFT + GRPO，并保存训练曲线、reward 分量、KL/entropy、stop reason 与完整评测报告；
-4. 完成至少三组消融和人工失败案例审查；
-5. 所有简历数字都能对应到仓库报告与输入哈希。
+1. 多个 sampling seed 复验；
+2. outcome-only、shaped reward 和无工具成本三组消融；
+3. max steps、group size 和训练数据规模消融；
+4. 补充困难样本与失败恢复轨迹，使证据完整度恢复到不低于 prompt-only；
+5. 人工审查错误案例和开放式 reward 漏洞。

@@ -127,15 +127,8 @@ python scripts/eval_agent.py --tasks data/eval/agent_tasks_synth.jsonl
 
 程序化指标：任务成功率（多跳看 gold chunk 全覆盖、计算看数值命中、记忆看关键词）、多跳 Coverage@k、工具选择 precision/recall、成本（每任务 LLM 调用/工具调用/步数/解析失败率）。报告落盘 `data/eval/agent_eval_report.json`。
 
-| 指标 | 基线（单次路由） | ToolAgent 循环 |
-| --- | ---: | ---: |
-| 任务成功率 | 待跑 | 待跑 |
-| 多跳 Coverage@8 | 待跑 | 待跑 |
-| 工具选择 P / R | 待跑 | 待跑 |
-| LLM 调用/任务 | 待跑 | 待跑 |
-| 解析失败率 | — | 待跑 |
-
-> 表内数字待 LLM API 恢复后运行上述两条命令回填（评测链路已跑通，当前卡在 API 余额）。示例任务集 `data/eval/agent_tasks_example.jsonl` 已入库可直接冒烟。
+这套早期合成任务评测只保留为 legacy ToolAgent 冒烟入口，不作为下面 Agentic RL 的成果依据。
+当前可复现主结果全部来自官方 HotpotQA 数据、固定开源模型和程序化 verifier。
 
 **诚实边界**：
 1. prompt-based JSON 工具调用**不如**原生 function calling 稳，靠防御解析+重试兜底，偶发解析失败用**解析失败率**量化，不藏。
@@ -147,13 +140,18 @@ python scripts/eval_agent.py --tasks data/eval/agent_tasks_synth.jsonl
 ## Agentic RL 训练与评测环境
 
 项目已增加独立的 `app/agent_rl/`，用于把检索 Agent 表达成可训练、可验证的多轮环境。目前已完成
-prompt-only 基线、75 条 decision 的小样本诊断，以及 741 条 decision 的扩大版 QLoRA SFT。
-扩大版 SFT 修复了重复调用和预算耗尽，但没有显著提升端到端成功率；GRPO 尚未完成：
+prompt-only、两版 QLoRA SFT，以及一次 20-update 的正式多轮 GRPO 训练。扩大版 SFT-741 修复了
+重复调用和预算耗尽，SFT-v2 恢复了部分证据完整度；四个 controller checkpoint 已在同一批官方
+validation 1,000 条固定 benchmark/dev 上完成逐题配对评测。这批数据与训练集隔离，但曾用于失败
+诊断和方案迭代，不是从未查看的最终 test：
 
 - `reset()/step()` 环境、严格 JSON action、step budget、重复调用惩罚和分项 reward；
 - HotpotQA 转换、按全部可见 context 文档连通分量隔离的数据切分、BM25 与确定性双轮检索 baseline；
 - 冻结答案生成器和 prompt-only controller 评测；
-- 保存原始模型输出、prompt、解析错误、transition、seed、环境/策略版本和端到端 verifier 指标。
+- 基于 583 条完整句级证据官方 teacher 轨迹构建 2,915 条 SFT-v2 决策，不编造问题、答案或证据；
+- 同任务分组 rollout、action-token loss、old/current/reference log-prob、clipped objective、KL 和 adapter 保存；
+- 正式 reward 配置的防刷审计，以及 prompt/SFT/GRPO 的逐题 paired bootstrap 对比；
+- 保存原始模型输出、prompt、解析错误、transition、seed、环境/策略版本、输入/代码/模型哈希和端到端 verifier 指标。
 
 ```bash
 # 准备 verifier-ready HotpotQA 数据与 BM25 索引
@@ -182,6 +180,26 @@ python scripts/eval_hotpotqa_prompt_policy.py \
   --controller-model Qwen/Qwen3-1.7B \
   --finalizer-model Qwen/Qwen3-1.7B \
   --data-dir data/agent_rl/hotpotqa_smoke --partition test
+
+# 从证据完整的官方 teacher 轨迹构建 SFT-v2
+python scripts/build_agent_sft_data.py \
+  --input /path/to/train-rollouts.jsonl \
+  --output data/agent_rl/sft-v2/train.jsonl \
+  --success-metric CompleteSentenceEvidence \
+  --pre-final-tool-repeat 3
+
+# 审计正式 GRPO reward，确认无关/重复/伪造行为不能刷分
+python scripts/audit_agent_rewards.py \
+  --config configs/agent_rl/qwen3_1.7b_grpo.json \
+  --output results/agent_rl/reward-hacking-audit.json --overwrite
+
+# 单卡多轮 GRPO；本地模型和初始 adapter 路径按实际环境填写
+python scripts/train_agent_grpo.py \
+  --config configs/agent_rl/qwen3_1.7b_grpo.json \
+  --model /path/to/Qwen3-1.7B \
+  --finalizer-model /path/to/Qwen3-1.7B \
+  --init-adapter /path/to/sft-v2/adapter \
+  --output-dir results/agent-grpo/qwen3-1.7b-sftv2-grpo
 ```
 
 数据本体不入库；内容哈希、切分规模和无模型基线报告保存在
@@ -190,7 +208,8 @@ python scripts/eval_hotpotqa_prompt_policy.py \
 得到 1,999 个有效任务和 `1617/191/191` 的 train/validation/test 切分；对应清单为
 `data/agent_rl/manifests/hotpotqa_train_2k.json`。
 
-已在官方 HotpotQA validation 的前 1,000 条样本上完成独立 test 评测。为公平比较，
+已在官方 HotpotQA validation 的前 1,000 条固定 benchmark/dev 上完成评测。该集合与训练数据隔离，
+但已被重复用于方法诊断。为公平比较，
 单轮 BM25 与 scripted two-hop controller 都只取 8 条检索结果：
 
 | Controller | 预算 | Sentence Recall | 完整句级证据 | Document Recall | 完整文档证据 |
@@ -203,8 +222,8 @@ python scripts/eval_hotpotqa_prompt_policy.py \
 BM25。scripted 评测没有答案生成器，会主动拒答，因此 Answer EM/F1 与 Joint 指标均为 0。
 完整报告见 `data/agent_rl/reports/hotpotqa_validation_1k_*.json`。
 
-Qwen3-1.7B controller 与同模型 frozen finalizer 已在官方 validation 的固定 100 条 held-out
-任务上完成端到端对照。Sampling 均使用 `temperature=0.7, top_p=0.8, top_k=20`；greedy 为
+Qwen3-1.7B controller 与同模型 frozen finalizer 已在官方 validation 的固定 100 条诊断子集
+上完成端到端对照。Sampling 均使用 `temperature=0.7, top_p=0.8, top_k=20`；greedy 为
 `temperature=0`：
 
 | Controller | Answer EM | Answer F1 | Joint Success | 完整句级证据 | 重复调用率 | 预算终止率 | 非法动作率 | 平均工具调用 |
@@ -222,7 +241,7 @@ Answer 与 Joint Success 退化；因此本轮是失败诊断，不是 SFT 提�
 
 扩大版 teacher 在 1,617 个 train episodes 上生成轨迹，其中 247 个达到 `JointSuccess=1`；严格
 筛选后得到 741 条 controller decision。QLoRA 训练 2 epochs / 94 steps，用时 587.37 秒，
-train loss 为 0.21865。最终在同一批官方 validation 1,000 条纯 held-out、同一 sampling 参数下
+train loss 为 0.21865。随后在同一批官方 validation 1,000 条固定 benchmark/dev、同一 sampling 参数下
 完成配对对照：
 
 | Controller | Answer EM | Answer F1 | Joint Success | 完整句级证据 | 重复调用率 | 预算终止率 | 非法动作率 | 平均工具调用 |
@@ -238,6 +257,46 @@ SFT 将平均工具调用减少 65.7%，并消除重复调用与预算耗尽；�
 
 扩大版原始报告为 `data/agent_rl/reports/qwen3_1.7b_{teacher_train2k,sft2k_*,prompt_validation1000}.json`；
 配对统计见 `data/agent_rl/reports/qwen3_1.7b_sft2k_paired_analysis.json`。
+
+为修复 SFT-741 的证据退化，从同一批 1,617 条官方 train teacher 轨迹中保留 583 条
+`CompleteSentenceEvidence=1` 的证据完整轨迹，得到 1,749 条原始决策；只重采样每条轨迹
+停止前的最后一次工具动作，形成 2,915 条 SFT-v2 决策（工具 2,332 / 停止 583）。Qwen3-1.7B
+QLoRA 使用 2 epochs / 366 steps，训练耗时 2,721.59 秒，train loss 为 0.12492。
+
+随后从 SFT-v2 adapter 初始化 20-update GRPO。训练数据源有 1,617 条任务，正式运行限制为
+128-task pool，实际使用 40 个唯一任务组，共运行 160 个 rollout episode / 525 条多轮决策，
+训练耗时 1,439.05 秒，峰值 CUDA reserved 约 10.22 GiB。训练只对生成 action token 计算
+loss，reference adapter 哈希前后一致，最终 policy adapter 已保存并通过独立重载验证。训练报告
+记录了官方数据、模型权重分片、代码、配置和依赖版本的校验信息。
+
+在固定 100 条官方 validation 的快速诊断中，SFT-v2 将完整句级证据从 prompt-only 的 38% 恢复
+到 43%，平均工具调用从 5.00 降到 3.75；GRPO 进一步把调用数降到 2.08、重复调用率从
+11.39% 降到 1.30%，但 Joint Success 为 11%，没有超过 SFT-v2 的 12% 或 prompt-only 的
+13%。这组小样本只说明 GRPO 学到了更低成本、更少重复的行为，不能据此宣称端到端效果提升；
+主要结果以 1,000 条固定 benchmark/dev 的同任务配对评测为准。
+
+固定 1,000 条 benchmark/dev 的同任务结果如下：
+
+| Controller | Answer EM | Answer F1 | Joint Success | 完整句级证据 | 完整文档证据 | 重复调用率 | 预算耗尽率 | 平均工具调用 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Prompt-only | 18.80% | 25.31% | 11.70% | 41.30% | 61.10% | 63.68% | 100.00% | 4.998 |
+| SFT-741 | 19.90% | 26.44% | 11.50% | 35.00% | 56.50% | 0.00% | 0.00% | 1.712 |
+| SFT-v2 | 19.40% | 25.97% | 11.90% | 39.60% | 61.20% | 12.91% | 0.30% | 3.690 |
+| SFT-v2 + GRPO | 19.90% | 26.16% | 11.90% | 37.40% | 59.20% | 1.23% | 0.00% | 2.096 |
+
+GRPO 相比 prompt-only 将平均工具调用减少 58.1%，重复调用率从 63.68% 降到 1.23%，预算耗尽
+从 100% 降到 0；Answer EM 为 19.9% 对 18.8%，Joint Success 为 11.9% 对 11.7%。逐题
+bootstrap 95% CI 显示 Answer EM `[-0.8pp, +3.1pp]`、Joint Success `[-1.6pp, +1.8pp]`，
+因此不能宣称端到端质量显著提升。完整句级证据下降 3.9pp，95% CI `[-6.3pp, -1.4pp]`，
+这是明确代价。
+
+相对 SFT-v2，GRPO 将平均工具调用从 3.690 降到 2.096（-43.2%，逐题差值 95% CI
+`[-1.629, -1.559]`），Joint Success 保持 11.9%，但完整句级/文档级证据分别下降 2.2pp/2.0pp。
+上述结果来自一个 sampling seed，且 benchmark/dev 被用于方案迭代；因此本轮可表述为在该固定
+集合上基本保持端到端结果的同时优化工具成本和重复行为，不能表述为准确率提升或未见数据泛化。
+
+完整实验报告见 [`docs/AGENTIC_RL_EXPERIMENT_REPORT.md`](docs/AGENTIC_RL_EXPERIMENT_REPORT.md)；
+adapter、完整轨迹与日志发布在 [GitHub Release](https://github.com/Chenypovo/Personal_RAG/releases/tag/agentic-rl-qwen3-1.7b-2026-08-06)。
 
 完整进度、实验边界和 SFT/GRPO 计划见
 

@@ -1,0 +1,131 @@
+{
+  "agent": "PromptOnlyPolicy",
+  "completion_backend": "transformers",
+  "config": {
+    "allowed_tools": [
+      "retrieve_docs"
+    ],
+    "completion_backend": "transformers",
+    "controller_adapter": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/adapter/policy",
+    "controller_adapter_provenance": {
+      "adapter_config_sha256": "511d68b602c84e55bc71ed35a6e0e3fc48b47827cf1167615c7df3792b8a6675",
+      "path": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/adapter/policy",
+      "weight_files": [
+        {
+          "path": "adapter_model.safetensors",
+          "sha256": "6a5b14534c3e1cf0a07eda193d746f37447149de3af6198e717e17b193572e25",
+          "size_bytes": 69782384
+        }
+      ]
+    },
+    "controller_max_new_tokens": 128,
+    "controller_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "controller_revision": null,
+    "controller_temperature": 0.7,
+    "controller_top_k": 20,
+    "controller_top_p": 0.8,
+    "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+    "device_map": "auto",
+    "dtype": "bfloat16",
+    "env_version": "personal-rag-hotpotqa-prompt-v1",
+    "evaluated_tasks": 100,
+    "finalizer_max_new_tokens": 64,
+    "finalizer_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "finalizer_revision": null,
+    "finalizer_temperature": 0.0,
+    "finalizer_version": "grounded-answer-finalizer-v0",
+    "max_steps": 5,
+    "max_tasks": 100,
+    "partition": "test",
+    "policy_version": "prompt-only-controller-v1",
+    "retrieval_top_k": 8,
+    "seed": 42,
+    "task_filename": "tasks_test.jsonl",
+    "thinking_enabled": false
+  },
+  "controller_adapter": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/adapter/policy",
+  "controller_adapter_provenance": {
+    "adapter_config_sha256": "511d68b602c84e55bc71ed35a6e0e3fc48b47827cf1167615c7df3792b8a6675",
+    "path": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/adapter/policy",
+    "weight_files": [
+      {
+        "path": "adapter_model.safetensors",
+        "sha256": "6a5b14534c3e1cf0a07eda193d746f37447149de3af6198e717e17b193572e25",
+        "size_bytes": 69782384
+      }
+    ]
+  },
+  "controller_max_new_tokens": 128,
+  "controller_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+  "controller_resolved_commit": null,
+  "controller_revision": null,
+  "controller_temperature": 0.7,
+  "controller_top_k": 20,
+  "controller_top_p": 0.8,
+  "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+  "data_input_sha256": {
+    "bm25.json": "97166fdfc062669a4d22c78f51f8d184074b6df34fe3cc578c447b85fdd360f8",
+    "corpus.jsonl": "fc52f56f478130927c8f2726c5a224abb0c97c3091dad884cbc3798ba3ebf0e8",
+    "tasks.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2",
+    "tasks_test.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2"
+  },
+  "data_manifest_path": "data/agent_rl/hotpotqa_validation_1k/manifest.json",
+  "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+  "dependencies": {
+    "packages": {
+      "peft": "0.20.0",
+      "python-dotenv": "1.2.2",
+      "rank-bm25": "0.2.2",
+      "torch": "2.8.0+cu128",
+      "transformers": "4.57.6"
+    },
+    "python": "3.12.3"
+  },
+  "device_map": "auto",
+  "dtype": "bfloat16",
+  "env_version": "personal-rag-hotpotqa-prompt-v1",
+  "evaluation": {
+    "metrics": {
+      "AbstainRate": 0.22,
+      "AnswerEM": 0.2,
+      "AnswerF1": 0.259890873015873,
+      "BudgetStopRate": 0.0,
+      "CallsPerJointSuccess": 18.90909090909091,
+      "CompleteDocumentEvidence": 0.55,
+      "CompleteSentenceEvidence": 0.41,
+      "DocumentEM": 0.0,
+      "DocumentF1": 0.39820634920634923,
+      "DocumentPrecision": 0.2752380952380952,
+      "DocumentRecall": 0.755,
+      "DuplicateCallRate": 0.012987012987012988,
+      "FinalizerErrorRate": 0.0,
+      "InvalidActionRate": 0.0,
+      "JointEM": 0.0,
+      "JointF1": 0.10072816069683518,
+      "JointSuccess": 0.11,
+      "MeanEnvironmentReturn": 0.0854,
+      "MeanToolCalls": 2.08,
+      "SentenceEM": 0.0,
+      "SentenceF1": 0.3120606060606061,
+      "SentencePrecision": 0.20825396825396825,
+      "SentenceRecall": 0.6573333333333333
+    },
+    "n_decisions": 308,
+    "n_joint_successes": 11,
+    "n_tasks": 100,
+    "n_tool_calls": 208
+  },
+  "finalizer_max_new_tokens": 64,
+  "finalizer_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+  "finalizer_resolved_commit": null,
+  "finalizer_revision": null,
+  "finalizer_temperature": 0.0,
+  "finalizer_version": "grounded-answer-finalizer-v0",
+  "max_steps": 5,
+  "partition": "test",
+  "policy_version": "prompt-only-controller-v1",
+  "retrieval_top_k": 8,
+  "schema_version": "prompt-policy-eval-v1",
+  "seed": 42,
+  "thinking_enabled": false
+}

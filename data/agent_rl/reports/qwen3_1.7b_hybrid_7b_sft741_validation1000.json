@@ -1,0 +1,155 @@
+{
+  "agent": "PromptOnlyPolicy",
+  "completion_backend": "transformers",
+  "config": {
+    "allowed_tools": [
+      "retrieve_docs"
+    ],
+    "completion_backend": "transformers",
+    "controller_adapter": "/root/autodl-tmp/results/agent-sft-2k/qwen3-1.7b-qlora/adapter",
+    "controller_adapter_provenance": {
+      "adapter_config_sha256": "0d0f81524805f666289d9c8e7989fc8bb3f472e90780a959be56f0a72c73514a",
+      "path": "/root/autodl-tmp/results/agent-sft-2k/qwen3-1.7b-qlora/adapter",
+      "weight_files": [
+        {
+          "path": "adapter_model.safetensors",
+          "sha256": "79322d6eb3c61ebe255d592d65deef39df28b0fe724b77206b6d7d5b236e0277",
+          "size_bytes": 69782384
+        }
+      ]
+    },
+    "controller_max_new_tokens": 128,
+    "controller_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "controller_revision": null,
+    "controller_temperature": 0.7,
+    "controller_top_k": 20,
+    "controller_top_p": 0.8,
+    "data_dir": "/root/autodl-tmp/personal-rag/data/agent_rl/hotpotqa_validation_1k",
+    "device_map": "auto",
+    "dtype": "bfloat16",
+    "embedding_batch_size": 64,
+    "embedding_device": "cuda",
+    "embedding_model": "/root/autodl-tmp/models/bge-small-en-v1.5",
+    "env_version": "personal-rag-hotpotqa-prompt-v1",
+    "evaluated_tasks": 1000,
+    "finalizer_max_new_tokens": 64,
+    "finalizer_model": "/root/autodl-tmp/models/Qwen2.5-7B-Instruct",
+    "finalizer_revision": null,
+    "finalizer_temperature": 0.0,
+    "finalizer_version": "grounded-answer-finalizer-v0",
+    "lancedb_table": "chunks",
+    "max_steps": 5,
+    "max_tasks": 1000,
+    "partition": "test",
+    "policy_version": "prompt-only-controller-v1",
+    "reranker_batch_size": 16,
+    "reranker_device": "cuda",
+    "reranker_model": "/root/autodl-tmp/models/bge-reranker-base",
+    "reranker_top_k": 6,
+    "retrieval_backend": "hybrid-rerank",
+    "retrieval_candidate_top_k": 15,
+    "retrieval_output_top_k": 6,
+    "retrieval_rrf_k": 60,
+    "retrieval_top_k": 20,
+    "seed": 42,
+    "task_filename": "tasks_test.jsonl",
+    "thinking_enabled": false,
+    "vector_store": "lancedb"
+  },
+  "controller_adapter": "/root/autodl-tmp/results/agent-sft-2k/qwen3-1.7b-qlora/adapter",
+  "controller_adapter_provenance": {
+    "adapter_config_sha256": "0d0f81524805f666289d9c8e7989fc8bb3f472e90780a959be56f0a72c73514a",
+    "path": "/root/autodl-tmp/results/agent-sft-2k/qwen3-1.7b-qlora/adapter",
+    "weight_files": [
+      {
+        "path": "adapter_model.safetensors",
+        "sha256": "79322d6eb3c61ebe255d592d65deef39df28b0fe724b77206b6d7d5b236e0277",
+        "size_bytes": 69782384
+      }
+    ]
+  },
+  "controller_max_new_tokens": 128,
+  "controller_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+  "controller_resolved_commit": null,
+  "controller_revision": null,
+  "controller_temperature": 0.7,
+  "controller_top_k": 20,
+  "controller_top_p": 0.8,
+  "data_dir": "/root/autodl-tmp/personal-rag/data/agent_rl/hotpotqa_validation_1k",
+  "data_input_sha256": {
+    "bm25.json": "97166fdfc062669a4d22c78f51f8d184074b6df34fe3cc578c447b85fdd360f8",
+    "corpus.jsonl": "fc52f56f478130927c8f2726c5a224abb0c97c3091dad884cbc3798ba3ebf0e8",
+    "tasks.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2",
+    "tasks_test.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2"
+  },
+  "data_manifest_path": "/root/autodl-tmp/personal-rag/data/agent_rl/hotpotqa_validation_1k/manifest.json",
+  "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+  "dependencies": {
+    "packages": {
+      "lancedb": "0.36.0",
+      "peft": "0.20.0",
+      "python-dotenv": "1.2.2",
+      "rank-bm25": "0.2.2",
+      "torch": "2.8.0+cu128",
+      "transformers": "4.57.6"
+    },
+    "python": "3.12.3"
+  },
+  "device_map": "auto",
+  "dtype": "bfloat16",
+  "embedding_model": "/root/autodl-tmp/models/bge-small-en-v1.5",
+  "env_version": "personal-rag-hotpotqa-prompt-v1",
+  "evaluation": {
+    "metrics": {
+      "AbstainRate": 0.211,
+      "AnswerEM": 0.433,
+      "AnswerF1": 0.5402380825256363,
+      "BudgetStopRate": 0.0,
+      "CallsPerJointSuccess": 5.140298507462687,
+      "CompleteDocumentEvidence": 0.818,
+      "CompleteSentenceEvidence": 0.621,
+      "DocumentEM": 0.098,
+      "DocumentF1": 0.6133119047619048,
+      "DocumentPrecision": 0.48645952380952384,
+      "DocumentRecall": 0.908,
+      "DuplicateCallRate": 0.0,
+      "FinalizerErrorRate": 0.0,
+      "InvalidActionRate": 0.0,
+      "JointEM": 0.0,
+      "JointF1": 0.26939018513761165,
+      "JointSuccess": 0.335,
+      "MeanEnvironmentReturn": 0.43322285714285713,
+      "MeanToolCalls": 1.722,
+      "SentenceEM": 0.0,
+      "SentenceF1": 0.44903477633477634,
+      "SentencePrecision": 0.3149285714285714,
+      "SentenceRecall": 0.8212095238095238
+    },
+    "n_decisions": 2722,
+    "n_joint_successes": 335,
+    "n_tasks": 1000,
+    "n_tool_calls": 1722
+  },
+  "finalizer_max_new_tokens": 64,
+  "finalizer_model": "/root/autodl-tmp/models/Qwen2.5-7B-Instruct",
+  "finalizer_resolved_commit": null,
+  "finalizer_revision": null,
+  "finalizer_temperature": 0.0,
+  "finalizer_version": "grounded-answer-finalizer-v0",
+  "max_steps": 5,
+  "partition": "test",
+  "policy_version": "prompt-only-controller-v1",
+  "reranker_model": "/root/autodl-tmp/models/bge-reranker-base",
+  "retrieval_artifact_sha256": {
+    "lancedb": "38e43612448a4ada423f5b0c9b7af7cef83018181e54c1914b0198489aa07611"
+  },
+  "retrieval_backend": "hybrid-rerank",
+  "retrieval_candidate_top_k": 15,
+  "retrieval_output_top_k": 6,
+  "retrieval_rrf_k": 60,
+  "retrieval_top_k": 20,
+  "schema_version": "prompt-policy-eval-v1",
+  "seed": 42,
+  "thinking_enabled": false,
+  "vector_store": "lancedb"
+}

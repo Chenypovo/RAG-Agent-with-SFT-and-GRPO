@@ -1,0 +1,26 @@
+{
+  "artifacts": {
+    "corpus": {
+      "path": "data/agent_rl/hotpotqa_train_2k_v3/corpus.jsonl",
+      "sha256": "ed72218eed0ed98b85bd7dd02a6f5a6ead75938725b65bbee40e73144185159d"
+    },
+    "lancedb": {
+      "path": "data/agent_rl/hotpotqa_train_2k_v3/lancedb",
+      "sha256": "63ab8a0c79186c8549433df64e7a089f6c95470e9c9b123621c073ea039041c1",
+      "table": "chunks"
+    }
+  },
+  "data_dir": "data/agent_rl/hotpotqa_train_2k_v3",
+  "dimension": 384,
+  "embedding": {
+    "batch_size": 128,
+    "device": "cuda",
+    "model": "/root/autodl-tmp/models/bge-small-en-v1.5",
+    "model_config_sha256": "094f8e891b932f2000c92cfc663bac4c62069f5d8af5b5278c4306aef3084750",
+    "normalized": true,
+    "pooling": "cls"
+  },
+  "records": 77864,
+  "schema_version": "agent-rl-hybrid-index-v1",
+  "vector_store": "lancedb"
+}

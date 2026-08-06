@@ -1,0 +1,38 @@
+{
+  "schema_version": "agent-rl-eval-config-v1",
+  "controller": {
+    "name_or_path": "Qwen/Qwen3-1.7B",
+    "torch_dtype": "bfloat16",
+    "max_new_tokens": 128,
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20
+  },
+  "retrieval": {
+    "backend": "hybrid-rerank",
+    "vector_store": "lancedb",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_pooling": "cls",
+    "embedding_normalized": true,
+    "vector_top_k": 15,
+    "bm25_top_k": 15,
+    "rrf_k": 60,
+    "candidate_top_k": 15,
+    "reranker_model": "BAAI/bge-reranker-base",
+    "reranker_top_k": 6,
+    "parent_child_expansion": false
+  },
+  "finalizer": {
+    "name_or_path": "Qwen/Qwen2.5-7B-Instruct",
+    "torch_dtype": "bfloat16",
+    "max_new_tokens": 64,
+    "temperature": 0.0
+  },
+  "evaluation": {
+    "data_dir": "data/agent_rl/hotpotqa_validation_1k",
+    "partition": "test",
+    "max_steps": 5,
+    "seed": 42,
+    "bootstrap_samples": 2000
+  }
+}

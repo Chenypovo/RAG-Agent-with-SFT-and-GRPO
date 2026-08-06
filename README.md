@@ -299,6 +299,28 @@ bootstrap 95% CI 显示 Answer EM `[-0.8pp, +3.1pp]`、Joint Success `[-1.6pp, +
 完整实验报告见 [`docs/AGENTIC_RL_EXPERIMENT_REPORT.md`](docs/AGENTIC_RL_EXPERIMENT_REPORT.md)；
 adapter、完整轨迹与日志发布在 [GitHub Release](https://github.com/Chenypovo/Personal_RAG/releases/tag/agentic-rl-qwen3-1.7b-2026-08-06)。
 
+### Agentic RAG / Agent RL 对齐检索栈
+
+后续实验将 Agent RL 的评测检索链路对齐到 Agentic RAG 使用的 LanceDB、BM25、RRF 和 BGE
+reranker 组件（Agentic RAG 默认是 LanceDB，不是 ChromaDB），并将 frozen finalizer 升级为
+Qwen2.5-7B-Instruct。两路检索各粗筛 15 条，RRF 后由 `bge-reranker-base` 重排到 top-6。
+1,000 题检索消融中，完整句证据从 BM25@8 的 34.7% 提升到 hybrid-rerank@6 的 59.5%。
+
+在相同新栈上的四 controller 结果：
+
+| Controller | Answer EM | Joint Success | 完整句证据 | 重复调用率 | 预算耗尽率 | 平均工具调用 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Prompt-only | 44.2% | 36.1% | 64.2% | 61.78% | 100.0% | 5.000 |
+| SFT-741 | 43.3% | 33.5% | 62.1% | 0.00% | 0.0% | 1.722 |
+| SFT-v2 | 43.6% | 36.2% | 67.7% | 11.42% | 0.6% | 3.726 |
+| SFT-v2 + GRPO | 42.5% | 35.0% | 65.5% | 1.28% | 0.0% | 2.121 |
+
+在新栈内，GRPO 相比 prompt-only 将平均工具调用减少 57.6%、预算耗尽降至 0，Answer EM 和
+Joint Success 的配对 95% CI 均跨 0。旧栈到新栈的准确率提升是 hybrid、reranker 和 7B
+finalizer 的**组合系统收益**，不能归因给 GRPO；现有 adapter 也尚未在 hybrid observation
+分布上重新训练。完整配置、统计区间和简历表述边界见
+[`docs/AGENTIC_RL_HYBRID_7B_EXPERIMENT_REPORT.md`](docs/AGENTIC_RL_HYBRID_7B_EXPERIMENT_REPORT.md)。
+
 完整进度、实验边界和 SFT/GRPO 计划见
 [`docs/AGENTIC_RL_CAREER_ROADMAP.md`](docs/AGENTIC_RL_CAREER_ROADMAP.md)。
 

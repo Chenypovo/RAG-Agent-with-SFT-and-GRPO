@@ -1,0 +1,51 @@
+{
+  "schema_version": "agent-sft-paired-analysis-v1",
+  "base_report": "qwen3_1.7b_prompt_validation1000.json",
+  "sft_report": "qwen3_1.7b_sft2k_validation1000.json",
+  "n_paired_tasks": 1000,
+  "task_ids_identical": true,
+  "method": "two-sided exact McNemar test on paired binary outcomes",
+  "metrics": {
+    "AnswerEM": {
+      "base": 0.188,
+      "sft": 0.199,
+      "difference": 0.011,
+      "base_only_successes": 41,
+      "sft_only_successes": 52,
+      "p_value": 0.2997316968970305
+    },
+    "JointSuccess": {
+      "base": 0.117,
+      "sft": 0.115,
+      "difference": -0.002,
+      "base_only_successes": 38,
+      "sft_only_successes": 36,
+      "p_value": 0.9075606176124987
+    },
+    "CompleteSentenceEvidence": {
+      "base": 0.413,
+      "sft": 0.35,
+      "difference": -0.063,
+      "base_only_successes": 98,
+      "sft_only_successes": 35,
+      "p_value": 4.292058431471202e-08
+    },
+    "CompleteDocumentEvidence": {
+      "base": 0.611,
+      "sft": 0.565,
+      "difference": -0.046,
+      "base_only_successes": 94,
+      "sft_only_successes": 48,
+      "p_value": 0.00014076286839269204
+    }
+  },
+  "episode_audit": {
+    "base_budget_stops": 1000,
+    "sft_budget_stops": 0,
+    "base_final_answer_stops": 0,
+    "sft_final_answer_stops": 1000,
+    "base_episodes_with_duplicate_call": 999,
+    "sft_episodes_with_duplicate_call": 0
+  },
+  "interpretation": "SFT materially improves stopping and tool-call efficiency, but does not improve AnswerEM or JointSuccess and reduces complete evidence collection."
+}

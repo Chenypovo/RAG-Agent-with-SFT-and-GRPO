@@ -1,0 +1,2 @@
+{"task_id":"rl_smoke_multihop_001","task_type":"multihop","question":"混合检索中 RRF 的默认 k 是多少，默认使用哪个 reranker 模型？","gold_answers":["60，BAAI/bge-reranker-base"],"gold_evidence_ids":["data/uploads_eval/hybrid_retrieval.md#2","data/uploads_eval/reranker_design.md#2"],"metadata":{"source_dataset":"personal_rag_smoke"}}
+{"task_id":"rl_smoke_calc_001","task_type":"calc","question":"检索出 vector_k 和 bm25_k 后，计算两者之和。","gold_answers":[],"gold_evidence_ids":["data/uploads_eval/hybrid_retrieval.md#2"],"expected_value":80,"metadata":{"source_dataset":"personal_rag_smoke"}}

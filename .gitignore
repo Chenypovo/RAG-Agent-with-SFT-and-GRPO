@@ -20,3 +20,7 @@ data/eval/*.jsonl
 !data/eval/memory_facts_synth.jsonl
 !data/eval/memory_queries_synth.jsonl
 !data/eval/memory_qrels_synth.jsonl
+data/agent_rl/hotpotqa_*/
+data/agent_rl/raw_hotpotqa/
+results/
+tmp/

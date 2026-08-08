@@ -1,0 +1,27 @@
+{
+  "adapter_path": "/root/autodl-tmp/results/agent-sft-2k/qwen3-1.7b-qlora/adapter",
+  "config_path": "/root/autodl-tmp/personal-rag/configs/agent_rl/qwen3_1.7b_qlora.json",
+  "config_sha256": "dac813d7c0fd34ccc46f9c35fa40def9eb01ce017ddf987cd4d06c052f06681c",
+  "model": {
+    "name_or_path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "revision": null,
+    "torch_dtype": "bfloat16",
+    "trust_remote_code": false
+  },
+  "output_dir": "/root/autodl-tmp/results/agent-sft-2k/qwen3-1.7b-qlora",
+  "schema_version": "agent-sft-train-report-v1",
+  "tokenization": {
+    "examples": 741,
+    "truncated_prompts": 0
+  },
+  "train_metrics": {
+    "epoch": 2.0,
+    "total_flos": 1.0740906001760256e+16,
+    "train_loss": 0.21864996168841708,
+    "train_runtime": 587.3734,
+    "train_samples_per_second": 2.523,
+    "train_steps_per_second": 0.16
+  },
+  "train_path": "/root/autodl-tmp/personal-rag/data/agent_rl/sft-train2k/train.jsonl",
+  "train_sha256": "941b9c223bc5e1323259be87fd40a0ce2d3b50390d4bac8979cebb21c92c430e"
+}

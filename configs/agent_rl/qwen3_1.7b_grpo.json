@@ -1,0 +1,58 @@
+{
+  "schema_version": "agent-grpo-train-config-v1",
+  "model": {
+    "name_or_path": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "init_adapter": "results/agent-sft-2k/qwen3-1.7b-qlora/adapter",
+    "torch_dtype": "bfloat16",
+    "trust_remote_code": false,
+    "quant_type": "nf4",
+    "double_quant": true
+  },
+  "finalizer": {
+    "name_or_path": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "torch_dtype": "bfloat16",
+    "max_new_tokens": 64
+  },
+  "data": {
+    "data_dir": "data/agent_rl/hotpotqa_train_2k_v3",
+    "task_file": "tasks_train.jsonl",
+    "max_tasks": 128,
+    "retrieval_top_k": 8
+  },
+  "rollout": {
+    "group_size": 4,
+    "tasks_per_update": 2,
+    "max_steps": 5,
+    "max_new_tokens": 128,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": 0
+  },
+  "reward": {
+    "task_success": 1.0,
+    "evidence_coverage": 0.5,
+    "valid_action_format": 0.0,
+    "tool_call_cost": -0.02,
+    "invalid_action": -0.2,
+    "duplicate_call": -0.2,
+    "premature_final_answer": -0.5,
+    "budget_exhausted": -0.3
+  },
+  "training": {
+    "max_updates": 20,
+    "optimization_epochs": 2,
+    "learning_rate": 5e-6,
+    "beta": 0.04,
+    "clip_epsilon": 0.2,
+    "max_seq_length": 2048,
+    "preserve_prompt_prefix_tokens": 256,
+    "max_grad_norm": 1.0,
+    "save_steps": 10,
+    "seed": 42
+  },
+  "output": {
+    "dir": "results/agent-grpo/qwen3-1.7b-sft-grpo"
+  }
+}

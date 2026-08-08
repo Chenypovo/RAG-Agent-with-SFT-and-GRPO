@@ -1,0 +1,2806 @@
+{
+  "algorithm": "multi-turn-grpo",
+  "artifacts": {
+    "progress": {
+      "path": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/training_progress.json",
+      "sha256": "daa3dd3fd4f92729d3f6649a13c20cb2d215ee3858863d7921fbf468f7ebbcae"
+    },
+    "trajectories": {
+      "path": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/train_trajectories.jsonl",
+      "sha256": "d4e7e40f2e032cc937b8727bb45561d3f5d95044109c79cc1bb0178588442914"
+    }
+  },
+  "config_path": "/root/autodl-tmp/personal-rag/configs/agent_rl/qwen3_1.7b_grpo.json",
+  "config_sha256": "285ca0bd84cf6b2567b2d9151c267c8b4f927107921cf169ff5bbb15c7a26081",
+  "data": {
+    "available_tasks": 128,
+    "data_dir": "/root/autodl-tmp/personal-rag/data/agent_rl/hotpotqa_train_2k_v3",
+    "input_sha256": {
+      "bm25": "cd0d0d17ec13418f7bc551a2b83ee52f12fda3657f464f7ff9d809ecf34c5324",
+      "manifest": "092f928c87d6d344ade599c84edc6d3e9ecf546f82aabbf922050fdc2ce59404",
+      "tasks": "df305837d21cd19b315531f78cc62bf89faeb0a3f250128f1adf1870b6f0d2c3"
+    },
+    "task_file": "/root/autodl-tmp/personal-rag/data/agent_rl/hotpotqa_train_2k_v3/tasks_train.jsonl"
+  },
+  "dependencies": {
+    "accelerate": true,
+    "bitsandbytes": true,
+    "peft": true,
+    "rank_bm25": true,
+    "torch": true,
+    "transformers": true
+  },
+  "finalizer": {
+    "frozen": true,
+    "model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "resolved_commit": null
+  },
+  "implementation": "custom-pytorch-clipped-grpo-v1",
+  "objective": {
+    "beta": 0.04,
+    "clip_epsilon": 0.2,
+    "group_scope": "same task and deterministic initial environment state",
+    "loss_scope": "generated action tokens only",
+    "optimization_epochs_per_rollout_batch": 2,
+    "sampling_distribution": "raw policy softmax (temperature=1, top_p=1, top_k=0)"
+  },
+  "policy": {
+    "base_model": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+    "disabled_dropout_modules": 392,
+    "initial_adapter": {
+      "adapter_config_sha256": "891566cf596ddca8467f65cb5ea5a21f02212e9112789edcac8c9e97ec94d566",
+      "path": "/root/autodl-tmp/results/agent-sft-v2/qwen3-1.7b-qlora/adapter",
+      "weight_files": [
+        {
+          "path": "adapter_model.safetensors",
+          "sha256": "3455bd56e7afe0353cb6c20884b9b06e14b82e47998f1df7d3f91f5565fc652a",
+          "size_bytes": 69782384
+        }
+      ]
+    },
+    "reference_policy": "frozen reference adapter copied from initial_adapter",
+    "reference_state_sha256_after": "8dc4c18ab4728aacbfbab3561c326a947bea222d44a458459e6191f71044c05d",
+    "reference_state_sha256_before": "8dc4c18ab4728aacbfbab3561c326a947bea222d44a458459e6191f71044c05d",
+    "reference_unchanged": true,
+    "trained_adapter": {
+      "adapter_config_sha256": "511d68b602c84e55bc71ed35a6e0e3fc48b47827cf1167615c7df3792b8a6675",
+      "path": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/adapter/policy",
+      "weight_files": [
+        {
+          "path": "adapter_model.safetensors",
+          "sha256": "6a5b14534c3e1cf0a07eda193d746f37447149de3af6198e717e17b193572e25",
+          "size_bytes": 69782384
+        }
+      ]
+    },
+    "trained_adapter_path": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo/adapter/policy"
+  },
+  "provenance": {
+    "base_model": {
+      "local_artifact_hashes": [
+        {
+          "path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope/config.json",
+          "sha256": "1ddb5b89ebc90dcb417a45c213d818577e65976454d29385c8f6140771d95197",
+          "size_bytes": 726
+        },
+        {
+          "path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope/model.safetensors.index.json",
+          "sha256": "0d660e94b165eb912669a5249dff44b83188c4777a07ddb9611fb78d91b0578d",
+          "size_bytes": 25605
+        },
+        {
+          "path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope/model-00001-of-00002.safetensors",
+          "sha256": "169ad53ec313c3a34b06c0809216e4fc072cce444a5d4ff2b59690d064130ed5",
+          "size_bytes": 3441185608
+        },
+        {
+          "path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope/model-00002-of-00002.safetensors",
+          "sha256": "912becff8d60672aa8628ef08c05898d9adf17c2ad4ae3caf99b065622fdeff9",
+          "size_bytes": 622329984
+        }
+      ],
+      "name_or_path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+      "revision": null,
+      "source": "local_directory"
+    },
+    "code": {
+      "config": {
+        "path": "/root/autodl-tmp/personal-rag/configs/agent_rl/qwen3_1.7b_grpo.json",
+        "sha256": "285ca0bd84cf6b2567b2d9151c267c8b4f927107921cf169ff5bbb15c7a26081",
+        "size_bytes": 1461
+      },
+      "grpo_module": {
+        "path": "/root/autodl-tmp/personal-rag/app/agent_rl/grpo.py",
+        "sha256": "c2dd65bfce478daff38826d68b9a5551313d038ae38503fe3ce9007a096ba1e6",
+        "size_bytes": 5328
+      },
+      "train_script": {
+        "path": "/root/autodl-tmp/personal-rag/scripts/train_agent_grpo.py",
+        "sha256": "eb756bec3e332b795e3ecfa2ae68f9a75ba90e057bce9154709c4191dd5f4005",
+        "size_bytes": 57607
+      }
+    },
+    "runtime_versions": {
+      "accelerate": "1.14.0",
+      "bitsandbytes": "0.50.0",
+      "peft": "0.20.0",
+      "python": "3.12.3",
+      "torch": "2.8.0+cu128",
+      "transformers": "4.57.6"
+    }
+  },
+  "resolved_config": {
+    "data": {
+      "data_dir": "data/agent_rl/hotpotqa_train_2k_v3",
+      "max_tasks": 128,
+      "retrieval_top_k": 8,
+      "task_file": "tasks_train.jsonl"
+    },
+    "finalizer": {
+      "max_new_tokens": 64,
+      "name_or_path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+      "revision": null,
+      "torch_dtype": "bfloat16"
+    },
+    "model": {
+      "double_quant": true,
+      "init_adapter": "/root/autodl-tmp/results/agent-sft-v2/qwen3-1.7b-qlora/adapter",
+      "name_or_path": "/root/autodl-tmp/models/Qwen3-1.7B-modelscope",
+      "quant_type": "nf4",
+      "revision": null,
+      "torch_dtype": "bfloat16",
+      "trust_remote_code": false
+    },
+    "output": {
+      "dir": "/root/autodl-tmp/results/agent-grpo/qwen3-1.7b-sftv2-grpo"
+    },
+    "reward": {
+      "budget_exhausted": -0.3,
+      "duplicate_call": -0.2,
+      "evidence_coverage": 0.5,
+      "invalid_action": -0.2,
+      "premature_final_answer": -0.5,
+      "task_success": 1.0,
+      "tool_call_cost": -0.02,
+      "valid_action_format": 0.0
+    },
+    "rollout": {
+      "group_size": 4,
+      "max_new_tokens": 128,
+      "max_steps": 5,
+      "tasks_per_update": 2,
+      "temperature": 1.0,
+      "top_k": 0,
+      "top_p": 1.0
+    },
+    "schema_version": "agent-grpo-train-config-v1",
+    "training": {
+      "beta": 0.04,
+      "clip_epsilon": 0.2,
+      "learning_rate": 5e-06,
+      "max_grad_norm": 1.0,
+      "max_seq_length": 2048,
+      "max_updates": 20,
+      "optimization_epochs": 2,
+      "preserve_prompt_prefix_tokens": 256,
+      "save_steps": 10,
+      "seed": 42
+    }
+  },
+  "resolved_config_sha256": "a58a8949c89bb400003c7a7a980ada7981e92090d50f6c3e8a5faa8a6d6c2d0f",
+  "schema_version": "agent-grpo-train-report-v1",
+  "training": {
+    "completed_updates": 20,
+    "decisions": 525,
+    "episodes": 160,
+    "peak_cuda_memory_allocated_bytes": 10444880384,
+    "peak_cuda_memory_reserved_bytes": 10974396416,
+    "runtime_seconds": 1439.0477447444573,
+    "source_task_count": 1617,
+    "total_runtime_seconds": 1458.5840887986124,
+    "training_pool_tasks": 128,
+    "truncated_prompts": 0,
+    "updates": [
+      {
+        "decisions": 37,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.375,
+            "AnswerF1": 0.625,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.0,
+            "CompleteSentenceEvidence": 0.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.2322420634920635,
+            "DocumentPrecision": 0.15223214285714284,
+            "DocumentRecall": 0.5,
+            "DuplicateCallRate": 0.02702702702702703,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.1277777777777778,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": -0.34500000000000003,
+            "MeanToolCalls": 3.625,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.20277777777777778,
+            "SentencePrecision": 0.12723214285714285,
+            "SentenceRecall": 0.5
+          },
+          "n_decisions": 37,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 29
+        },
+        "groups": [
+          {
+            "advantages": [
+              -0.5707597038168014,
+              -0.5707597038168014,
+              1.7122791114504043,
+              -0.5707597038168014
+            ],
+            "max": -0.31,
+            "mean": -0.325,
+            "min": -0.33,
+            "rewards": [
+              -0.33,
+              -0.33,
+              -0.31,
+              -0.33
+            ],
+            "std": 0.008660254037844393,
+            "task_id": "hotpotqa_5ae2e660554299492dc91c7e",
+            "zero_variance": false
+          },
+          {
+            "advantages": [
+              0.8782858520715482,
+              0.40986673096672216,
+              -1.6980193140049933,
+              0.40986673096672216
+            ],
+            "max": -0.29,
+            "mean": -0.365,
+            "min": -0.51,
+            "rewards": [
+              -0.29,
+              -0.33,
+              -0.51,
+              -0.33
+            ],
+            "std": 0.08529361054615991,
+            "task_id": "hotpotqa_5a81fab9554299676cceb1b1",
+            "zero_variance": false
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.08735476652152925,
+            "action_loss_unweighted_mean": 0.09375273375897794,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 1.5239354372024536,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.0,
+            "objective_loss": 2.9802322387695312e-08,
+            "policy_entropy": 0.03796155694215675,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.045655300498790005,
+            "tokens": 20.513513513513512
+          },
+          {
+            "action_loss_token_weighted_mean": 0.08444699358406117,
+            "action_loss_unweighted_mean": 0.09010651949289683,
+            "clip_fraction": 0.019636181057304948,
+            "epoch": 2,
+            "grad_norm": 0.5942107439041138,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.01504986855248112,
+            "objective_loss": -0.003313027322292328,
+            "policy_entropy": 0.04106375501796049,
+            "ratio_mean": 1.0309862091734603,
+            "sampled_token_nll": 0.04389040301191779,
+            "tokens": 20.513513513513512
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": -0.025,
+          "evidence_coverage": 0.25,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.5,
+          "task_success": 0.0,
+          "tool_call_cost": -0.07,
+          "valid_action_format": 0.0
+        },
+        "reward_max": -0.29,
+        "reward_mean": -0.34500000000000003,
+        "reward_min": -0.51,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5ae2e660554299492dc91c7e",
+          "hotpotqa_5a81fab9554299676cceb1b1"
+        ],
+        "update": 1,
+        "zero_variance_groups": 0
+      },
+      {
+        "decisions": 30,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.65,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5023809523809525,
+            "DocumentPrecision": 0.33839285714285716,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.13333333333333333,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.32513931888544895,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.02166666666666666,
+            "MeanToolCalls": 2.75,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.4636363636363636,
+            "SentencePrecision": 0.3214285714285714,
+            "SentenceRecall": 0.8333333333333333
+          },
+          "n_decisions": 30,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 22
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.26,
+            "mean": 0.26,
+            "min": 0.26,
+            "rewards": [
+              0.26,
+              0.26,
+              0.26,
+              0.26
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a78ec67554299148911f9a1",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              -0.9900990099009915,
+              0.9900990099009888,
+              0.9900990099009888,
+              -0.9900990099009915
+            ],
+            "max": -0.2066666666666667,
+            "mean": -0.21666666666666667,
+            "min": -0.22666666666666668,
+            "rewards": [
+              -0.22666666666666668,
+              -0.2066666666666667,
+              -0.2066666666666667,
+              -0.22666666666666668
+            ],
+            "std": 0.009999999999999995,
+            "task_id": "hotpotqa_5a8d7449554299068b959d06",
+            "zero_variance": false
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.062190773087826556,
+            "action_loss_unweighted_mean": 0.06651244866492582,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.8442862033843994,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.012646204381903618,
+            "objective_loss": 0.0001593903178900291,
+            "policy_entropy": 0.023432327115751175,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.04548512251894863,
+            "tokens": 27.666666666666668
+          },
+          {
+            "action_loss_token_weighted_mean": 0.061636167402701815,
+            "action_loss_unweighted_mean": 0.0670181671516145,
+            "clip_fraction": 0.013789177313446999,
+            "epoch": 2,
+            "grad_norm": 0.7662455439567566,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.020438687881378526,
+            "objective_loss": -0.0004024960056767668,
+            "policy_entropy": 0.024610741207578096,
+            "ratio_mean": 1.0045551260312398,
+            "sampled_token_nll": 0.04298730550126493,
+            "tokens": 27.666666666666668
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": -0.1,
+          "evidence_coverage": 0.41666666666666663,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.045,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.26,
+        "reward_mean": 0.02166666666666666,
+        "reward_min": -0.22666666666666668,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a78ec67554299148911f9a1",
+          "hotpotqa_5a8d7449554299068b959d06"
+        ],
+        "update": 2,
+        "zero_variance_groups": 1
+      },
+      {
+        "decisions": 30,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.5,
+            "AnswerF1": 0.5,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.375,
+            "CompleteSentenceEvidence": 0.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5059523809523809,
+            "DocumentPrecision": 0.43125,
+            "DocumentRecall": 0.6875,
+            "DuplicateCallRate": 0.03333333333333333,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.13257575757575757,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": -0.3275,
+            "MeanToolCalls": 2.75,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.2436868686868687,
+            "SentencePrecision": 0.1617063492063492,
+            "SentenceRecall": 0.5
+          },
+          "n_decisions": 30,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 22
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.9946858199822061,
+              -0.8677046514738386,
+              -1.1216669884905721,
+              0.9946858199822061
+            ],
+            "max": -0.22666666666666668,
+            "mean": -0.30500000000000005,
+            "min": -0.39333333333333337,
+            "rewards": [
+              -0.22666666666666668,
+              -0.37333333333333335,
+              -0.39333333333333337,
+              -0.22666666666666668
+            ],
+            "std": 0.07865183475997946,
+            "task_id": "hotpotqa_5a731cee5542994cef4bc45e",
+            "zero_variance": false
+          },
+          {
+            "advantages": [
+              0.7376409726047427,
+              0.4917606484031615,
+              -1.7211622694110664,
+              0.4917606484031615
+            ],
+            "max": -0.29,
+            "mean": -0.35,
+            "min": -0.49,
+            "rewards": [
+              -0.29,
+              -0.31,
+              -0.49,
+              -0.31
+            ],
+            "std": 0.08124038404635961,
+            "task_id": "hotpotqa_5a823d4b55429903bc27ba4f",
+            "zero_variance": false
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.037646894450901316,
+            "action_loss_unweighted_mean": -0.0028909921646118166,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 1.8147978782653809,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.03611136616752143,
+            "objective_loss": 0.0005801990628242493,
+            "policy_entropy": 0.03881063257173008,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.04992925718809905,
+            "tokens": 19.6
+          },
+          {
+            "action_loss_token_weighted_mean": 0.03507468337509908,
+            "action_loss_unweighted_mean": -0.0026338815689086912,
+            "clip_fraction": 0.023833448067307472,
+            "epoch": 2,
+            "grad_norm": 1.4691778421401978,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.03208834182644627,
+            "objective_loss": -0.0011799558997154236,
+            "policy_entropy": 0.03913555184670654,
+            "ratio_mean": 0.9983920534451802,
+            "sampled_token_nll": 0.054759376847505335,
+            "tokens": 19.6
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": -0.025,
+          "evidence_coverage": 0.25,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.5,
+          "task_success": 0.0,
+          "tool_call_cost": -0.0525,
+          "valid_action_format": 0.0
+        },
+        "reward_max": -0.22666666666666668,
+        "reward_mean": -0.3275,
+        "reward_min": -0.49,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a731cee5542994cef4bc45e",
+          "hotpotqa_5a823d4b55429903bc27ba4f"
+        ],
+        "update": 3,
+        "zero_variance_groups": 0
+      },
+      {
+        "decisions": 28,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.5,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.0,
+            "CompleteSentenceEvidence": 0.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.25892857142857145,
+            "DocumentPrecision": 0.175,
+            "DocumentRecall": 0.5,
+            "DuplicateCallRate": 0.14285714285714285,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": -0.39,
+            "MeanToolCalls": 2.5,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.2815656565656566,
+            "SentencePrecision": 0.20089285714285715,
+            "SentenceRecall": 0.5
+          },
+          "n_decisions": 28,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 20
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.9990009990009993,
+              0.9990009990009993,
+              -0.9990009990009987,
+              -0.9990009990009987
+            ],
+            "max": -0.29,
+            "mean": -0.39,
+            "min": -0.49,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.49,
+              -0.49
+            ],
+            "std": 0.1,
+            "task_id": "hotpotqa_5a8763d55542996e4f3087c3",
+            "zero_variance": false
+          },
+          {
+            "advantages": [
+              0.9990009990009993,
+              -0.9990009990009987,
+              -0.9990009990009987,
+              0.9990009990009993
+            ],
+            "max": -0.29,
+            "mean": -0.39,
+            "min": -0.49,
+            "rewards": [
+              -0.29,
+              -0.49,
+              -0.49,
+              -0.29
+            ],
+            "std": 0.1,
+            "task_id": "hotpotqa_5a80af89554299485f5986b7",
+            "zero_variance": false
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.14990874335913723,
+            "action_loss_unweighted_mean": 0.14353651659829275,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 2.3179430961608887,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.020552008561951465,
+            "objective_loss": 0.00031729042530059814,
+            "policy_entropy": 0.041990782806308836,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.04328513373197244,
+            "tokens": 23.607142857142858
+          },
+          {
+            "action_loss_token_weighted_mean": 0.14928663471282522,
+            "action_loss_unweighted_mean": 0.14344039346490586,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 2.2254414558410645,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.020831076897336036,
+            "objective_loss": -0.0006550848484039307,
+            "policy_entropy": 0.04183914640329429,
+            "ratio_mean": 1.0003996172121592,
+            "sampled_token_nll": 0.043276840965648135,
+            "tokens": 23.607142857142858
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": -0.1,
+          "evidence_coverage": 0.25,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.5,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": -0.29,
+        "reward_mean": -0.39,
+        "reward_min": -0.49,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a8763d55542996e4f3087c3",
+          "hotpotqa_5a80af89554299485f5986b7"
+        ],
+        "update": 4,
+        "zero_variance_groups": 0
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.5,
+            "AnswerF1": 0.75,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": 4.0,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 1.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.4722222222222222,
+            "DocumentPrecision": 0.30952380952380953,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.3764705882352941,
+            "JointSuccess": 0.5,
+            "MeanEnvironmentReturn": 0.96,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.4727272727272727,
+            "SentencePrecision": 0.3125,
+            "SentenceRecall": 1.0
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 4,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5ac4c61a5542996feb3fe93c",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 1.46,
+            "mean": 1.46,
+            "min": 1.46,
+            "rewards": [
+              1.46,
+              1.46,
+              1.46,
+              1.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a762b24554299109176e699",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 9.879967188738766e-06,
+            "action_loss_unweighted_mean": 3.410930854239394e-05,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.0006175735034048557,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.0008527327614599919,
+            "objective_loss": 1.012358620755549e-05,
+            "policy_entropy": 0.0019381885063545457,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.0008707233228051336,
+            "tokens": 24.166666666666668
+          },
+          {
+            "action_loss_token_weighted_mean": 1.0700440375488546e-05,
+            "action_loss_unweighted_mean": 3.6941795302767914e-05,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.0002938885590992868,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.0009235448752932621,
+            "objective_loss": 1.093797072826419e-05,
+            "policy_entropy": 0.0013991497730001293,
+            "ratio_mean": 1.000436266263326,
+            "sampled_token_nll": 0.00043684883500342647,
+            "tokens": 24.166666666666668
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.5,
+          "invalid_action": 0.0,
+          "premature_final_answer": 0.0,
+          "task_success": 0.5,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 1.46,
+        "reward_mean": 0.96,
+        "reward_min": 0.46,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5ac4c61a5542996feb3fe93c",
+          "hotpotqa_5a762b24554299109176e699"
+        ],
+        "update": 5,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 25,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.5,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.48571428571428577,
+            "DocumentPrecision": 0.3666666666666667,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.08250000000000002,
+            "MeanToolCalls": 2.125,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.33333333333333337,
+            "SentencePrecision": 0.21428571428571427,
+            "SentenceRecall": 0.75
+          },
+          "n_decisions": 25,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 17
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.5707597038168014,
+              0.5707597038168014,
+              0.5707597038168014,
+              -1.7122791114504043
+            ],
+            "max": -0.29,
+            "mean": -0.295,
+            "min": -0.31,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.31
+            ],
+            "std": 0.008660254037844393,
+            "task_id": "hotpotqa_5aba7995554299232ef4a2e2",
+            "zero_variance": false
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a79240555429970f5fffe5b",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.1281677964263152,
+            "action_loss_unweighted_mean": 0.07070855020082376,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.6166253685951233,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.05543514592248329,
+            "objective_loss": 0.0007747173076495528,
+            "policy_entropy": 0.023245379515952364,
+            "ratio_mean": 0.9999999976158143,
+            "sampled_token_nll": 0.03235717219460639,
+            "tokens": 23.28
+          },
+          {
+            "action_loss_token_weighted_mean": 0.12637667004415853,
+            "action_loss_unweighted_mean": 0.06888019498980383,
+            "clip_fraction": 0.0024041812121868133,
+            "epoch": 2,
+            "grad_norm": 0.34817108511924744,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.05961855040254676,
+            "objective_loss": -0.0005573632661253214,
+            "policy_entropy": 0.021200453384084904,
+            "ratio_mean": 1.0033998155593873,
+            "sampled_token_nll": 0.029448976865023724,
+            "tokens": 23.28
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.375,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.0425,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.08250000000000002,
+        "reward_min": -0.31,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5aba7995554299232ef4a2e2",
+          "hotpotqa_5a79240555429970f5fffe5b"
+        ],
+        "update": 6,
+        "zero_variance_groups": 1
+      },
+      {
+        "decisions": 33,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.5,
+            "AnswerEM": 0.25,
+            "AnswerF1": 0.45,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": 12.5,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.34444444444444444,
+            "DocumentPrecision": 0.22395833333333331,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.030303030303030304,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.18257575757575756,
+            "JointSuccess": 0.25,
+            "MeanEnvironmentReturn": 0.29,
+            "MeanToolCalls": 3.125,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.2964646464646465,
+            "SentencePrecision": 0.18501984126984128,
+            "SentenceRecall": 0.75
+          },
+          "n_decisions": 33,
+          "n_joint_successes": 2,
+          "n_tasks": 8,
+          "n_tool_calls": 25
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.299704061089076,
+              -0.899112183267228,
+              1.49852030544538,
+              -0.899112183267228
+            ],
+            "max": -0.29,
+            "mean": -0.315,
+            "min": -0.33,
+            "rewards": [
+              -0.31,
+              -0.33,
+              -0.29,
+              -0.33
+            ],
+            "std": 0.016583123951777013,
+            "task_id": "hotpotqa_5abc2e3d554299114383a0f6",
+            "zero_variance": false
+          },
+          {
+            "advantages": [
+              0.993070343821874,
+              -0.8290770760347757,
+              -1.1570636116089725,
+              0.993070343821874
+            ],
+            "max": 1.44,
+            "mean": 0.895,
+            "min": 0.26,
+            "rewards": [
+              1.44,
+              0.44,
+              0.26,
+              1.44
+            ],
+            "std": 0.5487030162118667,
+            "task_id": "hotpotqa_5ab914d655429919ba4e2394",
+            "zero_variance": false
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.10325318894481421,
+            "action_loss_unweighted_mean": 0.10242468841148145,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 1.415224313735962,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.06308341612652192,
+            "objective_loss": 0.0016170777380466461,
+            "policy_entropy": 0.039244884637851,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.056099547006218047,
+            "tokens": 24.303030303030305
+          },
+          {
+            "action_loss_token_weighted_mean": 0.10266500324977008,
+            "action_loss_unweighted_mean": 0.10148161288463708,
+            "clip_fraction": 0.006990023295987736,
+            "epoch": 2,
+            "grad_norm": 1.4536516666412354,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.0352225210121318,
+            "objective_loss": 0.0008779279887676239,
+            "policy_entropy": 0.040355088488846794,
+            "ratio_mean": 1.0057047497142444,
+            "sampled_token_nll": 0.0531998795526802,
+            "tokens": 24.303030303030305
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": -0.025,
+          "evidence_coverage": 0.375,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.25,
+          "tool_call_cost": -0.06,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 1.44,
+        "reward_mean": 0.29,
+        "reward_min": -0.33,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5abc2e3d554299114383a0f6",
+          "hotpotqa_5ab914d655429919ba4e2394"
+        ],
+        "update": 7,
+        "zero_variance_groups": 0
+      },
+      {
+        "decisions": 28,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.5,
+            "AnswerF1": 0.5,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.3472222222222222,
+            "DocumentPrecision": 0.22619047619047616,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.2,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": -0.2583333333333333,
+            "MeanToolCalls": 2.5,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.30000000000000004,
+            "SentencePrecision": 0.20535714285714285,
+            "SentenceRecall": 0.5833333333333333
+          },
+          "n_decisions": 28,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 20
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.22666666666666668,
+            "mean": -0.22666666666666668,
+            "min": -0.22666666666666668,
+            "rewards": [
+              -0.22666666666666668,
+              -0.22666666666666668,
+              -0.22666666666666668,
+              -0.22666666666666668
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a7f92f655429969796c1abc",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.29,
+            "mean": -0.29,
+            "min": -0.29,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.29
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5ab8500b55429916710eb033",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0007319426922825241,
+            "action_loss_unweighted_mean": 0.0027648917672688194,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.014620295725762844,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.06912229507933916,
+            "objective_loss": 0.0009652149060457305,
+            "policy_entropy": 0.017390975708736277,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.02054231457662224,
+            "tokens": 26.75
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0008141031642421755,
+            "action_loss_unweighted_mean": 0.002895925154928976,
+            "clip_fraction": 0.007410413851695401,
+            "epoch": 2,
+            "grad_norm": 0.047291599214076996,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.07239813213922817,
+            "objective_loss": 0.0010358242798247375,
+            "policy_entropy": 0.016542571787044744,
+            "ratio_mean": 0.9987822643348149,
+            "sampled_token_nll": 0.022637537226338673,
+            "tokens": 26.75
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.29166666666666663,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.5,
+          "task_success": 0.0,
+          "tool_call_cost": -0.05,
+          "valid_action_format": 0.0
+        },
+        "reward_max": -0.22666666666666668,
+        "reward_mean": -0.2583333333333333,
+        "reward_min": -0.29,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a7f92f655429969796c1abc",
+          "hotpotqa_5ab8500b55429916710eb033"
+        ],
+        "update": 8,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.5,
+            "AnswerF1": 0.5,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": 4.0,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 1.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.6000000000000001,
+            "DocumentPrecision": 0.4583333333333333,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.2,
+            "JointSuccess": 0.5,
+            "MeanEnvironmentReturn": 0.96,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.4222222222222223,
+            "SentencePrecision": 0.26785714285714285,
+            "SentenceRecall": 1.0
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 4,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5abd83bd5542993062266cb8",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 1.46,
+            "mean": 1.46,
+            "min": 1.46,
+            "rewards": [
+              1.46,
+              1.46,
+              1.46,
+              1.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a89cc495542992e4fca83c8",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0016529180077317677,
+            "action_loss_unweighted_mean": 0.005431013034373007,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.022252170369029045,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.13577532525057232,
+            "objective_loss": 0.0017815380692809413,
+            "policy_entropy": 0.0042656465986932535,
+            "ratio_mean": 0.9999999900658926,
+            "sampled_token_nll": 0.0018989416618448256,
+            "tokens": 23.0
+          },
+          {
+            "action_loss_token_weighted_mean": 0.00153363443042394,
+            "action_loss_unweighted_mean": 0.005039081543619757,
+            "clip_fraction": 0.023809524873892467,
+            "epoch": 2,
+            "grad_norm": 0.057364895939826965,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.1259770392319894,
+            "objective_loss": 0.0016529354193153267,
+            "policy_entropy": 0.007532738864529824,
+            "ratio_mean": 0.9919279317061106,
+            "sampled_token_nll": 0.01174204325222187,
+            "tokens": 23.0
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.5,
+          "invalid_action": 0.0,
+          "premature_final_answer": 0.0,
+          "task_success": 0.5,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 1.46,
+        "reward_mean": 0.96,
+        "reward_min": 0.46,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5abd83bd5542993062266cb8",
+          "hotpotqa_5a89cc495542992e4fca83c8"
+        ],
+        "update": 9,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 25,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.5,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5436507936507937,
+            "DocumentPrecision": 0.38035714285714284,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.10333333333333333,
+            "MeanToolCalls": 2.125,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.37803030303030305,
+            "SentencePrecision": 0.25,
+            "SentenceRecall": 0.7916666666666666
+          },
+          "n_decisions": 25,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 17
+        },
+        "groups": [
+          {
+            "advantages": [
+              -1.717684313306645,
+              0.38170762517925455,
+              0.6679883440636953,
+              0.6679883440636953
+            ],
+            "max": -0.2066666666666667,
+            "mean": -0.25333333333333335,
+            "min": -0.37333333333333335,
+            "rewards": [
+              -0.37333333333333335,
+              -0.22666666666666668,
+              -0.2066666666666667,
+              -0.2066666666666667
+            ],
+            "std": 0.06976149845485449,
+            "task_id": "hotpotqa_5abc53ed5542996583600443",
+            "zero_variance": false
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8cc6c7554299441c6b9ef8",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": -0.015181054136101218,
+            "action_loss_unweighted_mean": -0.010665771121243353,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.8001839518547058,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.11506360509292562,
+            "objective_loss": 0.0017168837330245879,
+            "policy_entropy": 0.026089737597611816,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.02708787767434842,
+            "tokens": 21.32
+          },
+          {
+            "action_loss_token_weighted_mean": -0.015527712965944806,
+            "action_loss_unweighted_mean": -0.01139836384358099,
+            "clip_fraction": 0.0042105263471603396,
+            "epoch": 2,
+            "grad_norm": 0.23679986596107483,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.12153745223843998,
+            "objective_loss": 0.0011976618370681535,
+            "policy_entropy": 0.025186913369282884,
+            "ratio_mean": 0.9992227029800415,
+            "sampled_token_nll": 0.028300675111313466,
+            "tokens": 21.32
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.3958333333333333,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.0425,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.10333333333333333,
+        "reward_min": -0.37333333333333335,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5abc53ed5542996583600443",
+          "hotpotqa_5a8cc6c7554299441c6b9ef8"
+        ],
+        "update": 10,
+        "zero_variance_groups": 1
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.5,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5180555555555556,
+            "DocumentPrecision": 0.4107142857142857,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.02250000000000002,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.30934343434343436,
+            "SentencePrecision": 0.20982142857142855,
+            "SentenceRecall": 0.625
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8e08b05542995085b37394",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.415,
+            "mean": -0.415,
+            "min": -0.415,
+            "rewards": [
+              -0.415,
+              -0.415,
+              -0.415,
+              -0.415
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a7b663855429927d897bfad",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0030754679686399574,
+            "action_loss_unweighted_mean": 0.008492298096796379,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.007199194747954607,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.2123074624339045,
+            "objective_loss": 0.0031385548936668783,
+            "policy_entropy": 0.010658769834192535,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.010791559666207226,
+            "tokens": 19.333333333333332
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0030743214279285395,
+            "action_loss_unweighted_mean": 0.008490956843711053,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.006716945208609104,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.21227393459695446,
+            "objective_loss": 0.0031374739191960543,
+            "policy_entropy": 0.011092565688786322,
+            "ratio_mean": 1.0002824366092682,
+            "sampled_token_nll": 0.01053058108118421,
+            "tokens": 19.333333333333332
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.3125,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.02250000000000002,
+        "reward_min": -0.415,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a8e08b05542995085b37394",
+          "hotpotqa_5a7b663855429927d897bfad"
+        ],
+        "update": 11,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.25,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.09523809523809525,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.75,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5069444444444444,
+            "DocumentPrecision": 0.3630952380952381,
+            "DocumentRecall": 0.875,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.025641025641025637,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.08500000000000002,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.3055555555555556,
+            "SentencePrecision": 0.1919642857142857,
+            "SentenceRecall": 0.75
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8708c655429960ec39b702",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.29,
+            "mean": -0.29,
+            "min": -0.29,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.29
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a88ac955542997e5c09a6a3",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0018996672567576413,
+            "action_loss_unweighted_mean": 0.006798560223430931,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.009486034512519836,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.16996400931227626,
+            "objective_loss": 0.0018391538760624826,
+            "policy_entropy": 0.008134694736168133,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.0045874215059787575,
+            "tokens": 25.25
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0019001581796021167,
+            "action_loss_unweighted_mean": 0.006800332065777857,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.009458799846470356,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.17000830880823303,
+            "objective_loss": 0.0018396179657429457,
+            "policy_entropy": 0.008064075609785889,
+            "ratio_mean": 1.0000453690687816,
+            "sampled_token_nll": 0.004542132543671566,
+            "tokens": 25.25
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.375,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.08500000000000002,
+        "reward_min": -0.29,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a8708c655429960ec39b702",
+          "hotpotqa_5a88ac955542997e5c09a6a3"
+        ],
+        "update": 12,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 25,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.5,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.3715277777777778,
+            "DocumentPrecision": 0.2470238095238095,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.04083333333333333,
+            "MeanToolCalls": 2.125,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.319949494949495,
+            "SentencePrecision": 0.21205357142857142,
+            "SentenceRecall": 0.6666666666666666
+          },
+          "n_decisions": 25,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 17
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8050ce5542996402f6a4b7",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.5707597038168014,
+              0.5707597038168014,
+              0.5707597038168014,
+              -1.7122791114504043
+            ],
+            "max": -0.37333333333333335,
+            "mean": -0.37833333333333335,
+            "min": -0.39333333333333337,
+            "rewards": [
+              -0.37333333333333335,
+              -0.37333333333333335,
+              -0.37333333333333335,
+              -0.39333333333333337
+            ],
+            "std": 0.008660254037844393,
+            "task_id": "hotpotqa_5ae0ae595542993d6555ec12",
+            "zero_variance": false
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.09495757667901769,
+            "action_loss_unweighted_mean": 0.07155071427793018,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.9519724249839783,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.07648858325353002,
+            "objective_loss": 0.0010124576492671622,
+            "policy_entropy": 0.023099110461771488,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.02332046057279513,
+            "tokens": 22.12
+          },
+          {
+            "action_loss_token_weighted_mean": 0.09394993932556492,
+            "action_loss_unweighted_mean": 0.06984746383480342,
+            "clip_fraction": 0.014913420528173446,
+            "epoch": 2,
+            "grad_norm": 0.4491994082927704,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.08373262582762335,
+            "objective_loss": 0.00024246690736617893,
+            "policy_entropy": 0.02313390949397444,
+            "ratio_mean": 1.0034448575973511,
+            "sampled_token_nll": 0.021055248868797206,
+            "tokens": 22.12
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.3333333333333333,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.0425,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.04083333333333333,
+        "reward_min": -0.39333333333333337,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a8050ce5542996402f6a4b7",
+          "hotpotqa_5ae0ae595542993d6555ec12"
+        ],
+        "update": 13,
+        "zero_variance_groups": 1
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 1.0,
+            "AnswerF1": 1.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": 2.0,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 1.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.4722222222222222,
+            "DocumentPrecision": 0.30952380952380953,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.5222222222222223,
+            "JointSuccess": 1.0,
+            "MeanEnvironmentReturn": 1.46,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.5222222222222223,
+            "SentencePrecision": 0.3571428571428571,
+            "SentenceRecall": 1.0
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 8,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 1.46,
+            "mean": 1.46,
+            "min": 1.46,
+            "rewards": [
+              1.46,
+              1.46,
+              1.46,
+              1.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5ae64cab5542991bbc9760be",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 1.46,
+            "mean": 1.46,
+            "min": 1.46,
+            "rewards": [
+              1.46,
+              1.46,
+              1.46,
+              1.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5ae64cbf5542992ae0d162c1",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0009853198160242858,
+            "action_loss_unweighted_mean": 0.0038239792122027835,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 1.2076933671778534e-05,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.09559949054673782,
+            "objective_loss": 0.000892359304771162,
+            "policy_entropy": 0.00030658182908032387,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 4.3065325447363044e-05,
+            "tokens": 27.166666666666668
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0009853199681958058,
+            "action_loss_unweighted_mean": 0.003823979971620029,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 1.259743748960318e-05,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.09559949618775954,
+            "objective_loss": 0.0008923595304395349,
+            "policy_entropy": 0.0003110354729111026,
+            "ratio_mean": 0.9999993642171224,
+            "sampled_token_nll": 4.372662169771502e-05,
+            "tokens": 27.166666666666668
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.5,
+          "invalid_action": 0.0,
+          "premature_final_answer": 0.0,
+          "task_success": 1.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 1.46,
+        "reward_mean": 1.46,
+        "reward_min": 1.46,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5ae64cab5542991bbc9760be",
+          "hotpotqa_5ae64cbf5542992ae0d162c1"
+        ],
+        "update": 14,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5357142857142858,
+            "DocumentPrecision": 0.3666666666666667,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.12666666666666665,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.4040404040404041,
+            "SentencePrecision": 0.26785714285714285,
+            "SentenceRecall": 0.8333333333333333
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.2066666666666667,
+            "mean": -0.2066666666666667,
+            "min": -0.2066666666666667,
+            "rewards": [
+              -0.2066666666666667,
+              -0.2066666666666667,
+              -0.2066666666666667,
+              -0.2066666666666667
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a77b91255429967ab105244",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5ae5e2285542996de7b71a5a",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.002327629071377965,
+            "action_loss_unweighted_mean": 0.0074186351496703384,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.0030652089044451714,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.18546587719319874,
+            "objective_loss": 0.0023276288993656635,
+            "policy_entropy": 0.014382304748826062,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.00455877595459242,
+            "tokens": 22.333333333333332
+          },
+          {
+            "action_loss_token_weighted_mean": 0.002324932364916625,
+            "action_loss_unweighted_mean": 0.007415976262844293,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.0011735270963981748,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.18539940191623336,
+            "objective_loss": 0.0023249323712661862,
+            "policy_entropy": 0.013863097405436434,
+            "ratio_mean": 1.000611235698064,
+            "sampled_token_nll": 0.003971762306870612,
+            "tokens": 22.333333333333332
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.41666666666666663,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.12666666666666665,
+        "reward_min": -0.2066666666666667,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a77b91255429967ab105244",
+          "hotpotqa_5ae5e2285542996de7b71a5a"
+        ],
+        "update": 15,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.5,
+            "AnswerF1": 0.5,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": 4.0,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 1.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.6222222222222222,
+            "DocumentPrecision": 0.47619047619047616,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.22222222222222224,
+            "JointSuccess": 0.5,
+            "MeanEnvironmentReturn": 0.96,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.4222222222222223,
+            "SentencePrecision": 0.26785714285714285,
+            "SentenceRecall": 1.0
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 4,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 1.46,
+            "mean": 1.46,
+            "min": 1.46,
+            "rewards": [
+              1.46,
+              1.46,
+              1.46,
+              1.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5abc0e30554299700f9d77c5",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a773a135542994aec3b7235",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.001787736929133532,
+            "action_loss_unweighted_mean": 0.005320640075934497,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 8.144081948557869e-05,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.13301601125039317,
+            "objective_loss": 0.0017991726053878665,
+            "policy_entropy": 0.0022921302076429127,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.0003096708041994134,
+            "tokens": 20.833333333333332
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0017876233401147852,
+            "action_loss_unweighted_mean": 0.005320299471795649,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.0001353436819044873,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.1330074884635156,
+            "objective_loss": 0.0017990581836784258,
+            "policy_entropy": 0.002328020576387644,
+            "ratio_mean": 0.9999976952870687,
+            "sampled_token_nll": 0.00031201739511743654,
+            "tokens": 20.833333333333332
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.5,
+          "invalid_action": 0.0,
+          "premature_final_answer": 0.0,
+          "task_success": 0.5,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 1.46,
+        "reward_mean": 0.96,
+        "reward_min": 0.46,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5abc0e30554299700f9d77c5",
+          "hotpotqa_5a773a135542994aec3b7235"
+        ],
+        "update": 16,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 1.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.65,
+            "DocumentPrecision": 0.5,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.46,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.5222222222222223,
+            "SentencePrecision": 0.3571428571428571,
+            "SentenceRecall": 1.0
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8a30ad5542992d82986eec",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8fa235554299458435d6a2",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0007544630415029624,
+            "action_loss_unweighted_mean": 0.0025507974433074485,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 2.3989380224520573e-06,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.06376993922589928,
+            "objective_loss": 0.0007544629916083068,
+            "policy_entropy": 0.0010173555945610286,
+            "ratio_mean": 0.9999999900658926,
+            "sampled_token_nll": 0.00013345469490862646,
+            "tokens": 23.666666666666668
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0007544649342522448,
+            "action_loss_unweighted_mean": 0.002550804247728876,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 1.93994401342934e-06,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.0637701075902034,
+            "objective_loss": 0.0007544649415649474,
+            "policy_entropy": 0.0010326812847215735,
+            "ratio_mean": 0.9999986886978149,
+            "sampled_token_nll": 0.00013476488978388565,
+            "tokens": 23.666666666666668
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.5,
+          "invalid_action": 0.0,
+          "premature_final_answer": 0.0,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.46,
+        "reward_min": 0.46,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a8a30ad5542992d82986eec",
+          "hotpotqa_5a8fa235554299458435d6a2"
+        ],
+        "update": 17,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 1.0,
+            "CompleteSentenceEvidence": 0.5,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.5555555555555556,
+            "DocumentPrecision": 0.39285714285714285,
+            "DocumentRecall": 1.0,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": 0.12666666666666665,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.4085858585858586,
+            "SentencePrecision": 0.27232142857142855,
+            "SentenceRecall": 0.8333333333333333
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": 0.46,
+            "mean": 0.46,
+            "min": 0.46,
+            "rewards": [
+              0.46,
+              0.46,
+              0.46,
+              0.46
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5abf037a5542993fe9a41dbe",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.2066666666666667,
+            "mean": -0.2066666666666667,
+            "min": -0.2066666666666667,
+            "rewards": [
+              -0.2066666666666667,
+              -0.2066666666666667,
+              -0.2066666666666667,
+              -0.2066666666666667
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5ac46c0c554299204fd21f44",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.0019235270992272958,
+            "action_loss_unweighted_mean": 0.005780567612175808,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.0012604566290974617,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.1445141993460234,
+            "objective_loss": 0.00197733366076136,
+            "policy_entropy": 0.0038564775710796364,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.007536244989978513,
+            "tokens": 21.041666666666668
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0019253448923093415,
+            "action_loss_unweighted_mean": 0.005782095423071899,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.0025775479152798653,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.14455238724496325,
+            "objective_loss": 0.001978944812435657,
+            "policy_entropy": 0.0035175544223609834,
+            "ratio_mean": 0.9998970230420431,
+            "sampled_token_nll": 0.0076507771923388646,
+            "tokens": 21.041666666666668
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.41666666666666663,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.25,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": 0.46,
+        "reward_mean": 0.12666666666666665,
+        "reward_min": -0.2066666666666667,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5abf037a5542993fe9a41dbe",
+          "hotpotqa_5ac46c0c554299204fd21f44"
+        ],
+        "update": 18,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.0,
+            "AnswerEM": 0.5,
+            "AnswerF1": 0.5,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.33333333333333337,
+            "DocumentPrecision": 0.21428571428571427,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.1,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": -0.29,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.2,
+            "SentencePrecision": 0.125,
+            "SentenceRecall": 0.5
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.29,
+            "mean": -0.29,
+            "min": -0.29,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.29
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a822d4655429926c1cdae45",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.29,
+            "mean": -0.29,
+            "min": -0.29,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.29
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a8ba093554299240d9c203f",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.002521891567825645,
+            "action_loss_unweighted_mean": 0.007625671015073669,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.0002988610358443111,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.19064178515580332,
+            "objective_loss": 0.002449394320137799,
+            "policy_entropy": 0.007359913810647613,
+            "ratio_mean": 1.0,
+            "sampled_token_nll": 0.008433994717430929,
+            "tokens": 21.166666666666668
+          },
+          {
+            "action_loss_token_weighted_mean": 0.002526333950424315,
+            "action_loss_unweighted_mean": 0.0076303622040920045,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.005953697022050619,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.19075904881189368,
+            "objective_loss": 0.0024536192358937114,
+            "policy_entropy": 0.007220803470328802,
+            "ratio_mean": 0.9993269989887873,
+            "sampled_token_nll": 0.009189252150918037,
+            "tokens": 21.166666666666668
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.25,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.5,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": -0.29,
+        "reward_mean": -0.29,
+        "reward_min": -0.29,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5a822d4655429926c1cdae45",
+          "hotpotqa_5a8ba093554299240d9c203f"
+        ],
+        "update": 19,
+        "zero_variance_groups": 2
+      },
+      {
+        "decisions": 24,
+        "episodes": 8,
+        "evaluation": {
+          "metrics": {
+            "AbstainRate": 0.75,
+            "AnswerEM": 0.0,
+            "AnswerF1": 0.0,
+            "BudgetStopRate": 0.0,
+            "CallsPerJointSuccess": null,
+            "CompleteDocumentEvidence": 0.5,
+            "CompleteSentenceEvidence": 0.0,
+            "DocumentEM": 0.0,
+            "DocumentF1": 0.3576388888888889,
+            "DocumentPrecision": 0.23511904761904762,
+            "DocumentRecall": 0.75,
+            "DuplicateCallRate": 0.0,
+            "FinalizerErrorRate": 0.0,
+            "InvalidActionRate": 0.0,
+            "JointEM": 0.0,
+            "JointF1": 0.0,
+            "JointSuccess": 0.0,
+            "MeanEnvironmentReturn": -0.29,
+            "MeanToolCalls": 2.0,
+            "SentenceEM": 0.0,
+            "SentenceF1": 0.20277777777777778,
+            "SentencePrecision": 0.12723214285714285,
+            "SentenceRecall": 0.5
+          },
+          "n_decisions": 24,
+          "n_joint_successes": 0,
+          "n_tasks": 8,
+          "n_tool_calls": 16
+        },
+        "groups": [
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.29,
+            "mean": -0.29,
+            "min": -0.29,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.29
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5adf01425542995ec70e8f53",
+            "zero_variance": true
+          },
+          {
+            "advantages": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max": -0.29,
+            "mean": -0.29,
+            "min": -0.29,
+            "rewards": [
+              -0.29,
+              -0.29,
+              -0.29,
+              -0.29
+            ],
+            "std": 0.0,
+            "task_id": "hotpotqa_5a76a59a5542993569682c72",
+            "zero_variance": true
+          }
+        ],
+        "optimization_episodes": 8,
+        "optimization_epochs": [
+          {
+            "action_loss_token_weighted_mean": 0.000900436915116806,
+            "action_loss_unweighted_mean": 0.0027566581850140153,
+            "clip_fraction": 0.0,
+            "epoch": 1,
+            "grad_norm": 0.019687939435243607,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.06891645794612078,
+            "objective_loss": 0.0009393140753672924,
+            "policy_entropy": 0.028152505526391987,
+            "ratio_mean": 0.9999999900658926,
+            "sampled_token_nll": 0.036602582150408125,
+            "tokens": 22.375
+          },
+          {
+            "action_loss_token_weighted_mean": 0.0009032038033204331,
+            "action_loss_unweighted_mean": 0.002759679352450609,
+            "clip_fraction": 0.0,
+            "epoch": 2,
+            "grad_norm": 0.018032565712928772,
+            "initial_logprob_max_error": 0.0,
+            "kl": 0.06899198504649788,
+            "objective_loss": 0.000941134709137259,
+            "policy_entropy": 0.02823777245166859,
+            "ratio_mean": 1.0003292833765347,
+            "sampled_token_nll": 0.03636570930317854,
+            "tokens": 22.375
+          }
+        ],
+        "reward_components_mean": {
+          "budget_exhausted": 0.0,
+          "duplicate_call": 0.0,
+          "evidence_coverage": 0.25,
+          "invalid_action": 0.0,
+          "premature_final_answer": -0.5,
+          "task_success": 0.0,
+          "tool_call_cost": -0.04,
+          "valid_action_format": 0.0
+        },
+        "reward_max": -0.29,
+        "reward_mean": -0.29,
+        "reward_min": -0.29,
+        "stop_reason_counts": {
+          "final_answer": 8
+        },
+        "task_ids": [
+          "hotpotqa_5adf01425542995ec70e8f53",
+          "hotpotqa_5a76a59a5542993569682c72"
+        ],
+        "update": 20,
+        "zero_variance_groups": 2
+      }
+    ]
+  }
+}

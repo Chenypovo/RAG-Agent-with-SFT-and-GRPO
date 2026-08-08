@@ -1,0 +1,35 @@
+{
+  "bm25_records": 77864,
+  "config": "distractor",
+  "corpus_records": 77864,
+  "dataset": "hotpotqa/hotpot_qa",
+  "evidence_granularity": "sentence",
+  "files": {
+    "bm25.json": "cd0d0d17ec13418f7bc551a2b83ee52f12fda3657f464f7ff9d809ecf34c5324",
+    "corpus.jsonl": "ed72218eed0ed98b85bd7dd02a6f5a6ead75938725b65bbee40e73144185159d",
+    "tasks.jsonl": "831e48a818242c683bb3d76f62844c0428e8ec02508c166a1a3db2ba4b3d9947",
+    "tasks_test.jsonl": "0b5a6ddb00a23ec872b2b3ad76e4bfd41fb191eecc506a640e9c20f4f657da55",
+    "tasks_train.jsonl": "df305837d21cd19b315531f78cc62bf89faeb0a3f250128f1adf1870b6f0d2c3",
+    "tasks_validation.jsonl": "ff86c47f71c3f44dd1990182dc91d6a3208bcd9a4b9460d81ebd677652112e6d"
+  },
+  "license": "CC BY-SA 4.0",
+  "offset": 0,
+  "partition_counts": {
+    "test": 191,
+    "train": 1617,
+    "validation": 191
+  },
+  "partition_strategy": "context_document_components_sha256_80_10_10",
+  "requested_source_rows": 2000,
+  "skipped_row_details": [
+    {
+      "reason": "supporting sentence is absent: Minoru Suzuki#2",
+      "row_id": "5a7b23ca554299042af8f703"
+    }
+  ],
+  "skipped_rows": 1,
+  "source_rows": 1999,
+  "source_split": "train",
+  "source_url": "https://huggingface.co/datasets/hotpotqa/hotpot_qa",
+  "tasks": 1999
+}

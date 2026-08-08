@@ -1,0 +1,40 @@
+{"query_id":"q001","query":"这个 RAG Agent 的整体流水线分成哪几层？","query_image":""}
+{"query_id":"q002","query":"路由置信度低于多少时会同时触发文档检索和记忆检索？","query_image":""}
+{"query_id":"q003","query":"当路由器无法判断问题类型时，系统会怎样降级处理？","query_image":""}
+{"query_id":"q004","query":"文档证据和长期记忆在回答上下文里有什么区别？","query_image":""}
+{"query_id":"q005","query":"结构化 chunking 默认的 chunk_size 和 overlap 分别是多少 token？","query_image":""}
+{"query_id":"q006","query":"每个 chunk 的 metadata 里会保存哪些定位字段？","query_image":""}
+{"query_id":"q007","query":"没有标题的文档会如何切分？","query_image":""}
+{"query_id":"q008","query":"为什么 Markdown 表格切分时要复制表头？","query_image":""}
+{"query_id":"q009","query":"LanceDB 表里默认保存哪些核心字段？","query_image":""}
+{"query_id":"q010","query":"系统里的 doc_id 是按照什么规则生成的？","query_image":""}
+{"query_id":"q011","query":"LanceDB 不可用时系统会退回到哪个向量后端？","query_image":""}
+{"query_id":"q012","query":"FAISS 和 LanceDB 在这个项目里的适用场景有什么差异？","query_image":""}
+{"query_id":"q013","query":"BM25 和向量检索的结果是如何融合排序的？","query_image":""}
+{"query_id":"q014","query":"RRF 融合默认使用的 rrf_k、vector_k 和 bm25_k 是多少？","query_image":""}
+{"query_id":"q015","query":"为什么混合检索不直接比较向量距离和 BM25 原始分数？","query_image":""}
+{"query_id":"q016","query":"只有图片没有文本的问题进入 hybrid 模式时会怎么处理？","query_image":""}
+{"query_id":"q017","query":"系统默认使用哪个 BGE reranker 模型？","query_image":""}
+{"query_id":"q018","query":"Reranker 精排候选数和最终保留证据数默认是多少？","query_image":""}
+{"query_id":"q019","query":"精排阶段为什么仍然需要做 source 去重？","query_image":""}
+{"query_id":"q020","query":"如果 torch 或 transformers 没装，reranker 模块会怎样降级？","query_image":""}
+{"query_id":"q021","query":"长期记忆事实包含哪些字段？","query_image":""}
+{"query_id":"q022","query":"记忆事实推荐使用哪些 fact_object 类别？","query_image":""}
+{"query_id":"q023","query":"新事实和旧事实冲突时，长期记忆模块如何处理？","query_image":""}
+{"query_id":"q024","query":"记忆召回评测建议报告哪些 Recall 和 MRR 指标？","query_image":""}
+{"query_id":"q025","query":"生成器收到的文档证据和记忆证据分别包含哪些标识？","query_image":""}
+{"query_id":"q026","query":"没有检索到证据时，系统默认返回什么 fallback 文案？","query_image":""}
+{"query_id":"q027","query":"涉及参数的回答为什么要优先引用包含具体数值的证据？","query_image":""}
+{"query_id":"q028","query":"证据约束生成如何避免模型把不确定内容说成确定结论？","query_image":""}
+{"query_id":"q029","query":"文档检索评测的 queries 和 qrels 分别需要哪些字段？","query_image":""}
+{"query_id":"q030","query":"文档检索和记忆召回分别建议报告哪些 K 上的指标？","query_image":""}
+{"query_id":"q031","query":"为什么建索引后还要用 metadatas.json 校验 qrels？","query_image":""}
+{"query_id":"q032","query":"跨段综合问题的 qrels 应该如何标注？","query_image":""}
+{"query_id":"q033","query":"图片和视频进入知识库时会被转换成什么样的记录？","query_image":""}
+{"query_id":"q034","query":"OCR 失败时系统如何降级，是否还会保留图片路径？","query_image":""}
+{"query_id":"q035","query":"视频抽帧默认间隔和最多抽取帧数是多少？","query_image":""}
+{"query_id":"q036","query":"CLIP 多模态检索默认使用哪个模型和设备？","query_image":""}
+{"query_id":"q037","query":"本地 embedding 默认模型和设备是什么？","query_image":""}
+{"query_id":"q038","query":"没有 API key 时部署配置建议怎么选择 embedding provider？","query_image":""}
+{"query_id":"q039","query":"合成评测文档、默认上传文件和索引文件分别放在哪些目录？","query_image":""}
+{"query_id":"q040","query":"为什么不建议把 memory.db 提交到公开仓库？","query_image":""}

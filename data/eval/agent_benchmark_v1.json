@@ -1,0 +1,1519 @@
+{
+  "benchmark_id": "personal-rag-agent-audit-v1",
+  "version": 1,
+  "language": "zh-CN",
+  "purpose": "Deterministic orchestration benchmark for the fixed-route MemoryAgent and multi-step ToolAgent.",
+  "scoring_contract": {
+    "task_success": "answer_correct AND tool_multiset_exact AND evidence_correct AND memory_state_correct",
+    "numeric_answers": "A number is accepted only when it appears after an explicit 最终答案 label.",
+    "reserved_tasks": "Tasks with enabled=false document future coverage and are excluded from all metrics."
+  },
+  "tasks": [
+    {
+      "id": "doc_policy_deadline",
+      "category": "document_retrieval",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "根据报销政策，交易发生后最迟多少天提交申请？",
+      "documents": [
+        {
+          "doc_id": "expense_policy.md#0",
+          "source": "expense_policy.md",
+          "chunk_id": 0,
+          "text": "报销申请必须在交易发生后的30个自然日内提交，逾期需要部门负责人额外审批。",
+          "match_terms": ["报销", "提交期限", "30个自然日"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "报销申请 提交期限"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "报销申请 提交期限"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1
+        },
+        "required_doc_ids": ["expense_policy.md#0"],
+        "required_memory_contains": [],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["30个自然日"],
+          "gold": "最迟为30个自然日。"
+        }
+      }
+    },
+    {
+      "id": "memory_read_allergy",
+      "category": "memory_read",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "根据你记得的个人信息，我需要避开什么食物？",
+      "documents": [],
+      "setup_memories": [
+        {
+          "id": "mem_allergy",
+          "fact_object": "dietary_restriction",
+          "fact_content": "饮食禁忌是花生"
+        },
+        {
+          "id": "mem_color",
+          "fact_object": "preference",
+          "fact_content": "喜欢的颜色是蓝色"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "饮食禁忌 花生"
+      },
+      "loop_script": [
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "饮食禁忌 花生",
+            "k": 3
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "read_memory": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": ["花生"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["花生"],
+          "gold": "你需要避开花生。"
+        }
+      }
+    },
+    {
+      "id": "memory_write_commute",
+      "category": "memory_write",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "请记住：我的通勤方式是骑自行车。",
+      "documents": [],
+      "setup_memories": [],
+      "write_fact": {
+        "fact_object": "commute",
+        "fact_content": "通勤方式是骑自行车",
+        "visibility": "PUBLIC"
+      },
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": false,
+        "write_memory": true,
+        "rewritten_query": "记录通勤方式"
+      },
+      "loop_script": [
+        {
+          "tool": "write_memory",
+          "args": {}
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "write_memory": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "memory_after_contains": ["骑自行车"],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["已记住"],
+          "gold": "已记住你的通勤方式。"
+        }
+      }
+    },
+    {
+      "id": "doc_calculation_total",
+      "category": "document_plus_calculation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "北区上午和下午一共处理了多少件工单？请给出最终答案。",
+      "documents": [
+        {
+          "doc_id": "operations_daily.md#0",
+          "source": "operations_daily.md",
+          "chunk_id": 0,
+          "text": "北区上午处理18件工单，下午处理24件工单。",
+          "match_terms": ["北区", "上午", "下午", "工单"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "北区 上午 下午 工单数量"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "北区 上午 下午 工单数量"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "18+24"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1,
+          "calculator": 1
+        },
+        "required_doc_ids": ["operations_daily.md#0"],
+        "required_memory_contains": [],
+        "required_calculation": 42,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 42,
+          "gold": "最终答案：42"
+        }
+      }
+    },
+    {
+      "id": "docs_memory_recommendation",
+      "category": "document_plus_memory",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "结合周三菜单和我的饮食禁忌，奶酪焗饭适合我吗？",
+      "documents": [
+        {
+          "doc_id": "cafeteria_menu.md#2",
+          "source": "cafeteria_menu.md",
+          "chunk_id": 2,
+          "text": "周三午餐主菜是奶酪焗饭，配菜是烤南瓜。",
+          "match_terms": ["周三菜单", "奶酪焗饭", "周三午餐"]
+        }
+      ],
+      "setup_memories": [
+        {
+          "id": "mem_dairy",
+          "fact_object": "dietary_restriction",
+          "fact_content": "饮食上避免乳制品"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "周三菜单 奶酪焗饭"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "周三菜单 奶酪焗饭"
+          }
+        },
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "饮食禁忌 乳制品"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1,
+          "read_memory": 1
+        },
+        "required_doc_ids": ["cafeteria_menu.md#2"],
+        "required_memory_contains": ["乳制品"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["不适合", "乳制品"],
+          "gold": "不适合，因为奶酪属于乳制品。"
+        }
+      }
+    },
+    {
+      "id": "multidoc_calc_sla_gap",
+      "category": "multi_retrieval_plus_calculation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "Alpha 与 Beta 服务的响应时限相差多少小时？请给出最终答案。",
+      "documents": [
+        {
+          "doc_id": "alpha_sla.md#0",
+          "source": "alpha_sla.md",
+          "chunk_id": 0,
+          "text": "Alpha 服务的严重故障响应时限是4小时。",
+          "match_terms": ["Alpha", "Alpha 响应时间", "Alpha 服务"]
+        },
+        {
+          "doc_id": "beta_sla.md#0",
+          "source": "beta_sla.md",
+          "chunk_id": 0,
+          "text": "Beta 服务的严重故障响应时限是6小时。",
+          "match_terms": ["Beta", "Beta 响应时间", "Beta 服务"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "Alpha Beta 服务 响应时限"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "Alpha 服务 响应时间"
+          }
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "Beta 服务 响应时间"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "6-4"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 2,
+          "calculator": 1
+        },
+        "required_doc_ids": ["alpha_sla.md#0", "beta_sla.md#0"],
+        "required_memory_contains": [],
+        "required_calculation": 2,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 2,
+          "gold": "最终答案：2"
+        }
+      }
+    },
+    {
+      "id": "unanswerable_launch_code",
+      "category": "insufficient_evidence_refusal",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "项目 Orion 的生产环境上线密码是什么？",
+      "documents": [],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "Orion 生产环境 上线密码"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "Orion 生产环境 上线密码"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "expect_no_documents": true,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "refusal",
+          "markers": ["证据不足", "没有足够证据", "无法根据现有证据"],
+          "forbidden_values": ["密码是", "口令是"],
+          "gold": "证据不足。"
+        }
+      }
+    },
+    {
+      "id": "parse_recovery_incident_owner",
+      "category": "control_recovery",
+      "cohort": "robustness",
+      "enabled": true,
+      "question": "安全事件应由谁负责上报？",
+      "documents": [
+        {
+          "doc_id": "incident_policy.md#1",
+          "source": "incident_policy.md",
+          "chunk_id": 1,
+          "text": "安全事件必须由值班经理在15分钟内上报。",
+          "match_terms": ["安全事件", "负责上报", "值班经理"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "安全事件 负责上报"
+      },
+      "loop_script": [
+        {
+          "raw": "I should search first."
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "安全事件 负责上报"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1
+        },
+        "required_doc_ids": ["incident_policy.md#1"],
+        "required_memory_contains": [],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["值班经理"],
+          "gold": "应由值班经理负责上报。"
+        }
+      }
+    },
+    {
+      "id": "memory_write_then_read_trip",
+      "category": "stateful_multi_tool",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "请记住我下一次旅行的目的地是京都，并告诉我刚记住的目的地。",
+      "documents": [],
+      "setup_memories": [],
+      "write_fact": {
+        "fact_object": "travel_plan",
+        "fact_content": "下一次旅行的目的地是京都",
+        "visibility": "PUBLIC"
+      },
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": true,
+        "write_memory": true,
+        "rewritten_query": "下一次旅行目的地"
+      },
+      "loop_script": [
+        {
+          "tool": "write_memory",
+          "args": {}
+        },
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "下一次旅行目的地 京都"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "write_memory": 1,
+          "read_memory": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": ["京都"],
+        "memory_after_contains": ["京都"],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["已记住", "京都"],
+          "gold": "已记住，目的地是京都。"
+        }
+      }
+    },
+    {
+      "id": "doc_refund_owner",
+      "category": "document_retrieval",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "企业客户退款应由哪个团队处理？",
+      "documents": [
+        {
+          "doc_id": "support_handbook.md#3",
+          "source": "support_handbook.md",
+          "chunk_id": 3,
+          "text": "企业客户退款统一由财务支持组处理，普通客服不得直接审批。",
+          "match_terms": ["企业客户退款", "退款团队", "财务支持组"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "企业客户退款 处理团队"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "企业客户退款 处理团队"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1
+        },
+        "required_doc_ids": ["support_handbook.md#3"],
+        "required_memory_contains": [],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["财务支持组"],
+          "gold": "应由财务支持组处理。"
+        }
+      }
+    },
+    {
+      "id": "docs_memory_workshop_format",
+      "category": "document_plus_memory",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "结合活动安排和我的工作方式偏好，这场培训适合我吗？",
+      "documents": [
+        {
+          "doc_id": "training_schedule.md#0",
+          "source": "training_schedule.md",
+          "chunk_id": 0,
+          "text": "本次培训只提供线下参加方式，不设线上直播或回放。",
+          "match_terms": ["活动安排", "培训方式", "线下参加"]
+        }
+      ],
+      "setup_memories": [
+        {
+          "id": "mem_remote",
+          "fact_object": "work_preference",
+          "fact_content": "只参加可以远程进行的培训"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "培训方式 线下参加"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "培训方式 线下参加"
+          }
+        },
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "培训 工作方式 远程偏好"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1,
+          "read_memory": 1
+        },
+        "required_doc_ids": ["training_schedule.md#0"],
+        "required_memory_contains": ["远程"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["不适合", "线下"],
+          "gold": "不适合，因为活动只提供线下参加方式。"
+        }
+      }
+    },
+    {
+      "id": "calculator_pure_product",
+      "category": "calculator_only",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "计算 17 乘以 6，并给出最终答案。",
+      "documents": [],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "计算 17 乘以 6"
+      },
+      "loop_script": [
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "17*6"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "calculator": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "required_calculation": 102,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 102,
+          "gold": "最终答案：102"
+        }
+      }
+    },
+    {
+      "id": "doc_calculation_average",
+      "category": "document_plus_calculation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "前三天新增客户数的平均值是多少？请给出最终答案。",
+      "documents": [
+        {
+          "doc_id": "sales_weekly.md#1",
+          "source": "sales_weekly.md",
+          "chunk_id": 1,
+          "text": "本周前三天新增客户数依次为12、15、18。",
+          "match_terms": ["前三天", "新增客户", "平均值"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "前三天 新增客户 数量"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "前三天 新增客户 数量"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "(12+15+18)/3"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1,
+          "calculator": 1
+        },
+        "required_doc_ids": ["sales_weekly.md#1"],
+        "required_memory_contains": [],
+        "required_calculation": 15,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 15,
+          "gold": "最终答案：15"
+        }
+      }
+    },
+    {
+      "id": "multidoc_calculation_capacity",
+      "category": "multi_retrieval_plus_calculation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "东区与西区机房合计可容纳多少台服务器？请给出最终答案。",
+      "documents": [
+        {
+          "doc_id": "east_capacity.md#0",
+          "source": "east_capacity.md",
+          "chunk_id": 0,
+          "text": "东区机房剩余容量为40台服务器。",
+          "match_terms": ["东区机房", "东区容量"]
+        },
+        {
+          "doc_id": "west_capacity.md#0",
+          "source": "west_capacity.md",
+          "chunk_id": 0,
+          "text": "西区机房剩余容量为35台服务器。",
+          "match_terms": ["西区机房", "西区容量"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "东区机房 西区机房 剩余容量"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "东区机房 剩余容量"
+          }
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "西区机房 剩余容量"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "40+35"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 2,
+          "calculator": 1
+        },
+        "required_doc_ids": ["east_capacity.md#0", "west_capacity.md#0"],
+        "required_memory_contains": [],
+        "required_calculation": 75,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 75,
+          "gold": "最终答案：75"
+        }
+      }
+    },
+    {
+      "id": "bad_args_recovery_data_owner",
+      "category": "control_recovery",
+      "cohort": "robustness",
+      "enabled": true,
+      "question": "数据泄露事件应由谁牵头处理？",
+      "documents": [
+        {
+          "doc_id": "data_incident.md#0",
+          "source": "data_incident.md",
+          "chunk_id": 0,
+          "text": "数据泄露事件由数据保护官牵头处理，并通知安全团队。",
+          "match_terms": ["数据泄露", "牵头处理", "数据保护官"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "数据泄露 牵头处理"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {}
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "数据泄露 牵头处理"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 2
+        },
+        "required_doc_ids": ["data_incident.md#0"],
+        "required_memory_contains": [],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["数据保护官"],
+          "gold": "应由数据保护官牵头处理。"
+        }
+      }
+    },
+    {
+      "id": "colloquial_pronoun_snack_check",
+      "category": "colloquial_reference_document_memory",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "我之前说不能碰的那个，这盒点心里有吗？能吃不？",
+      "documents": [
+        {
+          "doc_id": "snack_label.md#0",
+          "source": "snack_label.md",
+          "chunk_id": 0,
+          "text": "杏仁酥配料包含扁桃仁（杏仁）、小麦粉和黄油。",
+          "match_terms": ["杏仁酥", "配料", "杏仁"]
+        }
+      ],
+      "setup_memories": [
+        {
+          "id": "mem_almond_allergy",
+          "fact_object": "dietary_restriction",
+          "fact_content": "对杏仁严重过敏"
+        },
+        {
+          "id": "mem_coriander",
+          "fact_object": "preference",
+          "fact_content": "不喜欢香菜"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "杏仁酥 配料 杏仁"
+      },
+      "loop_script": [
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "不能吃的食物 过敏"
+          }
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "杏仁酥 配料 杏仁"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "read_memory": 1,
+          "retrieve_docs": 1
+        },
+        "tool_sequence": ["read_memory", "retrieve_docs"],
+        "required_doc_ids": ["snack_label.md#0"],
+        "required_memory_contains": ["杏仁"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["不能吃", "杏仁"],
+          "forbidden_values": ["可以吃", "适合吃"],
+          "gold": "不能吃，这盒点心含杏仁，而你对杏仁严重过敏。"
+        }
+      }
+    },
+    {
+      "id": "multi_constraint_training_choice",
+      "category": "multi_constraint_multi_document_memory",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "照我之前说的时长偏好，周二和周四里，哪个是下班后、远程，而且不用主管批的？",
+      "documents": [
+        {
+          "doc_id": "training_tuesday.md#0",
+          "source": "training_tuesday.md",
+          "chunk_id": 0,
+          "text": "周二课程19:00开始，远程参加，60分钟，需要主管批准。",
+          "match_terms": ["周二课程", "周二", "19:00"]
+        },
+        {
+          "doc_id": "training_thursday.md#0",
+          "source": "training_thursday.md",
+          "chunk_id": 0,
+          "text": "周四课程19:30开始，远程参加，75分钟，无需主管批准。",
+          "match_terms": ["周四课程", "周四", "19:30"]
+        }
+      ],
+      "setup_memories": [
+        {
+          "id": "mem_training_duration",
+          "fact_object": "training_preference",
+          "fact_content": "单次培训最多接受90分钟"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "周二课程 周四课程 远程 主管批准"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "周二课程 时间 形式 主管批准"
+          }
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "周四课程 时间 形式 主管批准"
+          }
+        },
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "单次培训 时长偏好"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 2,
+          "read_memory": 1
+        },
+        "tool_counts_by_agent": {
+          "baseline": {
+            "retrieve_docs": 1,
+            "read_memory": 1
+          },
+          "loop": {
+            "retrieve_docs": 2,
+            "read_memory": 1
+          }
+        },
+        "tool_sequence_by_agent": {
+          "baseline": ["read_memory", "retrieve_docs"],
+          "loop": ["retrieve_docs", "retrieve_docs", "read_memory"]
+        },
+        "required_doc_ids": [
+          "training_tuesday.md#0",
+          "training_thursday.md#0"
+        ],
+        "required_memory_contains": ["90分钟"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["周四", "远程", "无需主管批准", "75分钟"],
+          "forbidden_values": ["周二更合适"],
+          "gold": "周四合适：19:30开始、远程、75分钟，并且无需主管批准。"
+        }
+      }
+    },
+    {
+      "id": "duplicate_memory_backup_email",
+      "category": "duplicate_memory_read_resolution",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "我备用邮箱来着？直接给地址，别重复。",
+      "documents": [],
+      "setup_memories": [
+        {
+          "id": "mem_backup_email_1",
+          "fact_object": "backup_email",
+          "fact_content": "备用邮箱是 mira.work@example.com"
+        },
+        {
+          "id": "mem_backup_email_2",
+          "fact_object": "backup_email",
+          "fact_content": "备用联系邮箱：mira.work@example.com"
+        },
+        {
+          "id": "mem_work_email",
+          "fact_object": "work_email",
+          "fact_content": "工作邮箱是 mira@company.example"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "备用邮箱"
+      },
+      "loop_script": [
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "备用邮箱"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "read_memory": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": ["mira.work@example.com"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "exact",
+          "value": "mira.work@example.com",
+          "gold": "mira.work@example.com"
+        }
+      }
+    },
+    {
+      "id": "memory_unanswerable_last_checkup",
+      "category": "insufficient_memory_refusal",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "我上回体检是哪天来着？",
+      "documents": [],
+      "setup_memories": [
+        {
+          "id": "mem_blood_type",
+          "fact_object": "medical_profile",
+          "fact_content": "血型是A型"
+        },
+        {
+          "id": "mem_visit_preference",
+          "fact_object": "appointment_preference",
+          "fact_content": "看诊偏好上午"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "上次体检日期"
+      },
+      "loop_script": [
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "上次体检日期"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "read_memory": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": ["血型", "上午"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "refusal",
+          "markers": ["没有记录", "证据不足", "无法根据现有记忆确定"],
+          "forbidden_values": ["体检日期是", "上次体检是"],
+          "forbidden_patterns": [
+            "\\d{4}\\s*[年./-]\\s*\\d{1,2}",
+            "\\d{1,2}\\s*月\\s*\\d{1,2}\\s*日"
+          ],
+          "gold": "现有记忆没有记录上次体检日期。"
+        }
+      }
+    },
+    {
+      "id": "duplicate_memory_write_meeting",
+      "category": "duplicate_memory_write_resolution",
+      "cohort": "shared_core",
+      "enabled": true,
+      "question": "这条偏好应该已经有了，还是帮我记一下：每周五不安排会议。",
+      "documents": [],
+      "setup_memories": [
+        {
+          "id": "mem_friday_no_meeting",
+          "fact_object": "schedule_preference",
+          "fact_content": "每周五不安排会议"
+        }
+      ],
+      "write_fact": {
+        "fact_object": "schedule_preference",
+        "fact_content": "每周五不安排会议",
+        "visibility": "PUBLIC"
+      },
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": false,
+        "write_memory": true,
+        "rewritten_query": "记录周五不安排会议"
+      },
+      "loop_script": [
+        {
+          "tool": "write_memory",
+          "args": {}
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "write_memory": 1
+        },
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "memory_after_contains": ["每周五不安排会议"],
+        "memory_after_count": 1,
+        "answer": {
+          "kind": "contains_all",
+          "values": ["已记录"],
+          "gold": "已记录这条偏好，不会重复新增。"
+        }
+      }
+    },
+    {
+      "id": "personal_discount_plan_total",
+      "category": "document_memory_calculation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "按我之前记的员工折扣，买两个月 Pro 要付多少？给最终答案。",
+      "documents": [
+        {
+          "doc_id": "pricing.md#1",
+          "source": "pricing.md",
+          "chunk_id": 1,
+          "text": "Pro 套餐月费为120元。",
+          "match_terms": ["Pro", "月费", "套餐价格"]
+        }
+      ],
+      "setup_memories": [
+        {
+          "id": "mem_employee_discount",
+          "fact_object": "employee_discount",
+          "fact_content": "可使用15%的员工折扣"
+        }
+      ],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": true,
+        "write_memory": false,
+        "rewritten_query": "Pro 套餐 月费 员工折扣"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "Pro 套餐 月费"
+          }
+        },
+        {
+          "tool": "read_memory",
+          "args": {
+            "query": "员工折扣"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "120*2*(1-0.15)"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1,
+          "read_memory": 1,
+          "calculator": 1
+        },
+        "tool_sequence": ["retrieve_docs", "read_memory", "calculator"],
+        "required_doc_ids": ["pricing.md#1"],
+        "required_memory_contains": ["15%"],
+        "required_calculation": 204,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 204,
+          "gold": "最终答案：204"
+        }
+      }
+    },
+    {
+      "id": "multi_constraint_shipping_choice",
+      "category": "multi_condition_multi_document_calculation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "这单3箱、每箱8公斤，A和B都能收吗？在能收的里面选便宜的，分别算完再告诉我最终费用。",
+      "documents": [
+        {
+          "doc_id": "carrier_a.md#0",
+          "source": "carrier_a.md",
+          "chunk_id": 0,
+          "text": "A承运商单票上限30公斤，基础费20元，每公斤3元。",
+          "match_terms": ["A承运商", "A运费", "A上限"]
+        },
+        {
+          "doc_id": "carrier_b.md#0",
+          "source": "carrier_b.md",
+          "chunk_id": 0,
+          "text": "B承运商单票上限25公斤，基础费35元，每公斤2元。",
+          "match_terms": ["B承运商", "B运费", "B上限"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "A承运商 B承运商 上限 运费"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "A承运商 上限 运费"
+          }
+        },
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "B承运商 上限 运费"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "3*8"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "20+24*3"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "35+24*2"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 2,
+          "calculator": 3
+        },
+        "tool_sequence": [
+          "retrieve_docs",
+          "retrieve_docs",
+          "calculator",
+          "calculator",
+          "calculator"
+        ],
+        "required_doc_ids": ["carrier_a.md#0", "carrier_b.md#0"],
+        "required_memory_contains": [],
+        "required_calculations": [24, 92, 83],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["A：92", "B：83", "最终选择：B", "最终答案：83"],
+          "gold": "24公斤未超过两家的上限。A：92元，B：83元。最终选择：B，最终答案：83。"
+        }
+      }
+    },
+    {
+      "id": "calculator_error_then_retry",
+      "category": "tool_execution_error_recovery",
+      "cohort": "robustness",
+      "enabled": true,
+      "question": "审计日志每批12条，一共8批，合计多少条？给最终答案。",
+      "documents": [
+        {
+          "doc_id": "audit_log_summary.md#0",
+          "source": "audit_log_summary.md",
+          "chunk_id": 0,
+          "text": "本次审计日志共有8批，每批12条记录。",
+          "match_terms": ["审计日志", "批次", "每批"]
+        }
+      ],
+      "setup_memories": [],
+      "baseline_route": {
+        "use_docs": true,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "审计日志 批次 每批记录数"
+      },
+      "loop_script": [
+        {
+          "tool": "retrieve_docs",
+          "args": {
+            "query": "审计日志 批次 每批记录数"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "8×12"
+          }
+        },
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "8*12"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "retrieve_docs": 1,
+          "calculator": 2
+        },
+        "tool_sequence": ["retrieve_docs", "calculator", "calculator"],
+        "failed_tool_calls": 1,
+        "required_doc_ids": ["audit_log_summary.md#0"],
+        "required_memory_contains": [],
+        "required_calculation": 96,
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "labelled_number",
+          "value": 96,
+          "gold": "最终答案：96"
+        }
+      }
+    },
+    {
+      "id": "workspace_budget_lookup",
+      "category": "workspace_glob_grep_read",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "在工作区找到 2026 预算表，并报告研发预算总额。",
+      "documents": [],
+      "setup_memories": [],
+      "workspace_files": {
+        "finance/2026_budget.md": "# 2026 年预算\n研发预算总额：840万元\n市场预算总额：360万元\n",
+        "notes/archive.md": "2025 年预算已经归档，不作为本次查询依据。\n"
+      },
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "2026 预算表 研发预算总额"
+      },
+      "loop_script": [
+        {
+          "tool": "glob_files",
+          "args": {
+            "pattern": "**/*budget*.md"
+          }
+        },
+        {
+          "tool": "grep_text",
+          "args": {
+            "query": "研发预算总额",
+            "pattern": "**/*.md"
+          }
+        },
+        {
+          "tool": "read_file",
+          "args": {
+            "path": "finance/2026_budget.md"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "glob_files": 1,
+          "grep_text": 1,
+          "read_file": 1
+        },
+        "tool_sequence": ["glob_files", "grep_text", "read_file"],
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "required_artifact_contains": [
+          "finance/2026_budget.md",
+          "研发预算总额：840万元"
+        ],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["840万元"],
+          "forbidden_values": ["360万元"],
+          "gold": "研发预算总额为840万元。"
+        }
+      }
+    },
+    {
+      "id": "workspace_production_owner_locator",
+      "category": "workspace_multi_step_disambiguation",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "帮我在项目里找一下生产环境告警升级负责人，别拿开发环境的。",
+      "documents": [],
+      "setup_memories": [],
+      "workspace_files": {
+        "config/dev/service.yaml": "environment: development\nescalation_owner: dev-team\n",
+        "config/prod/ops.yaml": "environment: production\nescalation_owner: platform-oncall\n",
+        "README.md": "运行配置位于 config 目录。\n"
+      },
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "生产环境 告警升级负责人"
+      },
+      "loop_script": [
+        {
+          "tool": "glob_files",
+          "args": {
+            "pattern": "config/**/*.yaml"
+          }
+        },
+        {
+          "tool": "grep_text",
+          "args": {
+            "query": "escalation_owner",
+            "pattern": "config/**/*.yaml"
+          }
+        },
+        {
+          "tool": "read_file",
+          "args": {
+            "path": "config/prod/ops.yaml"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "glob_files": 1,
+          "grep_text": 1,
+          "read_file": 1
+        },
+        "tool_sequence": ["glob_files", "grep_text", "read_file"],
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "required_artifact_contains": [
+          "config/prod/ops.yaml",
+          "platform-oncall"
+        ],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "contains_all",
+          "values": ["platform-oncall"],
+          "forbidden_values": ["dev-team"],
+          "gold": "生产环境告警升级负责人是 platform-oncall。"
+        }
+      }
+    },
+    {
+      "id": "workspace_missing_migration_window",
+      "category": "workspace_insufficient_evidence_refusal",
+      "cohort": "extended_tools",
+      "enabled": true,
+      "question": "工作区里写没写“量子迁移窗口”具体是哪天？没有就直接说没有。",
+      "documents": [],
+      "setup_memories": [],
+      "workspace_files": {
+        "docs/migration.md": "数据库迁移流程要求先备份并完成回滚演练；本文没有安排具体窗口。\n",
+        "docs/release.md": "常规版本每周二发布。\n"
+      },
+      "baseline_route": {
+        "use_docs": false,
+        "use_memory": false,
+        "write_memory": false,
+        "rewritten_query": "量子迁移窗口 日期"
+      },
+      "loop_script": [
+        {
+          "tool": "glob_files",
+          "args": {
+            "pattern": "**/*.md"
+          }
+        },
+        {
+          "tool": "grep_text",
+          "args": {
+            "query": "量子迁移窗口",
+            "pattern": "**/*.md"
+          }
+        },
+        {
+          "final_answer": true
+        }
+      ],
+      "expected": {
+        "tool_counts": {
+          "glob_files": 1,
+          "grep_text": 1
+        },
+        "tool_sequence": ["glob_files", "grep_text"],
+        "required_doc_ids": [],
+        "required_memory_contains": [],
+        "required_artifact_contains": ["no text matches for: 量子迁移窗口"],
+        "memory_after_contains": [],
+        "answer": {
+          "kind": "refusal",
+          "markers": ["没有", "证据不足", "未找到"],
+          "forbidden_patterns": [
+            "\\d{4}\\s*[年./-]\\s*\\d{1,2}",
+            "\\d{1,2}\\s*月\\s*\\d{1,2}\\s*日"
+          ],
+          "gold": "工作区中没有找到“量子迁移窗口”的具体日期。"
+        }
+      }
+    }
+  ]
+}

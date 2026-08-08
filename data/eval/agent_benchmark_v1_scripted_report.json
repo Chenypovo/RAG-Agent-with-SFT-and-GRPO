@@ -1,0 +1,4194 @@
+{
+  "benchmark_id": "personal-rag-agent-audit-v1",
+  "benchmark_version": 1,
+  "dataset_sha256": "fc35a7ba726e50f60aa4b52ce2d8702d5002ded60c96c0dcbc759d553e26a4bf",
+  "mode": "scripted",
+  "result_usage": "regression_only_not_an_effectiveness_claim",
+  "model": "scripted_fixture",
+  "real_environment": {
+    "api_key_configured": true,
+    "base_url_configured": true,
+    "llm_model_configured": true,
+    "ready_for_real_mode": true
+  },
+  "cohort_policy": {
+    "main_comparison": "shared_core only",
+    "extended_capabilities": "reported separately; excluded from main comparison",
+    "robustness": "reported separately; excluded from main comparison"
+  },
+  "reserved_tasks": [],
+  "agents": {
+    "baseline": {
+      "main_comparison": {
+        "n_tasks": 13,
+        "task_success": 0.9230769230769231,
+        "answer_accuracy": 0.9230769230769231,
+        "evidence_accuracy": 0.9230769230769231,
+        "tool_call_precision": 1.0,
+        "tool_call_recall": 1.0,
+        "tool_multiset_exact_match": 1.0,
+        "tool_sequence_exact_match": 1.0,
+        "n_tool_sequence_tasks": 2,
+        "capability_coverage": 1.0,
+        "memory_state_accuracy": 1.0,
+        "n_memory_state_tasks": 3,
+        "refusal_accuracy": 1.0,
+        "n_refusal_tasks": 2,
+        "avg_tool_calls": 1.3846153846153846,
+        "avg_failed_tool_calls": 0.0,
+        "avg_steps": 1.0,
+        "avg_decision_calls": 1.0,
+        "parse_failure_rate": 0.0,
+        "recovery_accuracy": null,
+        "n_recovery_tasks": 0,
+        "stop_reason_counts": {
+          "single_pass": 13
+        }
+      },
+      "extended_capabilities": {
+        "n_tasks": 10,
+        "task_success": 0.0,
+        "answer_accuracy": 0.0,
+        "evidence_accuracy": 0.0,
+        "tool_call_precision": 0.6,
+        "tool_call_recall": 0.2533333333333333,
+        "tool_multiset_exact_match": 0.0,
+        "tool_sequence_exact_match": 0.0,
+        "n_tool_sequence_tasks": 5,
+        "capability_coverage": 0.31666666666666665,
+        "memory_state_accuracy": null,
+        "n_memory_state_tasks": 0,
+        "refusal_accuracy": 0.0,
+        "n_refusal_tasks": 1,
+        "avg_tool_calls": 0.7,
+        "avg_failed_tool_calls": 0.0,
+        "avg_steps": 1.0,
+        "avg_decision_calls": 1.0,
+        "parse_failure_rate": 0.0,
+        "recovery_accuracy": null,
+        "n_recovery_tasks": 0,
+        "stop_reason_counts": {
+          "single_pass": 10
+        }
+      },
+      "robustness": {
+        "n_tasks": 3,
+        "task_success": 0.3333333333333333,
+        "answer_accuracy": 0.6666666666666666,
+        "evidence_accuracy": 0.6666666666666666,
+        "tool_call_precision": 1.0,
+        "tool_call_recall": 0.611111111111111,
+        "tool_multiset_exact_match": 0.3333333333333333,
+        "tool_sequence_exact_match": 0.0,
+        "n_tool_sequence_tasks": 1,
+        "capability_coverage": 0.8333333333333334,
+        "memory_state_accuracy": null,
+        "n_memory_state_tasks": 0,
+        "refusal_accuracy": null,
+        "n_refusal_tasks": 0,
+        "avg_tool_calls": 1.0,
+        "avg_failed_tool_calls": 0.0,
+        "avg_steps": 1.0,
+        "avg_decision_calls": 1.0,
+        "parse_failure_rate": 0.0,
+        "recovery_accuracy": 0.0,
+        "n_recovery_tasks": 1,
+        "stop_reason_counts": {
+          "single_pass": 3
+        }
+      },
+      "per_task": [
+        {
+          "task_id": "doc_policy_deadline",
+          "category": "document_retrieval",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "最迟为30个自然日。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "expense_policy.md#0"
+            ],
+            "actual_doc_ids": [
+              "expense_policy.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_read_allergy",
+          "category": "memory_read",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "你需要避开花生。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "花生"
+            ],
+            "actual_memory_contents": [
+              "饮食禁忌是花生",
+              "喜欢的颜色是蓝色"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 2,
+            "actual_contents": [
+              "饮食禁忌是花生",
+              "喜欢的颜色是蓝色"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_write_commute",
+          "category": "memory_write",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "已记住你的通勤方式。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "write_memory": 1
+            },
+            "expected_counts": {
+              "write_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "write_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [
+              "骑自行车"
+            ],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "通勤方式是骑自行车"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "doc_calculation_total",
+          "category": "document_plus_calculation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "operations_daily.md#0"
+            ],
+            "actual_doc_ids": [
+              "operations_daily.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              42
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.5,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "docs_memory_recommendation",
+          "category": "document_plus_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "不适合，因为奶酪属于乳制品。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "cafeteria_menu.md#2"
+            ],
+            "actual_doc_ids": [
+              "cafeteria_menu.md#2"
+            ],
+            "required_memory_contains": [
+              "乳制品"
+            ],
+            "actual_memory_contents": [
+              "饮食上避免乳制品"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "饮食上避免乳制品"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multidoc_calc_sla_gap",
+          "category": "multi_retrieval_plus_calculation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.3333333333333333,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "alpha_sla.md#0",
+              "beta_sla.md#0"
+            ],
+            "actual_doc_ids": [
+              "beta_sla.md#0",
+              "alpha_sla.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              2
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.5,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "unanswerable_launch_code",
+          "category": "insufficient_evidence_refusal",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "证据不足。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "refusal",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": true
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": true
+        },
+        {
+          "task_id": "parse_recovery_incident_owner",
+          "category": "control_recovery",
+          "cohort": "robustness",
+          "success": true,
+          "answer": "应由值班经理负责上报。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "incident_policy.md#1"
+            ],
+            "actual_doc_ids": [
+              "incident_policy.md#1"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_write_then_read_trip",
+          "category": "stateful_multi_tool",
+          "cohort": "shared_core",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "contains_all",
+            "reasons": [
+              "missing required text: 已记住",
+              "missing required text: 京都"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "write_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "write_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory",
+              "write_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "京都"
+            ],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [
+              "京都"
+            ],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "下一次旅行的目的地是京都"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "doc_refund_owner",
+          "category": "document_retrieval",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "应由财务支持组处理。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "support_handbook.md#3"
+            ],
+            "actual_doc_ids": [
+              "support_handbook.md#3"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "docs_memory_workshop_format",
+          "category": "document_plus_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "不适合，因为活动只提供线下参加方式。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "training_schedule.md#0"
+            ],
+            "actual_doc_ids": [
+              "training_schedule.md#0"
+            ],
+            "required_memory_contains": [
+              "远程"
+            ],
+            "actual_memory_contents": [
+              "只参加可以远程进行的培训"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "只参加可以远程进行的培训"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "calculator_pure_product",
+          "category": "calculator_only",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "exact": false,
+            "actual_counts": {},
+            "expected_counts": {
+              "calculator": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              102
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.0,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 0,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "doc_calculation_average",
+          "category": "document_plus_calculation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "sales_weekly.md#1"
+            ],
+            "actual_doc_ids": [
+              "sales_weekly.md#1"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              15
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.5,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multidoc_calculation_capacity",
+          "category": "multi_retrieval_plus_calculation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.3333333333333333,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "east_capacity.md#0",
+              "west_capacity.md#0"
+            ],
+            "actual_doc_ids": [
+              "east_capacity.md#0",
+              "west_capacity.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              75
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.5,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "bad_args_recovery_data_owner",
+          "category": "control_recovery",
+          "cohort": "robustness",
+          "success": false,
+          "answer": "应由数据保护官牵头处理。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 2
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "data_incident.md#0"
+            ],
+            "actual_doc_ids": [
+              "data_incident.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "colloquial_pronoun_snack_check",
+          "category": "colloquial_reference_document_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "不能吃，这盒点心含杏仁，而你对杏仁严重过敏。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "actual_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "snack_label.md#0"
+            ],
+            "actual_doc_ids": [
+              "snack_label.md#0"
+            ],
+            "required_memory_contains": [
+              "杏仁"
+            ],
+            "actual_memory_contents": [
+              "对杏仁严重过敏",
+              "不喜欢香菜"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 2,
+            "actual_contents": [
+              "对杏仁严重过敏",
+              "不喜欢香菜"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multi_constraint_training_choice",
+          "category": "multi_constraint_multi_document_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "周四合适：19:30开始、远程、75分钟，并且无需主管批准。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "actual_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "training_tuesday.md#0",
+              "training_thursday.md#0"
+            ],
+            "actual_doc_ids": [
+              "training_tuesday.md#0",
+              "training_thursday.md#0"
+            ],
+            "required_memory_contains": [
+              "90分钟"
+            ],
+            "actual_memory_contents": [
+              "单次培训最多接受90分钟"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "单次培训最多接受90分钟"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "duplicate_memory_backup_email",
+          "category": "duplicate_memory_read_resolution",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "mira.work@example.com",
+          "answer_judge": {
+            "correct": true,
+            "kind": "exact",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "mira.work@example.com"
+            ],
+            "actual_memory_contents": [
+              "备用邮箱是 mira.work@example.com",
+              "备用联系邮箱：mira.work@example.com",
+              "工作邮箱是 mira@company.example"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 3,
+            "actual_contents": [
+              "备用邮箱是 mira.work@example.com",
+              "备用联系邮箱：mira.work@example.com",
+              "工作邮箱是 mira@company.example"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_unanswerable_last_checkup",
+          "category": "insufficient_memory_refusal",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "现有记忆没有记录上次体检日期。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "refusal",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "血型",
+              "上午"
+            ],
+            "actual_memory_contents": [
+              "看诊偏好上午",
+              "血型是A型"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 2,
+            "actual_contents": [
+              "血型是A型",
+              "看诊偏好上午"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": true
+        },
+        {
+          "task_id": "duplicate_memory_write_meeting",
+          "category": "duplicate_memory_write_resolution",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "已记录这条偏好，不会重复新增。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "write_memory": 1
+            },
+            "expected_counts": {
+              "write_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "write_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [
+              "每周五不安排会议"
+            ],
+            "expected_count": 1,
+            "actual_count": 1,
+            "actual_contents": [
+              "每周五不安排会议"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "personal_discount_plan_total",
+          "category": "document_memory_calculation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.6666666666666666,
+            "exact": false,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "read_memory",
+              "calculator"
+            ],
+            "actual_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "sequence_exact": false
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "pricing.md#1"
+            ],
+            "actual_doc_ids": [
+              "pricing.md#1"
+            ],
+            "required_memory_contains": [
+              "15%"
+            ],
+            "actual_memory_contents": [
+              "可使用15%的员工折扣"
+            ],
+            "required_calculations": [
+              204
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "可使用15%的员工折扣"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.6666666666666666,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multi_constraint_shipping_choice",
+          "category": "multi_condition_multi_document_calculation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "contains_all",
+            "reasons": [
+              "missing required text: A：92",
+              "missing required text: B：83",
+              "missing required text: 最终选择：B",
+              "missing required text: 最终答案：83"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.2,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 3,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator",
+              "calculator",
+              "calculator"
+            ],
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": false
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "carrier_a.md#0",
+              "carrier_b.md#0"
+            ],
+            "actual_doc_ids": [
+              "carrier_a.md#0",
+              "carrier_b.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              24,
+              92,
+              83
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.5,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "calculator_error_then_retry",
+          "category": "tool_execution_error_recovery",
+          "cohort": "robustness",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "labelled_number",
+            "reasons": [
+              "missing explicit 最终答案 label"
+            ]
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 0.3333333333333333,
+            "exact": false,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 2,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "calculator",
+              "calculator"
+            ],
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": false
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [
+              "audit_log_summary.md#0"
+            ],
+            "actual_doc_ids": [
+              "audit_log_summary.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              96
+            ],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": false,
+            "expected_failed_tool_calls": 1,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.5,
+          "unsupported_expected_tools": [
+            "calculator"
+          ],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "workspace_budget_lookup",
+          "category": "workspace_glob_grep_read",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "contains_all",
+            "reasons": [
+              "missing required text: 840万元"
+            ]
+          },
+          "tools": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "exact": false,
+            "actual_counts": {},
+            "expected_counts": {
+              "glob_files": 1,
+              "grep_text": 1,
+              "read_file": 1
+            },
+            "expected_sequence": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "actual_sequence": [],
+            "sequence_exact": false
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [
+              "finance/2026_budget.md",
+              "研发预算总额：840万元"
+            ],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.0,
+          "unsupported_expected_tools": [
+            "glob_files",
+            "grep_text",
+            "read_file"
+          ],
+          "tool_calls": 0,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "workspace_production_owner_locator",
+          "category": "workspace_multi_step_disambiguation",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "contains_all",
+            "reasons": [
+              "missing required text: platform-oncall"
+            ]
+          },
+          "tools": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "exact": false,
+            "actual_counts": {},
+            "expected_counts": {
+              "glob_files": 1,
+              "grep_text": 1,
+              "read_file": 1
+            },
+            "expected_sequence": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "actual_sequence": [],
+            "sequence_exact": false
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [
+              "config/prod/ops.yaml",
+              "platform-oncall"
+            ],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.0,
+          "unsupported_expected_tools": [
+            "glob_files",
+            "grep_text",
+            "read_file"
+          ],
+          "tool_calls": 0,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": false
+        },
+        {
+          "task_id": "workspace_missing_migration_window",
+          "category": "workspace_insufficient_evidence_refusal",
+          "cohort": "extended_tools",
+          "success": false,
+          "answer": "无法根据现有工具结果回答。",
+          "answer_judge": {
+            "correct": false,
+            "kind": "refusal",
+            "reasons": [
+              "missing an accepted insufficient-evidence marker"
+            ]
+          },
+          "tools": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "exact": false,
+            "actual_counts": {},
+            "expected_counts": {
+              "glob_files": 1,
+              "grep_text": 1
+            },
+            "expected_sequence": [
+              "glob_files",
+              "grep_text"
+            ],
+            "actual_sequence": [],
+            "sequence_exact": false
+          },
+          "evidence": {
+            "correct": false,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [
+              "no text matches for: 量子迁移窗口"
+            ],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 0.0,
+          "unsupported_expected_tools": [
+            "glob_files",
+            "grep_text"
+          ],
+          "tool_calls": 0,
+          "failed_tool_calls": 0,
+          "steps": 1,
+          "parse_failures": 0,
+          "decision_calls": 1,
+          "generation_calls": 1,
+          "stop_reason": "single_pass",
+          "refusal_case": true
+        }
+      ]
+    },
+    "loop": {
+      "main_comparison": {
+        "n_tasks": 13,
+        "task_success": 1.0,
+        "answer_accuracy": 1.0,
+        "evidence_accuracy": 1.0,
+        "tool_call_precision": 1.0,
+        "tool_call_recall": 1.0,
+        "tool_multiset_exact_match": 1.0,
+        "tool_sequence_exact_match": 1.0,
+        "n_tool_sequence_tasks": 2,
+        "capability_coverage": 1.0,
+        "memory_state_accuracy": 1.0,
+        "n_memory_state_tasks": 3,
+        "refusal_accuracy": 1.0,
+        "n_refusal_tasks": 2,
+        "avg_tool_calls": 1.4615384615384615,
+        "avg_failed_tool_calls": 0.0,
+        "avg_steps": 2.4615384615384617,
+        "avg_decision_calls": 2.4615384615384617,
+        "parse_failure_rate": 0.0,
+        "recovery_accuracy": null,
+        "n_recovery_tasks": 0,
+        "stop_reason_counts": {
+          "final_answer": 13
+        }
+      },
+      "extended_capabilities": {
+        "n_tasks": 10,
+        "task_success": 1.0,
+        "answer_accuracy": 1.0,
+        "evidence_accuracy": 1.0,
+        "tool_call_precision": 1.0,
+        "tool_call_recall": 1.0,
+        "tool_multiset_exact_match": 1.0,
+        "tool_sequence_exact_match": 1.0,
+        "n_tool_sequence_tasks": 5,
+        "capability_coverage": 1.0,
+        "memory_state_accuracy": null,
+        "n_memory_state_tasks": 0,
+        "refusal_accuracy": 1.0,
+        "n_refusal_tasks": 1,
+        "avg_tool_calls": 2.7,
+        "avg_failed_tool_calls": 0.0,
+        "avg_steps": 3.7,
+        "avg_decision_calls": 3.7,
+        "parse_failure_rate": 0.0,
+        "recovery_accuracy": null,
+        "n_recovery_tasks": 0,
+        "stop_reason_counts": {
+          "final_answer": 10
+        }
+      },
+      "robustness": {
+        "n_tasks": 3,
+        "task_success": 1.0,
+        "answer_accuracy": 1.0,
+        "evidence_accuracy": 1.0,
+        "tool_call_precision": 1.0,
+        "tool_call_recall": 1.0,
+        "tool_multiset_exact_match": 1.0,
+        "tool_sequence_exact_match": 1.0,
+        "n_tool_sequence_tasks": 1,
+        "capability_coverage": 1.0,
+        "memory_state_accuracy": null,
+        "n_memory_state_tasks": 0,
+        "refusal_accuracy": null,
+        "n_refusal_tasks": 0,
+        "avg_tool_calls": 2.0,
+        "avg_failed_tool_calls": 0.6666666666666666,
+        "avg_steps": 3.3333333333333335,
+        "avg_decision_calls": 3.3333333333333335,
+        "parse_failure_rate": 0.1,
+        "recovery_accuracy": 1.0,
+        "n_recovery_tasks": 1,
+        "stop_reason_counts": {
+          "final_answer": 3
+        }
+      },
+      "per_task": [
+        {
+          "task_id": "doc_policy_deadline",
+          "category": "document_retrieval",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "最迟为30个自然日。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "expense_policy.md#0"
+            ],
+            "actual_doc_ids": [
+              "expense_policy.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_read_allergy",
+          "category": "memory_read",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "你需要避开花生。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "花生"
+            ],
+            "actual_memory_contents": [
+              "饮食禁忌是花生",
+              "喜欢的颜色是蓝色"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 2,
+            "actual_contents": [
+              "饮食禁忌是花生",
+              "喜欢的颜色是蓝色"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_write_commute",
+          "category": "memory_write",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "已记住你的通勤方式。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "write_memory": 1
+            },
+            "expected_counts": {
+              "write_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "write_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [
+              "骑自行车"
+            ],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "通勤方式是骑自行车"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "doc_calculation_total",
+          "category": "document_plus_calculation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "最终答案：42",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "calculator"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "operations_daily.md#0"
+            ],
+            "actual_doc_ids": [
+              "operations_daily.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              42
+            ],
+            "actual_calculations": [
+              42
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "docs_memory_recommendation",
+          "category": "document_plus_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "不适合，因为奶酪属于乳制品。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "cafeteria_menu.md#2"
+            ],
+            "actual_doc_ids": [
+              "cafeteria_menu.md#2"
+            ],
+            "required_memory_contains": [
+              "乳制品"
+            ],
+            "actual_memory_contents": [
+              "饮食上避免乳制品"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "饮食上避免乳制品"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multidoc_calc_sla_gap",
+          "category": "multi_retrieval_plus_calculation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "最终答案：2",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 1,
+              "retrieve_docs": 2
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "alpha_sla.md#0",
+              "beta_sla.md#0"
+            ],
+            "actual_doc_ids": [
+              "alpha_sla.md#0",
+              "beta_sla.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              2
+            ],
+            "actual_calculations": [
+              2
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 0,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "unanswerable_launch_code",
+          "category": "insufficient_evidence_refusal",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "证据不足。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "refusal",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": true
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": true
+        },
+        {
+          "task_id": "parse_recovery_incident_owner",
+          "category": "control_recovery",
+          "cohort": "robustness",
+          "success": true,
+          "answer": "应由值班经理负责上报。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "incident_policy.md#1"
+            ],
+            "actual_doc_ids": [
+              "incident_policy.md#1"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 1,
+            "recovered_to_final_answer": true
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 1,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_write_then_read_trip",
+          "category": "stateful_multi_tool",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "已记住，目的地是京都。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "write_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "write_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "write_memory",
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "京都"
+            ],
+            "actual_memory_contents": [
+              "下一次旅行的目的地是京都"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [
+              "京都"
+            ],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "下一次旅行的目的地是京都"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "doc_refund_owner",
+          "category": "document_retrieval",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "应由财务支持组处理。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "support_handbook.md#3"
+            ],
+            "actual_doc_ids": [
+              "support_handbook.md#3"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "docs_memory_workshop_format",
+          "category": "document_plus_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "不适合，因为活动只提供线下参加方式。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "training_schedule.md#0"
+            ],
+            "actual_doc_ids": [
+              "training_schedule.md#0"
+            ],
+            "required_memory_contains": [
+              "远程"
+            ],
+            "actual_memory_contents": [
+              "只参加可以远程进行的培训"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "只参加可以远程进行的培训"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "calculator_pure_product",
+          "category": "calculator_only",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "最终答案：102",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 1
+            },
+            "expected_counts": {
+              "calculator": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "calculator"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              102
+            ],
+            "actual_calculations": [
+              102
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "doc_calculation_average",
+          "category": "document_plus_calculation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "最终答案：15",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "calculator"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "sales_weekly.md#1"
+            ],
+            "actual_doc_ids": [
+              "sales_weekly.md#1"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              15
+            ],
+            "actual_calculations": [
+              15.0
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multidoc_calculation_capacity",
+          "category": "multi_retrieval_plus_calculation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "最终答案：75",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 1,
+              "retrieve_docs": 2
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "east_capacity.md#0",
+              "west_capacity.md#0"
+            ],
+            "actual_doc_ids": [
+              "east_capacity.md#0",
+              "west_capacity.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              75
+            ],
+            "actual_calculations": [
+              75
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 0,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "bad_args_recovery_data_owner",
+          "category": "control_recovery",
+          "cohort": "robustness",
+          "success": true,
+          "answer": "应由数据保护官牵头处理。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "retrieve_docs": 2
+            },
+            "expected_counts": {
+              "retrieve_docs": 2
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "retrieve_docs",
+              "retrieve_docs"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "data_incident.md#0"
+            ],
+            "actual_doc_ids": [
+              "data_incident.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 1,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": true
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 1,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "colloquial_pronoun_snack_check",
+          "category": "colloquial_reference_document_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "不能吃，这盒点心含杏仁，而你对杏仁严重过敏。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "actual_sequence": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "snack_label.md#0"
+            ],
+            "actual_doc_ids": [
+              "snack_label.md#0"
+            ],
+            "required_memory_contains": [
+              "杏仁"
+            ],
+            "actual_memory_contents": [
+              "对杏仁严重过敏",
+              "不喜欢香菜"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "read_memory",
+              "retrieve_docs"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 2,
+            "actual_contents": [
+              "对杏仁严重过敏",
+              "不喜欢香菜"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multi_constraint_training_choice",
+          "category": "multi_constraint_multi_document_memory",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "周四合适：19:30开始、远程、75分钟，并且无需主管批准。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 2
+            },
+            "expected_counts": {
+              "read_memory": 1,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "actual_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "training_tuesday.md#0",
+              "training_thursday.md#0"
+            ],
+            "actual_doc_ids": [
+              "training_tuesday.md#0",
+              "training_thursday.md#0"
+            ],
+            "required_memory_contains": [
+              "90分钟"
+            ],
+            "actual_memory_contents": [
+              "单次培训最多接受90分钟"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "单次培训最多接受90分钟"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 0,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "duplicate_memory_backup_email",
+          "category": "duplicate_memory_read_resolution",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "mira.work@example.com",
+          "answer_judge": {
+            "correct": true,
+            "kind": "exact",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "mira.work@example.com"
+            ],
+            "actual_memory_contents": [
+              "备用邮箱是 mira.work@example.com",
+              "备用联系邮箱：mira.work@example.com",
+              "工作邮箱是 mira@company.example"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 3,
+            "actual_contents": [
+              "备用邮箱是 mira.work@example.com",
+              "备用联系邮箱：mira.work@example.com",
+              "工作邮箱是 mira@company.example"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "memory_unanswerable_last_checkup",
+          "category": "insufficient_memory_refusal",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "现有记忆没有记录上次体检日期。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "refusal",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "read_memory": 1
+            },
+            "expected_counts": {
+              "read_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "read_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [
+              "血型",
+              "上午"
+            ],
+            "actual_memory_contents": [
+              "看诊偏好上午",
+              "血型是A型"
+            ],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "read_memory"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 2,
+            "actual_contents": [
+              "血型是A型",
+              "看诊偏好上午"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": true
+        },
+        {
+          "task_id": "duplicate_memory_write_meeting",
+          "category": "duplicate_memory_write_resolution",
+          "cohort": "shared_core",
+          "success": true,
+          "answer": "已记录这条偏好，不会重复新增。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "write_memory": 1
+            },
+            "expected_counts": {
+              "write_memory": 1
+            },
+            "expected_sequence": null,
+            "actual_sequence": [
+              "write_memory"
+            ],
+            "sequence_exact": null
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [
+              "每周五不安排会议"
+            ],
+            "expected_count": 1,
+            "actual_count": 1,
+            "actual_contents": [
+              "每周五不安排会议"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 1,
+          "failed_tool_calls": 0,
+          "steps": 2,
+          "parse_failures": 0,
+          "decision_calls": 2,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "personal_discount_plan_total",
+          "category": "document_memory_calculation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "最终答案：204",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 1,
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 1,
+              "read_memory": 1,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "read_memory",
+              "calculator"
+            ],
+            "actual_sequence": [
+              "retrieve_docs",
+              "read_memory",
+              "calculator"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "pricing.md#1"
+            ],
+            "actual_doc_ids": [
+              "pricing.md#1"
+            ],
+            "required_memory_contains": [
+              "15%"
+            ],
+            "actual_memory_contents": [
+              "可使用15%的员工折扣"
+            ],
+            "required_calculations": [
+              204
+            ],
+            "actual_calculations": [
+              204.0
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "read_memory",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 1,
+            "actual_contents": [
+              "可使用15%的员工折扣"
+            ]
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 0,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "multi_constraint_shipping_choice",
+          "category": "multi_condition_multi_document_calculation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "24公斤未超过两家的上限。A：92元，B：83元。最终选择：B，最终答案：83。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 3,
+              "retrieve_docs": 2
+            },
+            "expected_counts": {
+              "calculator": 3,
+              "retrieve_docs": 2
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator",
+              "calculator",
+              "calculator"
+            ],
+            "actual_sequence": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator",
+              "calculator",
+              "calculator"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "carrier_a.md#0",
+              "carrier_b.md#0"
+            ],
+            "actual_doc_ids": [
+              "carrier_a.md#0",
+              "carrier_b.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              24,
+              92,
+              83
+            ],
+            "actual_calculations": [
+              24,
+              92,
+              83
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "retrieve_docs",
+              "calculator",
+              "calculator",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 5,
+          "failed_tool_calls": 0,
+          "steps": 6,
+          "parse_failures": 0,
+          "decision_calls": 6,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "calculator_error_then_retry",
+          "category": "tool_execution_error_recovery",
+          "cohort": "robustness",
+          "success": true,
+          "answer": "最终答案：96",
+          "answer_judge": {
+            "correct": true,
+            "kind": "labelled_number",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "calculator": 2,
+              "retrieve_docs": 1
+            },
+            "expected_counts": {
+              "calculator": 2,
+              "retrieve_docs": 1
+            },
+            "expected_sequence": [
+              "retrieve_docs",
+              "calculator",
+              "calculator"
+            ],
+            "actual_sequence": [
+              "retrieve_docs",
+              "calculator",
+              "calculator"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [
+              "audit_log_summary.md#0"
+            ],
+            "actual_doc_ids": [
+              "audit_log_summary.md#0"
+            ],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [
+              96
+            ],
+            "actual_calculations": [
+              96
+            ],
+            "required_artifact_contains": [],
+            "actual_artifact_sources": [
+              "retrieve_docs",
+              "calculator"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": 1,
+            "actual_failed_tool_calls": 1,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": true
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 1,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "workspace_budget_lookup",
+          "category": "workspace_glob_grep_read",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "研发预算总额为840万元。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "glob_files": 1,
+              "grep_text": 1,
+              "read_file": 1
+            },
+            "expected_counts": {
+              "glob_files": 1,
+              "grep_text": 1,
+              "read_file": 1
+            },
+            "expected_sequence": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "actual_sequence": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [
+              "finance/2026_budget.md",
+              "研发预算总额：840万元"
+            ],
+            "actual_artifact_sources": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 0,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "workspace_production_owner_locator",
+          "category": "workspace_multi_step_disambiguation",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "生产环境告警升级负责人是 platform-oncall。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "contains_all",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "glob_files": 1,
+              "grep_text": 1,
+              "read_file": 1
+            },
+            "expected_counts": {
+              "glob_files": 1,
+              "grep_text": 1,
+              "read_file": 1
+            },
+            "expected_sequence": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "actual_sequence": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [
+              "config/prod/ops.yaml",
+              "platform-oncall"
+            ],
+            "actual_artifact_sources": [
+              "glob_files",
+              "grep_text",
+              "read_file"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 3,
+          "failed_tool_calls": 0,
+          "steps": 4,
+          "parse_failures": 0,
+          "decision_calls": 4,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": false
+        },
+        {
+          "task_id": "workspace_missing_migration_window",
+          "category": "workspace_insufficient_evidence_refusal",
+          "cohort": "extended_tools",
+          "success": true,
+          "answer": "工作区中没有找到“量子迁移窗口”的具体日期。",
+          "answer_judge": {
+            "correct": true,
+            "kind": "refusal",
+            "reasons": []
+          },
+          "tools": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "exact": true,
+            "actual_counts": {
+              "glob_files": 1,
+              "grep_text": 1
+            },
+            "expected_counts": {
+              "glob_files": 1,
+              "grep_text": 1
+            },
+            "expected_sequence": [
+              "glob_files",
+              "grep_text"
+            ],
+            "actual_sequence": [
+              "glob_files",
+              "grep_text"
+            ],
+            "sequence_exact": true
+          },
+          "evidence": {
+            "correct": true,
+            "required_doc_ids": [],
+            "actual_doc_ids": [],
+            "required_memory_contains": [],
+            "actual_memory_contents": [],
+            "required_calculations": [],
+            "actual_calculations": [],
+            "required_artifact_contains": [
+              "no text matches for: 量子迁移窗口"
+            ],
+            "actual_artifact_sources": [
+              "glob_files",
+              "grep_text"
+            ],
+            "expect_no_documents": false
+          },
+          "memory_state": {
+            "correct": true,
+            "required_contains": [],
+            "expected_count": null,
+            "actual_count": 0,
+            "actual_contents": []
+          },
+          "recovery": {
+            "correct": true,
+            "expected_failed_tool_calls": null,
+            "actual_failed_tool_calls": 0,
+            "expected_parse_failures": null,
+            "actual_parse_failures": 0,
+            "recovered_to_final_answer": false
+          },
+          "capability_coverage": 1.0,
+          "unsupported_expected_tools": [],
+          "tool_calls": 2,
+          "failed_tool_calls": 0,
+          "steps": 3,
+          "parse_failures": 0,
+          "decision_calls": 3,
+          "generation_calls": 1,
+          "stop_reason": "final_answer",
+          "refusal_case": true
+        }
+      ]
+    }
+  },
+  "main_comparison_delta_loop_minus_baseline": {
+    "task_success": 0.07692307692307687,
+    "answer_accuracy": 0.07692307692307687,
+    "evidence_accuracy": 0.07692307692307687,
+    "tool_call_precision": 0.0,
+    "tool_call_recall": 0.0,
+    "tool_multiset_exact_match": 0.0,
+    "avg_tool_calls": 0.07692307692307687,
+    "avg_steps": 1.4615384615384617,
+    "parse_failure_rate": 0.0
+  }
+}

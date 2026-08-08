@@ -1,7 +1,9 @@
 from app.agent.loop import ToolAgent, parse_decision
 from app.agent.registry import ToolRegistry
-from app.agent.tools.base import ToolResult
+from app.agent.tools.base import ConfirmedAction, ToolResult
+from app.agent.tools.calculator import CalculatorTool
 from app.agent.trajectory import TrajectoryStep, format_trajectory
+from app.memory.merger import MergeOp
 from app.memory.models import MemoryFact
 
 
@@ -124,10 +126,11 @@ def build_agent(responses, tools=(), captured=None, **kwargs):
     for t in tools:
         reg.register(t)
 
-    def generate(query, chunks, memory_block):
+    def generate(query, chunks, memory_block, tool_artifacts):
         captured["query"] = query
         captured["chunks"] = chunks
         captured["memory_block"] = memory_block
+        captured["tool_artifacts"] = tool_artifacts
         return {"answer": "final synthesized answer", "sources": [{"citation": "c"}]}
 
     complete = scripted(responses)
@@ -167,6 +170,185 @@ def test_read_memory_feeds_memory_block():
     result = agent.chat("按我的偏好回答")
     assert "concise" in captured["memory_block"]
     assert any("concise" in f.fact_content for f in result.recalled_memories)
+
+
+def test_calculator_result_feeds_final_synthesis_as_generic_artifact():
+    responses = [
+        '{"tool": "calculator", "args": {"expression": "20 + 20"}}',
+        '{"final_answer": true}',
+    ]
+    agent, _, captured = build_agent(responses, tools=[CalculatorTool()])
+    result = agent.chat("20 加 20 是多少？")
+
+    assert any(
+        artifact.source_tool == "calculator" and "20 + 20 = 40" in artifact.content
+        for artifact in captured["tool_artifacts"]
+    )
+    assert result.tool_artifacts == captured["tool_artifacts"]
+
+
+def test_side_effect_is_recorded_but_not_used_as_answer_evidence():
+    op = MergeOp(type="add", fact_content="is learning guitar", applied=True)
+
+    class MutatingTool:
+        name = "remember"
+        description = "fake side effect"
+        args_schema = {}
+
+        def run(self, args):
+            return ToolResult(
+                ok=True,
+                content="stored private mutation details",
+                side_effects=[op],
+            )
+
+    responses = [
+        '{"tool": "remember", "args": {}}',
+        '{"final_answer": true}',
+    ]
+    agent, _, captured = build_agent(responses, tools=[MutatingTool()])
+    result = agent.chat("记住这件事")
+
+    assert captured["tool_artifacts"] == []
+    assert result.tool_artifacts == []
+    assert result.memory_ops == [op]
+    assert result.confirmed_actions
+    assert result.confirmed_actions[0].source_tool == "remember"
+
+
+def test_successful_write_memory_is_confirmed_separately_from_evidence():
+    op = MergeOp(type="add", fact_content="is learning guitar", applied=True)
+
+    class SuccessfulMemoryWrite:
+        name = "write_memory"
+        description = "fake successful memory write"
+        args_schema = {"text": {"type": "str", "required": False, "desc": "text"}}
+
+        def run(self, args):
+            return ToolResult(
+                ok=True,
+                content="memory merged: 1 add, 0 update, 0 delete",
+                data={"ops": [op]},
+                side_effects=[op],
+            )
+
+    responses = iter(
+        [
+            '{"tool": "write_memory", "args": {}}',
+            '{"final_answer": true}',
+        ]
+    )
+    captured = {}
+
+    def generate(query, chunks, memory_block, artifacts, confirmed_actions):
+        captured["artifacts"] = artifacts
+        captured["confirmed_actions"] = confirmed_actions
+        return {"answer": "已记住。", "sources": []}
+
+    registry = ToolRegistry()
+    registry.register(SuccessfulMemoryWrite())
+    agent = ToolAgent(
+        complete_fn=lambda system, user: next(responses),
+        registry=registry,
+        generate_fn=generate,
+    )
+    result = agent.chat("我在学吉他")
+
+    assert result.answer == "已记住。"
+    assert captured["artifacts"] == []
+    assert result.tool_artifacts == []
+    assert len(captured["confirmed_actions"]) == 1
+    assert "1 add" in captured["confirmed_actions"][0].content
+    assert result.confirmed_actions == captured["confirmed_actions"]
+
+
+def test_failed_write_memory_is_not_confirmed():
+    op = MergeOp(type="add", fact_content="must not be confirmed", applied=True)
+
+    class FailedMemoryWrite:
+        name = "write_memory"
+        description = "fake failed memory write"
+        args_schema = {"text": {"type": "str", "required": False, "desc": "text"}}
+
+        def run(self, args):
+            return ToolResult(
+                ok=False,
+                content="",
+                error="storage unavailable",
+                side_effects=[op],
+            )
+
+    registry = ToolRegistry()
+    registry.register(FailedMemoryWrite())
+    responses = iter(
+        [
+            '{"tool": "write_memory", "args": {}}',
+            '{"final_answer": true}',
+        ]
+    )
+    captured = {}
+
+    def generate(query, chunks, memory_block, artifacts, confirmed_actions):
+        captured["artifacts"] = artifacts
+        captured["confirmed_actions"] = confirmed_actions
+        return {"answer": "未能保存。", "sources": []}
+
+    result = ToolAgent(
+        complete_fn=lambda system, user: next(responses),
+        registry=registry,
+        generate_fn=generate,
+    ).chat("记住这件事")
+
+    assert captured["artifacts"] == []
+    assert captured["confirmed_actions"] == []
+    assert result.tool_artifacts == []
+    assert result.confirmed_actions == []
+    assert result.memory_ops == []
+
+
+def test_explicit_confirmed_action_never_becomes_answer_evidence():
+    class ConfirmOnlyTool:
+        name = "confirm_only"
+        description = "fake confirmed operation"
+        args_schema = {}
+
+        def run(self, args):
+            return ToolResult(
+                ok=True,
+                content="operation completed",
+                confirmed_actions=[
+                    ConfirmedAction(
+                        content="operation completed",
+                        source_tool=self.name,
+                    )
+                ],
+            )
+
+    registry = ToolRegistry()
+    registry.register(ConfirmOnlyTool())
+    responses = iter(
+        [
+            '{"tool": "confirm_only", "args": {}}',
+            '{"final_answer": true}',
+        ]
+    )
+    captured = {}
+
+    def generate(query, chunks, memory_block, artifacts, confirmed_actions):
+        captured["artifacts"] = artifacts
+        captured["confirmed_actions"] = confirmed_actions
+        return {"answer": "操作已完成。", "sources": []}
+
+    result = ToolAgent(
+        complete_fn=lambda system, user: next(responses),
+        registry=registry,
+        generate_fn=generate,
+    ).chat("执行操作")
+
+    assert captured["artifacts"] == []
+    assert result.tool_artifacts == []
+    assert len(captured["confirmed_actions"]) == 1
+    assert result.confirmed_actions == captured["confirmed_actions"]
 
 
 def test_write_memory_defaults_text_to_user_msg():
@@ -255,3 +437,25 @@ def test_history_carried_and_bounded():
         agent.chat(f"msg{i}")
     assert len(agent.history) <= 2
     assert "msg3" in complete.prompts[-1]              # 后一轮能看到前一轮
+
+
+def test_legacy_three_argument_generator_remains_supported():
+    captured = {}
+    reg = ToolRegistry()
+    reg.register(CalculatorTool())
+
+    def generate(query, chunks, memory_block):
+        captured["called"] = True
+        return {"answer": "legacy generator", "sources": []}
+
+    agent = ToolAgent(
+        complete_fn=scripted([
+            '{"tool": "calculator", "args": {"expression": "1 + 1"}}',
+            '{"final_answer": true}',
+        ]),
+        registry=reg,
+        generate_fn=generate,
+    )
+    result = agent.chat("1+1")
+    assert result.answer == "legacy generator"
+    assert captured["called"]

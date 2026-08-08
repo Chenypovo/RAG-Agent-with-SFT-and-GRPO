@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from app.agent.agent import MemoryAgent
 from app.agent.llm import make_complete_fn, make_embed_fn
@@ -10,8 +10,10 @@ from app.agent.loop import ToolAgent
 from app.agent.registry import ToolRegistry
 from app.agent.router import Router
 from app.agent.tools.calculator import CalculatorTool
+from app.agent.tools.base import ConfirmedAction, ToolArtifact
 from app.agent.tools.memory_tools import ReadMemoryTool, WriteMemoryTool
 from app.agent.tools.retrieve import RetrieveDocsTool
+from app.agent.tools.workspace import make_workspace_tools
 from app.generator.generator import OpenAICompatibleGenerator
 from app.memory.extractor import MemoryExtractor
 from app.memory.merger import MemoryMerger
@@ -171,13 +173,33 @@ def _build_runtime(
 
     generator = OpenAICompatibleGenerator()
 
-    def generate_fn(query: str, chunks: List[Dict[str, Any]], user_memory: str) -> Dict[str, Any]:
-        if not chunks and not user_memory.strip():
+    def generate_fn(
+        query: str,
+        chunks: List[Dict[str, Any]],
+        user_memory: str,
+        tool_artifacts: Optional[List[ToolArtifact]] = None,
+        confirmed_actions: Optional[List[ConfirmedAction]] = None,
+    ) -> Dict[str, Any]:
+        answer_artifacts = [
+            artifact
+            for artifact in (tool_artifacts or [])
+            if artifact.kind not in {"documents", "memory"} and artifact.content.strip()
+        ]
+        answer_actions = [
+            action for action in (confirmed_actions or []) if action.content.strip()
+        ]
+        if not chunks and not user_memory.strip() and not answer_artifacts and not answer_actions:
             return {
                 "answer": "还没有可用的文档证据或记忆。先告诉我一些关于你的事，或先建立文档索引。",
                 "sources": [],
             }
-        return generator.generate(query=query, retrieved_chunks=chunks, user_memory=user_memory)
+        return generator.generate(
+            query=query,
+            retrieved_chunks=chunks,
+            user_memory=user_memory,
+            tool_artifacts=tool_artifacts,
+            confirmed_actions=confirmed_actions,
+        )
 
     retrieve = _build_doc_retriever(
         vector_store, index_path, meta_path, lancedb_uri, lancedb_table, bm25_path, embed_fn,
@@ -249,8 +271,17 @@ def build_tool_agent(
     max_parent_chunks: int = 6,
     max_steps: int = 6,
     max_tool_calls: int = 8,
+    workspace_root: Optional[str] = None,
+    workspace_max_results: int = 100,
+    workspace_max_chars: int = 12_000,
+    workspace_max_files_scanned: int = 1_000,
+    workspace_max_file_bytes: int = 1_000_000,
 ) -> ToolAgentBundle:
-    """Wire a real ToolAgent: same runtime as build_memory_agent, tools instead of a router."""
+    """Wire a real ToolAgent.
+
+    Workspace tools are opt-in: pass an explicit ``workspace_root`` to register
+    the read-only file glob, text search, and file read tools.
+    """
     rt = _build_runtime(
         memory_dir, vector_store, index_path, meta_path, lancedb_uri, lancedb_table, bm25_path,
         top_k, max_distance, use_rerank, rerank_model, rerank_candidates,
@@ -265,6 +296,15 @@ def build_tool_agent(
         merger=MemoryMerger(store=rt.store, complete_fn=rt.complete_fn),
     ))
     registry.register(CalculatorTool())
+    if workspace_root:
+        for tool in make_workspace_tools(
+            workspace_root,
+            max_results=workspace_max_results,
+            max_chars=workspace_max_chars,
+            max_files_scanned=workspace_max_files_scanned,
+            max_file_bytes=workspace_max_file_bytes,
+        ):
+            registry.register(tool)
 
     agent = ToolAgent(
         complete_fn=rt.complete_fn,

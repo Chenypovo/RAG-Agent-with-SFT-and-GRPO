@@ -1,18 +1,21 @@
 from __future__ import annotations
 
+import inspect
 import json
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
-from app.agent.agent import GenerateFn
 from app.agent.registry import ToolRegistry
-from app.agent.tools.base import ToolResult
+from app.agent.tools.base import ConfirmedAction, ToolArtifact, ToolResult
 from app.agent.trajectory import TrajectoryStep
 from app.memory.extractor import CompleteFn
 from app.memory.merger import MergeOp
 from app.memory.models import MemoryFact
 from app.memory.recall import format_memory_block
+
+
+ToolGenerateFn = Callable[..., Dict[str, Any]]
 
 
 def _strip_code_fences(text: str) -> str:
@@ -67,6 +70,8 @@ def parse_decision(raw: str) -> Optional[Decision]:
 class AgentResult:
     answer: str
     sources: List[Dict[str, Any]] = field(default_factory=list)
+    tool_artifacts: List[ToolArtifact] = field(default_factory=list)
+    confirmed_actions: List[ConfirmedAction] = field(default_factory=list)
     trajectory: List[TrajectoryStep] = field(default_factory=list)
     recalled_memories: List[MemoryFact] = field(default_factory=list)
     memory_ops: List[MergeOp] = field(default_factory=list)
@@ -110,7 +115,7 @@ class ToolAgent:
         self,
         complete_fn: CompleteFn,
         registry: ToolRegistry,
-        generate_fn: GenerateFn,
+        generate_fn: ToolGenerateFn,
         max_steps: int = 6,
         max_tool_calls: int = 8,
         max_parse_retries: int = 2,
@@ -168,6 +173,10 @@ class ToolAgent:
         seen_chunk_keys: set = set()
         acc_memories: List[MemoryFact] = []
         seen_memory_ids: set = set()
+        acc_artifacts: List[ToolArtifact] = []
+        seen_artifact_keys: set = set()
+        acc_confirmed_actions: List[ConfirmedAction] = []
+        seen_action_keys: set = set()
         acc_ops: List[MergeOp] = []
         seen_calls: set = set()
         parse_fails = 0
@@ -177,7 +186,14 @@ class ToolAgent:
         def finish(reason: str) -> AgentResult:
             # 任何终止路径都走同一条合成：受控/带引用/证据不足拒答由 generate_fn 保证
             try:
-                gen = self.generate_fn(msg, acc_chunks, format_memory_block(acc_memories))
+                gen = _invoke_generate(
+                    self.generate_fn,
+                    msg,
+                    acc_chunks,
+                    format_memory_block(acc_memories),
+                    acc_artifacts,
+                    acc_confirmed_actions,
+                )
             except Exception:
                 gen = {"answer": "抱歉，这一轮处理出错，暂时无法回答。", "sources": []}
             answer = str(gen.get("answer", ""))
@@ -187,6 +203,8 @@ class ToolAgent:
             return AgentResult(
                 answer=answer,
                 sources=gen.get("sources", []) or [],
+                tool_artifacts=acc_artifacts,
+                confirmed_actions=acc_confirmed_actions,
                 trajectory=steps,
                 recalled_memories=acc_memories,
                 memory_ops=acc_ops,
@@ -246,8 +264,19 @@ class ToolAgent:
             start = time.time()
             result = self.registry.dispatch(decision.tool, args)
             tool_calls += 1
-            _accumulate(decision.tool, result, acc_chunks, seen_chunk_keys,
-                        acc_memories, seen_memory_ids, acc_ops)
+            _accumulate(
+                decision.tool,
+                result,
+                acc_chunks,
+                seen_chunk_keys,
+                acc_memories,
+                seen_memory_ids,
+                acc_artifacts,
+                seen_artifact_keys,
+                acc_confirmed_actions,
+                seen_action_keys,
+                acc_ops,
+            )
             steps.append(TrajectoryStep(
                 step_index=step_index, thought=decision.thought, tool=decision.tool, args=args,
                 observation=result.content if result.ok else f"error: {result.error}",
@@ -259,6 +288,67 @@ class ToolAgent:
         return finish("budget")
 
 
+def _invoke_generate(
+    generate_fn: ToolGenerateFn,
+    query: str,
+    chunks: List[Dict[str, Any]],
+    memory_block: str,
+    artifacts: List[ToolArtifact],
+    confirmed_actions: List[ConfirmedAction],
+) -> Dict[str, Any]:
+    """Call the richest supported generator signature, preserving 3/4-arg injections."""
+    try:
+        signature = inspect.signature(generate_fn)
+    except (TypeError, ValueError):
+        return generate_fn(query, chunks, memory_block)
+    try:
+        signature.bind(query, chunks, memory_block, artifacts, confirmed_actions)
+    except TypeError:
+        try:
+            signature.bind(query, chunks, memory_block, artifacts)
+        except TypeError:
+            return generate_fn(query, chunks, memory_block)
+        return generate_fn(query, chunks, memory_block, artifacts)
+    return generate_fn(query, chunks, memory_block, artifacts, confirmed_actions)
+
+
+def _legacy_artifacts(tool: str, result: ToolResult) -> List[ToolArtifact]:
+    """Adapt pre-Artifact ToolResults without relying on a concrete tool name."""
+    if result.artifacts:
+        return result.artifacts
+    if "chunks" in result.data:
+        chunks = result.data.get("chunks", [])
+        if not chunks:
+            return []
+        return [
+            ToolArtifact(
+                kind="documents",
+                content=result.content,
+                source_tool=tool,
+                data={"chunks": chunks},
+            )
+        ]
+    if "memories" in result.data:
+        memories = result.data.get("memories", [])
+        if not memories:
+            return []
+        return [
+            ToolArtifact(
+                kind="memory",
+                content=result.content,
+                source_tool=tool,
+                data={"memories": memories},
+            )
+        ]
+    # Mutations are useful to the control loop but are never answer evidence.
+    # Legacy memory tools conventionally exposed their changes as ``ops``.
+    if result.side_effects or result.confirmed_actions or "ops" in result.data:
+        return []
+    if result.content:
+        return [ToolArtifact(content=result.content, source_tool=tool, data=dict(result.data))]
+    return []
+
+
 def _accumulate(
     tool: str,
     result: ToolResult,
@@ -266,23 +356,65 @@ def _accumulate(
     seen_chunk_keys: set,
     acc_memories: List[MemoryFact],
     seen_memory_ids: set,
+    acc_artifacts: List[ToolArtifact],
+    seen_artifact_keys: set,
+    acc_confirmed_actions: List[ConfirmedAction],
+    seen_action_keys: set,
     acc_ops: List[MergeOp],
 ) -> None:
-    """按工具类型把结构化载荷归集到终局合成用的证据池（去重）。"""
+    """归集成功工具产出的 Artifact；副作用与回答证据严格分开。"""
     if not result.ok:
         return
-    if tool == "retrieve_docs":
-        for c in result.data.get("chunks", []):
-            meta = c.get("metadata", {}) if isinstance(c, dict) else {}
-            key = (str(meta.get("source", "")), str(meta.get("chunk_id", id(c))))
-            if key not in seen_chunk_keys:
-                seen_chunk_keys.add(key)
-                acc_chunks.append(c)
-    elif tool == "read_memory":
-        for f in result.data.get("memories", []):
-            fid = getattr(f, "id", None) or id(f)
-            if fid not in seen_memory_ids:
-                seen_memory_ids.add(fid)
-                acc_memories.append(f)
-    elif tool == "write_memory":
-        acc_ops.extend(result.data.get("ops", []))
+
+    for artifact in _legacy_artifacts(tool, result):
+        if not artifact.source_tool:
+            artifact.source_tool = tool
+
+        if artifact.kind == "documents":
+            for c in artifact.data.get("chunks", []):
+                meta = c.get("metadata", {}) if isinstance(c, dict) else {}
+                key = (str(meta.get("source", "")), str(meta.get("chunk_id", id(c))))
+                if key not in seen_chunk_keys:
+                    seen_chunk_keys.add(key)
+                    acc_chunks.append(c)
+        elif artifact.kind == "memory":
+            for f in artifact.data.get("memories", []):
+                fid = getattr(f, "id", None) or id(f)
+                if fid not in seen_memory_ids:
+                    seen_memory_ids.add(fid)
+                    acc_memories.append(f)
+
+        artifact_key = (artifact.source_tool, artifact.kind, artifact.content)
+        if artifact_key not in seen_artifact_keys:
+            seen_artifact_keys.add(artifact_key)
+            acc_artifacts.append(artifact)
+
+    confirmed_actions = list(result.confirmed_actions)
+    if not confirmed_actions:
+        confirmed_effects = list(result.side_effects)
+        if not confirmed_effects and "ops" in result.data:
+            confirmed_effects = [
+                op for op in result.data.get("ops", []) if getattr(op, "applied", False)
+            ]
+        if confirmed_effects and result.content:
+            confirmed_actions = [
+                ConfirmedAction(
+                    content=result.content,
+                    source_tool=tool,
+                    data={"count": len(confirmed_effects)},
+                )
+            ]
+    for action in confirmed_actions:
+        if not action.source_tool:
+            action.source_tool = tool
+        action_key = (action.source_tool, action.content)
+        if action_key not in seen_action_keys:
+            seen_action_keys.add(action_key)
+            acc_confirmed_actions.append(action)
+
+    effects = result.side_effects
+    if not effects and "ops" in result.data:
+        effects = result.data.get("ops", [])
+    for effect in effects:
+        if isinstance(effect, MergeOp):
+            acc_ops.append(effect)

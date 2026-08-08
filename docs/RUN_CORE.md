@@ -1,21 +1,17 @@
-# 跑通记忆增强 RAG core（给运行者 / 另一个 CC 会话）
+# 跑通记忆增强 RAG Core
 
-这份指南让你在**真实环境**跑通"带长期记忆的 RAG agent"核心：多轮对话里，助手会从你说的话沉淀长期记忆，并在后续提问时召回。
-
-> 当前分支：`feature/long-term-memory`。请在原仓库目录运行，不要和正在改代码的会话共用同一份工作区同时改文件。
+这份指南用于在本地跑通带长期记忆的 RAG Agent：助手从多轮对话中沉淀事实，并在后续会话中召回。
 
 ## 1. 环境
 
 ```bash
-# 建议用虚拟环境
-python3 -m venv .venv && source .venv/bin/activate
-
-# 跑“记忆 core 对话”最少只需要这些（不需要 torch/transformers/rapidocr）：
-pip install openai faiss-cpu numpy python-dotenv rank-bm25 jieba tiktoken pypdf pymupdf
-
-# 或者直接装全量（含 reranker/OCR 依赖，较重）：
-# pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
+
+全量依赖包含 reranker、OCR 和多模态组件，安装体积较大，但可保证完整测试集和所有入口使用同一套环境。
 
 ## 2. 配置 .env
 
@@ -23,24 +19,27 @@ pip install openai faiss-cpu numpy python-dotenv rank-bm25 jieba tiktoken pypdf 
 cp .env.example .env
 ```
 
-填入你的 OpenAI 兼容服务（例如智谱）：
+填入你的 OpenAI 兼容服务。下面以兼容接口为例，模型名必须与服务商实际支持的名称一致：
 
-```
+```dotenv
 LLM_PROVIDER=openai_compatible
-EMBED_PROVIDER=openai_compatible
 LLM_MODEL=glm-4-flash
-EMBED_MODEL=embedding-3
 OPENAI_COMPAT_API_KEY=你的key
 OPENAI_COMPAT_BASE_URL=你的base_url
+
+# 默认使用本地 embedding，首次运行会下载模型
+EMBED_PROVIDER=local
+EMBED_MODEL=BAAI/bge-small-zh-v1.5
+EMBED_DEVICE=cpu
 ```
 
 ## 3. 先跑单测（确认 core 逻辑健康，无需联网）
 
 ```bash
-pip install pytest
-python -m pytest tests/ -q
-# 期望：41 passed
+python -m pytest -q
 ```
+
+期望命令以退出码 `0` 结束。测试数量会随功能变化，因此不在文档中硬编码。
 
 ## 4.（可选）建文档索引
 
@@ -48,9 +47,12 @@ python -m pytest tests/ -q
 
 ```bash
 # 把文件放进 data/uploads/ 后：
-python scripts/build_index.py --input-dir data/uploads \
-  --index-path data/index/faiss.index --meta-path data/index/metadatas.json \
-  --bm25-path data/index/bm25.json --embed-backend openai
+python scripts/build_index.py \
+  --input-dir data/uploads \
+  --vector-store lancedb \
+  --lancedb-uri data/index/lancedb \
+  --bm25-path data/index/bm25.json \
+  --embed-backend local
 ```
 
 ## 5. 跑对话 core（重点）
@@ -77,12 +79,11 @@ python scripts/chat_demo.py
 - `:mem` 能列出结构化事实
 - 重启后记忆仍在（`data/memory/memory.db` + `mem_index.json`）
 
-## 反馈给改代码的会话
+## 6. 常见问题
 
-把这些贴回来最有用：
-- 记忆**该抽没抽 / 抽错 / 重复**的例子
-- 召回**该召没召 / 召回不相关**的例子
-- 归并**该合并没合并、该更新没更新、误删**的例子
-- 任何报错堆栈
+- 启动时提示缺少 key/base URL：检查 `.env` 中 `OPENAI_COMPAT_API_KEY` 和 `OPENAI_COMPAT_BASE_URL`。
+- 首次本地 embedding 较慢：需要下载 `BAAI/bge-small-zh-v1.5`，后续会复用本地缓存。
+- 文档检索始终为空：确认已执行建库命令，且 `data/index/lancedb/` 与 `data/index/bm25.json` 存在。
+- 记忆数据位于 `data/memory/`，默认不会提交到 Git。
 
-这些正好对应后续要做的"记忆评测"维度。
+> 当前服务只面向本地单用户演示；尚未实现鉴权、用户隔离和限流，不要直接作为公网多用户服务部署。

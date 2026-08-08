@@ -8,8 +8,15 @@ __pycache__/
 
 # runtime artifacts
 data/index/
+data/index_plain/
+data/index_eval/lancedb/
 data/frames/
 data/memory/
 data/uploads/*.pdf
 data/eval/*.jsonl
 !data/eval/*_example.jsonl
+!data/eval/queries_synth.jsonl
+!data/eval/qrels_synth_chunk.jsonl
+!data/eval/memory_facts_synth.jsonl
+!data/eval/memory_queries_synth.jsonl
+!data/eval/memory_qrels_synth.jsonl

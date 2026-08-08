@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict
 
 from app.agent.agent import RetrieveDocsFn
-from app.agent.tools.base import ToolResult
+from app.agent.tools.base import ToolArtifact, ToolResult
 
 
 class RetrieveDocsTool:
@@ -38,4 +38,17 @@ class RetrieveDocsTool:
             meta = c.get("metadata", {}) if isinstance(c, dict) else {}
             text = str(meta.get("text", "")).replace("\n", " ")[:200]
             lines.append(f"[{meta.get('source', 'unknown')}#{meta.get('chunk_id', i)}] {text}")
-        return ToolResult(ok=True, content="retrieved chunks:\n" + "\n".join(lines), data={"chunks": chunks})
+        content = "retrieved chunks:\n" + "\n".join(lines)
+        return ToolResult(
+            ok=True,
+            content=content,
+            data={"chunks": chunks},
+            artifacts=[
+                ToolArtifact(
+                    kind="documents",
+                    content=content,
+                    source_tool=self.name,
+                    data={"chunks": chunks},
+                )
+            ],
+        )

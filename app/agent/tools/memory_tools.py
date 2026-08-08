@@ -4,7 +4,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict
 
-from app.agent.tools.base import ToolResult
+from app.agent.tools.base import ToolArtifact, ToolResult
 from app.memory.extractor import MemoryExtractor
 from app.memory.merger import MemoryMerger
 from app.memory.recall import format_memory_block, recall_memories
@@ -39,8 +39,20 @@ class ReadMemoryTool:
             return ToolResult(ok=False, content="", error=f"memory recall failed: {e}")
         if not facts:
             return ToolResult(ok=True, content="no relevant memories found", data={"memories": []})
-        return ToolResult(ok=True, content="recalled memories:\n" + format_memory_block(facts),
-                          data={"memories": facts})
+        content = "recalled memories:\n" + format_memory_block(facts)
+        return ToolResult(
+            ok=True,
+            content=content,
+            data={"memories": facts},
+            artifacts=[
+                ToolArtifact(
+                    kind="memory",
+                    content=content,
+                    source_tool=self.name,
+                    data={"memories": facts},
+                )
+            ],
+        )
 
 
 class WriteMemoryTool:
@@ -67,7 +79,12 @@ class WriteMemoryTool:
         try:
             facts = self.extractor.extract(text, source="chat", message_time=self.message_time_fn())
             if not facts:
-                return ToolResult(ok=True, content="no durable facts found in the text", data={"ops": []})
+                return ToolResult(
+                    ok=True,
+                    content="no durable facts found in the text",
+                    data={"ops": []},
+                    side_effects=[],
+                )
             ops = self.merger.merge(facts, source="chat")
         except Exception as e:
             return ToolResult(ok=False, content="", error=f"memory write failed: {e}")
@@ -76,4 +93,4 @@ class WriteMemoryTool:
             f"memory merged: {counts.get('add', 0)} add, "
             f"{counts.get('update', 0)} update, {counts.get('delete', 0)} delete"
         )
-        return ToolResult(ok=True, content=content, data={"ops": ops})
+        return ToolResult(ok=True, content=content, data={"ops": ops}, side_effects=list(ops))

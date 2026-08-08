@@ -3,7 +3,7 @@ from __future__ import annotations
 import ast
 from typing import Any, Dict
 
-from app.agent.tools.base import ToolResult
+from app.agent.tools.base import ToolArtifact, ToolResult
 
 _BIN_OPS = {
     ast.Add: lambda a, b: a + b,
@@ -46,4 +46,17 @@ class CalculatorTool:
             return ToolResult(ok=False, content="", error="division by zero")
         except Exception:
             return ToolResult(ok=False, content="", error="unsupported expression")
-        return ToolResult(ok=True, content=f"{expr} = {value}", data={"result": value})
+        content = f"{expr} = {value}"
+        return ToolResult(
+            ok=True,
+            content=content,
+            data={"result": value},
+            artifacts=[
+                ToolArtifact(
+                    kind="calculation",
+                    content=content,
+                    source_tool=self.name,
+                    data={"result": value},
+                )
+            ],
+        )

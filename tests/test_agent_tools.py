@@ -42,6 +42,8 @@ def test_retrieve_docs_returns_chunks_and_readable_content():
     assert r.ok
     assert r.data["chunks"] == CHUNKS
     assert "a.md#1" in r.content and "IVF" in r.content
+    assert r.artifacts[0].kind == "documents"
+    assert r.artifacts[0].data["chunks"] == CHUNKS
 
 
 def test_retrieve_docs_k_caps_results():
@@ -78,6 +80,7 @@ def test_read_memory_recalls_relevant_facts(tmp_path):
     assert r.ok
     assert any("guitar" in f.fact_content for f in r.data["memories"])
     assert "guitar" in r.content
+    assert r.artifacts[0].kind == "memory"
 
 
 def test_read_memory_empty_store(tmp_path):
@@ -100,6 +103,8 @@ def test_write_memory_extracts_and_merges(tmp_path):
     r = tool.run({"text": "我在做一个 faiss 项目"})
     assert r.ok
     assert [op.type for op in r.data["ops"]] == ["add"]
+    assert r.artifacts == []
+    assert r.side_effects == r.data["ops"]
     assert "1 add" in r.content
     assert any("faiss project" in f.fact_content for f in store.list_active())
 

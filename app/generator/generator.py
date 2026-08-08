@@ -1,6 +1,7 @@
 import os
 from typing import Any, Dict, List, Optional
 
+from app.agent.tools.base import ConfirmedAction, ToolArtifact
 from app.config import get_provider_config, get_settings
 
 
@@ -10,16 +11,37 @@ SYSTEM_PROMPT = (
     "If context is insufficient, you may add common knowledge but clearly separate it. "
     "Use only evidence labels from provided chunks, such as [Chunk x, filename] or [Frame x, filename, t=xx.xx s]. "
     "Do not treat URLs inside chunks as retrieved citations. "
+    "A 'Verified tool outputs' section contains successful read-only tool results, such as "
+    "calculations. You may use those results directly; do not invent chunk citations for them. "
+    "A 'Confirmed actions' section reports side effects that completed successfully. Use it only "
+    "to acknowledge operation status; never treat it as document or world-fact evidence. "
     "An 'About the user' section may be provided as personal background to personalize the "
     "answer; it is NOT retrieved evidence, so do not cite it."
 )
 
 
-def compose_user_prompt(query: str, context: str, user_memory: str = "") -> str:
+def compose_user_prompt(
+    query: str,
+    context: str,
+    user_memory: str = "",
+    tool_context: str = "",
+    confirmed_actions_context: str = "",
+) -> str:
     parts = [f"User question:\n{query}", f"Retrieved context:\n{context}"]
+    if tool_context.strip():
+        parts.append("Verified tool outputs:\n" + tool_context.strip())
+    if confirmed_actions_context.strip():
+        parts.append(
+            "Confirmed actions (operation status only, not factual evidence):\n"
+            + confirmed_actions_context.strip()
+        )
     if user_memory.strip():
         parts.append("About the user (personal background, not evidence):\n" + user_memory.strip())
-    parts.append("Provide a concise and accurate answer. Append evidence labels to key claims.")
+    parts.append(
+        "Provide a concise and accurate answer. Append chunk evidence labels to claims based on "
+        "retrieved context; verified tool outputs do not need chunk citations. Acknowledge only "
+        "the operations listed under Confirmed actions."
+    )
     return "\n\n".join(parts)
 
 
@@ -80,9 +102,27 @@ class OpenAICompatibleGenerator:
         query: str,
         retrieved_chunks: List[Dict[str, Any]],
         user_memory: str = "",
+        tool_artifacts: Optional[List[ToolArtifact]] = None,
+        confirmed_actions: Optional[List[ConfirmedAction]] = None,
     ) -> Dict[str, Any]:
         context = self._build_context(retrieved_chunks)
-        user_prompt = compose_user_prompt(query, context, user_memory)
+        tool_lines = [
+            f"[Tool {artifact.source_tool or 'unknown'}, {artifact.kind}]\n{artifact.content.strip()}"
+            for artifact in (tool_artifacts or [])
+            if artifact.kind not in {"documents", "memory"} and artifact.content.strip()
+        ]
+        action_lines = [
+            f"[Tool {action.source_tool or 'unknown'}]\n{action.content.strip()}"
+            for action in (confirmed_actions or [])
+            if action.content.strip()
+        ]
+        user_prompt = compose_user_prompt(
+            query,
+            context,
+            user_memory,
+            "\n\n".join(tool_lines),
+            "\n\n".join(action_lines),
+        )
 
         resp = self.client.chat.completions.create(
             model=self.model,

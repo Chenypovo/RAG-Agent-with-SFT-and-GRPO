@@ -133,7 +133,15 @@ For heading-free documents, expanding a retrieved child chunk to a three-chunk w
 
 ### Memory retrieval
 
-Personal example data have been removed from this public snapshot.
+The repository includes three fictional demonstration facts with matching queries and relevance labels. These examples illustrate the interface and carry no measured performance claim.
+
+```bash
+python scripts/eval_memory.py \
+  --facts data/eval/memory_demo_facts.jsonl \
+  --queries data/eval/memory_demo_queries.jsonl \
+  --qrels data/eval/memory_demo_qrels.jsonl \
+  --ks 1,3
+```
 
 ### ToolAgent benchmark
 

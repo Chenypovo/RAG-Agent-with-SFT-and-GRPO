@@ -24,3 +24,19 @@ data/agent_rl/hotpotqa_*/
 data/agent_rl/raw_hotpotqa/
 results/
 tmp/
+
+# Personal documents and operational handoffs stay private.
+docs/CV*.md
+docs/RESUME*.md
+docs/*CAREER*.md
+docs/*HANDOFF*.md
+docs/superpowers/
+/*面试*.md
+/*押题*.md
+/*简历*.md
+data/eval/memory_*_synth.jsonl
+data/eval/memory_synth_report.json
+data/eval/memory_*_example.jsonl
+data/eval_memory/
+data/agent_rl/reports/adaptive_teacher_20260905/RESULTS_SHA256SUMS
+!data/eval/memory_demo_*.jsonl

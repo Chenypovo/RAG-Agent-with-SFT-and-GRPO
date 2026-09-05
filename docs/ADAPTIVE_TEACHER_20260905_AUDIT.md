@@ -2,15 +2,14 @@
 
 Status: full teacher generation, QLoRA SFT, all20 original GRPO updates, all three1,000-task evaluations and paired statistics completed. Final scientific integrity audits passed. Entries below are a chronological record; earlier pending-stage notes are superseded by their later completion entries.
 
-## Baseline and authorisation
+## Baseline and preservation
 
 - Local HEAD and the user-supplied GitHub repository's master both resolve to `19458b5fbd3a37d44f8673c1b0f0da7c65c122ea`.
-- No filesystem AGENTS.md was found in the repository or its ancestor directories. The AGENTS instructions supplied in the conversation apply.
+- E0 report SHA-256 values are recorded there before modification. Original historical reports, datasets and checkpoints are preserved privately; published copies exclude personal material.
 - All tests and experimental execution take place on AutoDL. Local activity is limited to reading, editing, file integrity checks and transferring artifacts.
 
 ## Environment observed on AutoDL
 
-- Host: `<gpu-host>`.
 - Single NVIDIA GeForce RTX 5090 D, 32,607 MiB reported by nvidia-smi.
 - Driver 595.71.05; CUDA toolkit 12.8.93 at `/usr/local/cuda/bin/nvcc`.
 - Python 3.12.3; PyTorch 2.8.0+cu128; compiled architectures include sm_120; device capability (12, 0).

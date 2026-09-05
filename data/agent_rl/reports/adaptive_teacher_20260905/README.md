@@ -29,12 +29,13 @@ This is the compact evidence package for the completed 5 September 2026 run. Sci
 
 [PUBLIC_SHA256SUMS](PUBLIC_SHA256SUMS) covers this compact package. Verify it from this directory. The metadata and numerical reports retain their original file contents and internal AutoDL paths.
 
-[RESULTS_SHA256SUMS](RESULTS_SHA256SUMS) is the original manifest for the full 9,874-file, 6.28 GB result bundle. Its own SHA-256 is `d8e82282c8a31aac642d296739fba4902a9de8255edc52e275c987155eed992e`. This manifest is supplied as a content inventory; the large raw trajectories, candidate/RNG journals, adapters and full recovery checkpoints are **not hosted in this Git repository**. They remain in the original local/AutoDL delivery.
 
-[AUTODL_INPUTS_SHA256SUMS](delivery_provenance/AUTODL_INPUTS_SHA256SUMS) identifies 208 base-model, data/index and original E0 input files (23.60 GB). Its paths are relative to the recorded AutoDL run root. Base model weights and indexes are also outside Git. Neither checksum file is a download link, and the existing historical release is not a release of these new adapters.
+[AUTODL_INPUTS_SHA256SUMS](delivery_provenance/AUTODL_INPUTS_SHA256SUMS) identifies 208 base-model, data/index and original E0 input files (23.60 GB). Its paths are relative to the recorded AutoDL run root. Base model weights and indexes are also outside Git. This checksum file is not a download link, and the existing historical release is not a release of these new adapters.
 
 The complete original artifacts are required to re-run the saved-output audits; this compact package supports inspection of metrics and provenance, not a claim that all raw outputs are downloadable after cloning. Model or scientific reruns are separate experiments and must not be confused with publication verification.
 
-All science, tests, metric calculations and figure generation were performed on AutoDL. Publication used file copies, file checksums and documentation updates. The full frozen experiment report remains unchanged; README updates distinguish current E1/E2 findings from historical E0.
+All science, tests, metric calculations and figure generation were performed on AutoDL. Publication used file copies, file checksums and documentation updates. Public documentation has been edited to remove personal material; numerical results remain unchanged. README updates distinguish current E1/E2 findings from historical E0.
 
 These are one-seed, reused benchmark/dev results. Joint Success means an exact answer plus complete gold sentence evidence. Conditional stopping groups differ across policies; zero empty/failed-retrieval exposure and unlabelled contradictions do not establish recovery. GRPO did not preserve accuracy relative to the new SFT adapter.
+
+The full original manifest and raw delivery include private material and are retained privately. They are not published here. Public checksums cover only the files included in this directory. Personal machine paths in the separate historical SFT data summary were reduced to project-relative paths; all numerical results and artifact hashes are unchanged.

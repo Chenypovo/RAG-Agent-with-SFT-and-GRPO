@@ -1,0 +1,3 @@
+{"query_id": "demo_q1", "fact_id": "demo_name", "relevance": 1}
+{"query_id": "demo_q2", "fact_id": "demo_colour", "relevance": 1}
+{"query_id": "demo_q3", "fact_id": "demo_place", "relevance": 1}

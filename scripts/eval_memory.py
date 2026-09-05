@@ -9,9 +9,9 @@ then runs labeled queries and scores which facts come back.
 
 Run:
     python scripts/eval_memory.py \
-        --facts data/eval_memory/facts_example.jsonl \
-        --queries data/eval_memory/queries_example.jsonl \
-        --qrels data/eval_memory/qrels_example.jsonl \
+        --facts data/eval/memory_demo_facts.jsonl \
+        --queries data/eval/memory_demo_queries.jsonl \
+        --qrels data/eval/memory_demo_qrels.jsonl \
         --ks 1,3,5
 """
 

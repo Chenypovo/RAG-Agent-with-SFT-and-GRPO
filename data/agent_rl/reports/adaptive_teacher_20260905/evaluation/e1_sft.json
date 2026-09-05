@@ -1,0 +1,252 @@
+{
+  "agent": "PromptOnlyPolicy",
+  "behaviour": {
+    "action_counts": {
+      "final_answer": 949,
+      "retrieve_docs": 3512
+    },
+    "budget_exhaustion_rate": 0.051,
+    "decision_after_two_calls_with_incomplete_evidence": {
+      "continue_with_incomplete_evidence": 242,
+      "continued_then_complete_evidence": 72,
+      "continued_then_joint_success": 41,
+      "opportunities_with_incomplete_evidence": 265,
+      "stop_with_incomplete_evidence": 23
+    },
+    "decisions_per_episode": {
+      "2": 2,
+      "3": 105,
+      "4": 323,
+      "5": 570
+    },
+    "definitions": {
+      "json_invalid_rate": "strict JSON action parsing/schema errors divided by all model decisions; retrieval execution failures are counted separately",
+      "premature_stop": "explicit final_answer with incomplete gold sentence evidence, divided by all episodes",
+      "recovery": "a subsequent successful retrieval yields a previously unseen sentence ID; also report endpoint JointSuccess",
+      "retrieval_calls": "retrieve_docs action attempts, including duplicates; historical MeanToolCalls counts all tool-name attempts and also includes unsupported tool names",
+      "zero_exposures": "null rate; absence of an opportunity is not evidence of recovery"
+    },
+    "duplicate_call_rate_per_decision": 0.02757229320780094,
+    "duplicate_call_rate_per_retrieval_attempt": 0.03502277904328018,
+    "explicit_stop_rate": 0.949,
+    "json_invalid_rate": 0.0,
+    "mean_retrieval_calls": 3.512,
+    "n_decisions": 4461,
+    "n_episodes": 1000,
+    "premature_stop_rate": 0.178,
+    "recovery": {
+      "contradictory": {
+        "exposures": null,
+        "joint_success_rate": null,
+        "new_evidence_rate": null,
+        "status": "unresolved: no adjudicated contradiction labels in this protocol"
+      },
+      "duplicate": {
+        "exposures": 123,
+        "has_later_action": 99,
+        "joint_success_rate": 0.024390243902439025,
+        "new_evidence_rate": 0.13008130081300814,
+        "recovered_joint_success": 3,
+        "recovered_new_evidence": 16
+      },
+      "empty": {
+        "exposures": 0,
+        "has_later_action": 0,
+        "joint_success_rate": null,
+        "new_evidence_rate": null,
+        "recovered_joint_success": 0,
+        "recovered_new_evidence": 0
+      },
+      "failed": {
+        "exposures": 0,
+        "has_later_action": 0,
+        "joint_success_rate": null,
+        "new_evidence_rate": null,
+        "recovered_joint_success": 0,
+        "recovered_new_evidence": 0
+      }
+    },
+    "retrieval_call_buckets": {
+      "0": 0,
+      "1": 2,
+      "2": 105,
+      "3": 323,
+      "4+": 570
+    },
+    "retrieval_call_proportions": {
+      "0": 0.0,
+      "1": 0.002,
+      "2": 0.105,
+      "3": 0.323,
+      "4+": 0.57
+    },
+    "retrieval_calls_per_episode": {
+      "1": 2,
+      "2": 105,
+      "3": 323,
+      "4": 519,
+      "5": 51
+    },
+    "unsupported_tool_action_count": 0,
+    "unsupported_tool_action_rate": 0.0
+  },
+  "completion_backend": "transformers",
+  "config": {
+    "allowed_tools": [
+      "retrieve_docs"
+    ],
+    "completion_backend": "transformers",
+    "controller_adapter": "/root/autodl-tmp/e1-20260905/results/e1_sft/adapter",
+    "controller_adapter_provenance": {
+      "adapter_config_sha256": "f5fcff1769794f3f591c5555b9795b33a342fd99ff9ee555c57df1e96746b0cf",
+      "path": "/root/autodl-tmp/e1-20260905/results/e1_sft/adapter",
+      "weight_files": [
+        {
+          "path": "adapter_model.safetensors",
+          "sha256": "4ffac48ca6e6d9b424457d699b810c4c6cb4082275d73da3b313420d0201a7b6",
+          "size_bytes": 69782384
+        }
+      ]
+    },
+    "controller_max_new_tokens": 128,
+    "controller_model": "/root/autodl-tmp/e1-20260905/models/Qwen3-1.7B",
+    "controller_revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "controller_temperature": 0.7,
+    "controller_top_k": 20,
+    "controller_top_p": 0.8,
+    "data_dir": "/root/autodl-tmp/e1-20260905/workspace/data/agent_rl/hotpotqa_validation_1k",
+    "device_map": "auto",
+    "dtype": "bfloat16",
+    "embedding_batch_size": 64,
+    "embedding_device": "cuda",
+    "embedding_model": "/root/autodl-tmp/e1-20260905/models/bge-small-en-v1.5",
+    "env_version": "personal-rag-hotpotqa-prompt-v1",
+    "evaluated_tasks": 1000,
+    "finalizer_max_new_tokens": 64,
+    "finalizer_model": "/root/autodl-tmp/e1-20260905/models/Qwen2.5-7B-Instruct",
+    "finalizer_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "finalizer_temperature": 0.0,
+    "finalizer_version": "grounded-answer-finalizer-v0",
+    "lancedb_table": "chunks",
+    "max_steps": 5,
+    "max_tasks": 1000,
+    "partition": "test",
+    "policy_version": "prompt-only-controller-v1",
+    "reranker_batch_size": 16,
+    "reranker_device": "cuda",
+    "reranker_model": "/root/autodl-tmp/e1-20260905/models/bge-reranker-base",
+    "reranker_top_k": 6,
+    "retrieval_backend": "hybrid-rerank",
+    "retrieval_candidate_top_k": 15,
+    "retrieval_output_top_k": 6,
+    "retrieval_rrf_k": 60,
+    "retrieval_top_k": 20,
+    "seed": 42,
+    "task_filename": "tasks_test.jsonl",
+    "thinking_enabled": false,
+    "vector_store": "lancedb"
+  },
+  "controller_adapter": "/root/autodl-tmp/e1-20260905/results/e1_sft/adapter",
+  "controller_adapter_provenance": {
+    "adapter_config_sha256": "f5fcff1769794f3f591c5555b9795b33a342fd99ff9ee555c57df1e96746b0cf",
+    "path": "/root/autodl-tmp/e1-20260905/results/e1_sft/adapter",
+    "weight_files": [
+      {
+        "path": "adapter_model.safetensors",
+        "sha256": "4ffac48ca6e6d9b424457d699b810c4c6cb4082275d73da3b313420d0201a7b6",
+        "size_bytes": 69782384
+      }
+    ]
+  },
+  "controller_max_new_tokens": 128,
+  "controller_model": "/root/autodl-tmp/e1-20260905/models/Qwen3-1.7B",
+  "controller_resolved_commit": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "controller_revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "controller_temperature": 0.7,
+  "controller_top_k": 20,
+  "controller_top_p": 0.8,
+  "data_dir": "/root/autodl-tmp/e1-20260905/workspace/data/agent_rl/hotpotqa_validation_1k",
+  "data_input_sha256": {
+    "bm25.json": "97166fdfc062669a4d22c78f51f8d184074b6df34fe3cc578c447b85fdd360f8",
+    "corpus.jsonl": "fc52f56f478130927c8f2726c5a224abb0c97c3091dad884cbc3798ba3ebf0e8",
+    "tasks.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2",
+    "tasks_test.jsonl": "c5c67ed5bcd710eb944ac649eba7a429838e8aa5452332ec3ba4f72daf64b6f2"
+  },
+  "data_manifest_path": "/root/autodl-tmp/e1-20260905/workspace/data/agent_rl/hotpotqa_validation_1k/manifest.json",
+  "data_manifest_sha256": "a23d2a7d92ef7647972deb373ceb7761c5ba6342aac9e525b191b0fa65e8fb5b",
+  "dependencies": {
+    "packages": {
+      "lancedb": "0.36.0",
+      "peft": "0.20.0",
+      "python-dotenv": "1.2.3",
+      "rank-bm25": "0.2.2",
+      "torch": "2.8.0+cu128",
+      "transformers": "4.57.6"
+    },
+    "python": "3.12.3"
+  },
+  "device_map": "auto",
+  "dtype": "bfloat16",
+  "embedding_model": "/root/autodl-tmp/e1-20260905/models/bge-small-en-v1.5",
+  "env_version": "personal-rag-hotpotqa-prompt-v1",
+  "evaluation": {
+    "metrics": {
+      "AbstainRate": 0.099,
+      "AnswerEM": 0.48,
+      "AnswerF1": 0.6160611231898421,
+      "BudgetStopRate": 0.051,
+      "CallsPerJointSuccess": 8.12962962962963,
+      "CompleteDocumentEvidence": 0.892,
+      "CompleteSentenceEvidence": 0.807,
+      "DocumentEM": 0.013,
+      "DocumentF1": 0.40489181109568106,
+      "DocumentPrecision": 0.27082444459135635,
+      "DocumentRecall": 0.945,
+      "DuplicateCallRate": 0.02757229320780094,
+      "FinalizerErrorRate": 0.0,
+      "InvalidActionRate": 0.0,
+      "JointEM": 0.0,
+      "JointF1": 0.19839530999452049,
+      "JointSuccess": 0.432,
+      "MeanEnvironmentReturn": 0.51978,
+      "MeanToolCalls": 3.512,
+      "SentenceEM": 0.0,
+      "SentenceF1": 0.29804304120723357,
+      "SentencePrecision": 0.1823070937072081,
+      "SentenceRecall": 0.9097000000000001
+    },
+    "n_decisions": 4461,
+    "n_joint_successes": 432,
+    "n_tasks": 1000,
+    "n_tool_calls": 3512
+  },
+  "finalizer_max_new_tokens": 64,
+  "finalizer_model": "/root/autodl-tmp/e1-20260905/models/Qwen2.5-7B-Instruct",
+  "finalizer_resolved_commit": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "finalizer_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "finalizer_temperature": 0.0,
+  "finalizer_version": "grounded-answer-finalizer-v0",
+  "max_steps": 5,
+  "partition": "test",
+  "policy_code_sha256": "a3d082e1679c3a3e301eaeb85311fcf388ac2d6f734974dd9e6c6d653ec8e88d",
+  "policy_version": "prompt-only-controller-v1",
+  "reranker_model": "/root/autodl-tmp/e1-20260905/models/bge-reranker-base",
+  "retrieval_artifact_sha256": {
+    "lancedb": "41d70e492c7c1ada57431d13ce03835b6cbff74720e86c4e64c6190de41efcf3"
+  },
+  "retrieval_backend": "hybrid-rerank",
+  "retrieval_candidate_top_k": 15,
+  "retrieval_output_top_k": 6,
+  "retrieval_rrf_k": 60,
+  "retrieval_top_k": 20,
+  "runtime": {
+    "evaluation_seconds": 3027.066508874763,
+    "peak_allocated_bytes": 20603218944,
+    "peak_reserved_bytes": 22737321984,
+    "total_seconds_this_process": 3043.163576446008
+  },
+  "schema_version": "prompt-policy-eval-v1",
+  "seed": 42,
+  "thinking_enabled": false,
+  "vector_store": "lancedb"
+}

@@ -1,0 +1,14 @@
+........................................................................ [ 67%]
+..................................                                       [100%]
+=============================== warnings summary ===============================
+../venv/lib/python3.12/site-packages/jieba/_compat.py:18
+  /root/autodl-tmp/e1-20260905/venv/lib/python3.12/site-packages/jieba/_compat.py:18: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+../../../miniconda3/lib/python3.12/site-packages/pkg_resources/__init__.py:2832
+  /root/miniconda3/lib/python3.12/site-packages/pkg_resources/__init__.py:2832: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+106 passed, 2 warnings in 2.20s

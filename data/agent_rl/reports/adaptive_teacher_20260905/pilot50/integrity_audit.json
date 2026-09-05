@@ -1,0 +1,97 @@
+{
+  "tasks": 50,
+  "candidate_count": 91,
+  "candidate_count_histogram": {
+    "2": 41,
+    "1": 9
+  },
+  "candidate_hashes_valid": true,
+  "candidate_limits_and_seed_schedule_valid": true,
+  "selection_recomputed_identically": true,
+  "audited_prompts": 451,
+  "prompts_equal_observation_only_renderer": true,
+  "shared_teacher_finaliser_verified": true,
+  "selected_behaviour_recomputed": {
+    "n_episodes": 50,
+    "n_decisions": 246,
+    "action_counts": {
+      "retrieve_docs": 210,
+      "final_answer": 21,
+      "unsupported_tool:final_answer": 15
+    },
+    "retrieval_calls_per_episode": {
+      "2": 1,
+      "3": 10,
+      "4": 17,
+      "5": 22
+    },
+    "decisions_per_episode": {
+      "4": 4,
+      "5": 46
+    },
+    "retrieval_call_buckets": {
+      "0": 0,
+      "1": 0,
+      "2": 1,
+      "3": 10,
+      "4+": 39
+    },
+    "retrieval_call_proportions": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.02,
+      "3": 0.2,
+      "4+": 0.78
+    },
+    "mean_retrieval_calls": 4.2,
+    "json_invalid_rate": 0.0,
+    "unsupported_tool_action_count": 15,
+    "unsupported_tool_action_rate": 0.06097560975609756,
+    "premature_stop_rate": 0.12,
+    "duplicate_call_rate_per_decision": 0.13821138211382114,
+    "duplicate_call_rate_per_retrieval_attempt": 0.1619047619047619,
+    "budget_exhaustion_rate": 0.58,
+    "explicit_stop_rate": 0.42,
+    "recovery": {
+      "empty": {
+        "exposures": 0,
+        "has_later_action": 0,
+        "recovered_new_evidence": 0,
+        "recovered_joint_success": 0,
+        "new_evidence_rate": null,
+        "joint_success_rate": null
+      },
+      "failed": {
+        "exposures": 0,
+        "has_later_action": 0,
+        "recovered_new_evidence": 0,
+        "recovered_joint_success": 0,
+        "new_evidence_rate": null,
+        "joint_success_rate": null
+      },
+      "duplicate": {
+        "exposures": 34,
+        "has_later_action": 23,
+        "recovered_new_evidence": 6,
+        "recovered_joint_success": 0,
+        "new_evidence_rate": 0.17647058823529413,
+        "joint_success_rate": 0.0
+      },
+      "contradictory": {
+        "exposures": null,
+        "new_evidence_rate": null,
+        "joint_success_rate": null,
+        "status": "unresolved: no adjudicated contradiction labels in this protocol"
+      }
+    },
+    "decision_after_two_calls_with_incomplete_evidence": null,
+    "definitions": {
+      "json_invalid_rate": "strict JSON action parsing/schema errors divided by all model decisions; retrieval execution failures are counted separately",
+      "retrieval_calls": "retrieve_docs action attempts, including duplicates; historical MeanToolCalls counts all tool-name attempts and also includes unsupported tool names",
+      "premature_stop": "explicit final_answer with incomplete gold sentence evidence, divided by all episodes",
+      "recovery": "a subsequent successful retrieval yields a previously unseen sentence ID; also report endpoint JointSuccess",
+      "zero_exposures": "null rate; absence of an opportunity is not evidence of recovery"
+    }
+  },
+  "qualification": "Gold text can occur naturally in retrieved corpus evidence; this check verifies the authorised observation renderer, not a misleading ban on matching answer strings."
+}

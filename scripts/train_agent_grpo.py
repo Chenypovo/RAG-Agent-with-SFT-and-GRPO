@@ -912,12 +912,14 @@ def run_training(
     *,
     config_path: Path,
     overwrite_output_dir: bool,
+    resume_from_checkpoint: Optional[str] = None,
 ) -> Dict[str, Any]:
     import torch
 
     run_started = time.perf_counter()
     if not torch.cuda.is_available():
         raise RuntimeError("GRPO training requires a CUDA GPU")
+    torch.cuda.reset_peak_memory_stats()
     missing_dependencies = [name for name, present in dependency_status().items() if not present]
     if missing_dependencies:
         raise RuntimeError("missing GRPO dependencies: " + ", ".join(missing_dependencies))
@@ -936,7 +938,10 @@ def run_training(
     if not paths["init_adapter"].is_dir():
         raise RuntimeError(f"initial SFT adapter does not exist: {paths['init_adapter']}")
     output_dir = paths["output_dir"]
-    _prepare_output_dir(output_dir, overwrite=overwrite_output_dir)
+    if resume_from_checkpoint is None:
+        _prepare_output_dir(output_dir, overwrite=overwrite_output_dir)
+    elif not output_dir.is_dir() or (output_dir / "train_report.json").exists():
+        raise RuntimeError("resume requires an unfinished existing GRPO output directory")
 
     training = config["training"]
     rollout_config = config["rollout"]
@@ -955,13 +960,13 @@ def run_training(
     if not tasks:
         raise RuntimeError("training task file contains no tasks")
 
-    store = BM25Store.load(str(paths["bm25"]))
-    registry = build_minimal_registry(
-        lambda query: store.search(
-            query=query,
-            top_k=int(config["data"]["retrieval_top_k"]),
-        )
-    )
+    from app.agent_rl.retrieval_setup import build_retrieval_registry
+
+    retrieval_config = config["data"].get("retrieval", {
+        "backend": "bm25", "top_k": int(config["data"]["retrieval_top_k"])
+    })
+    registry, retrieval_artifacts = build_retrieval_registry(paths["data_dir"], retrieval_config)
+    run_provenance["retrieval"] = retrieval_artifacts
     model, tokenizer = _load_policy(config, paths)
     reference_sha256_before = _adapter_state_sha256(model, "reference")
     finalizer_config = config["finalizer"]
@@ -1019,7 +1024,6 @@ def run_training(
     }
     if optimizer_parameter_ids & reference_parameter_ids:
         raise RuntimeError("reference adapter parameters entered the optimizer")
-    torch.cuda.reset_peak_memory_stats()
     training_started = time.perf_counter()
 
     trajectory_path = output_dir / "train_trajectories.jsonl"
@@ -1028,9 +1032,39 @@ def run_training(
     total_episodes = 0
     total_decisions = 0
     total_truncated_prompts = 0
+    from app.agent_rl.training_checkpoint import save_checkpoint, load_checkpoint
+    protocol_sha256 = _canonical_sha256({
+        "config": config, "tasks_sha256": _sha256(paths["task_file"]),
+        "initial_adapter": _adapter_provenance(str(paths["init_adapter"])),
+        "retrieval": retrieval_artifacts,
+        "reference_sha256": reference_sha256_before,
+    })
+    start_update = 1
+    previous_runtime = 0.0
+    previous_peak_allocated = previous_peak_reserved = 0
+    if resume_from_checkpoint is not None:
+        saved = load_checkpoint(resume_from_checkpoint, model, optimizer, protocol_sha256=protocol_sha256)
+        start_update = int(saved["completed_updates"]) + 1
+        update_reports = saved["updates"]
+        total_episodes = saved["total_episodes"]
+        total_decisions = saved["total_decisions"]
+        total_truncated_prompts = saved["total_truncated_prompts"]
+        previous_runtime = saved["training_runtime_seconds"]
+        previous_peak_allocated = saved["peak_allocated_bytes"]
+        previous_peak_reserved = saved["peak_reserved_bytes"]
+        for path in output_dir.glob("resume-update-*"):
+            if int(path.name.rsplit("-", 1)[-1]) > int(saved["completed_updates"]):
+                path.rename(output_dir / f"interrupted-{time.time_ns()}-{path.name}")
+        contents = trajectory_path.read_bytes()
+        prefix = contents[:saved["trajectory_bytes"]]
+        if hashlib.sha256(prefix).hexdigest() != saved["trajectory_sha256"]:
+            raise RuntimeError("checkpoint trajectory prefix hash mismatch")
+        if len(contents) > len(prefix):
+            (output_dir / f"interrupted-trajectory-tail-{time.time_ns()}.jsonl").write_bytes(contents[len(prefix):])
+            trajectory_path.write_bytes(prefix)
 
-    with trajectory_path.open("w", encoding="utf-8") as trajectory_handle:
-        for update in range(1, int(training["max_updates"]) + 1):
+    with trajectory_path.open("a" if resume_from_checkpoint else "w", encoding="utf-8") as trajectory_handle:
+        for update in range(start_update, int(training["max_updates"]) + 1):
             selected_tasks = _select_tasks(
                 tasks,
                 update=update,
@@ -1232,6 +1266,17 @@ def run_training(
                     },
                 }, ensure_ascii=False, sort_keys=True) + "\n")
             trajectory_handle.flush()
+            os.fsync(trajectory_handle.fileno())
+            save_checkpoint(output_dir / f"resume-update-{update:04d}", model, optimizer, {
+                "protocol_sha256": protocol_sha256, "completed_updates": update,
+                "updates": update_reports, "total_episodes": total_episodes,
+                "total_decisions": total_decisions, "total_truncated_prompts": total_truncated_prompts,
+                "trajectory_bytes": trajectory_path.stat().st_size,
+                "trajectory_sha256": _sha256(trajectory_path),
+                "training_runtime_seconds": previous_runtime + time.perf_counter() - training_started,
+                "peak_allocated_bytes": max(previous_peak_allocated, torch.cuda.max_memory_allocated()),
+                "peak_reserved_bytes": max(previous_peak_reserved, torch.cuda.max_memory_reserved()),
+            })
             progress_path.write_text(
                 json.dumps({
                     "schema_version": "agent-grpo-progress-v1",
@@ -1250,10 +1295,10 @@ def run_training(
     reference_sha256_after = _adapter_state_sha256(model, "reference")
     if reference_sha256_after != reference_sha256_before:
         raise RuntimeError("frozen reference adapter changed during training")
-    training_runtime = time.perf_counter() - training_started
+    training_runtime = previous_runtime + time.perf_counter() - training_started
     total_runtime = time.perf_counter() - run_started
-    peak_memory_allocated = int(torch.cuda.max_memory_allocated())
-    peak_memory_reserved = int(torch.cuda.max_memory_reserved())
+    peak_memory_allocated = max(previous_peak_allocated, int(torch.cuda.max_memory_allocated()))
+    peak_memory_reserved = max(previous_peak_reserved, int(torch.cuda.max_memory_reserved()))
     adapter_path = _save_policy_adapter(model, tokenizer, output_dir / "adapter")
     report = {
         "schema_version": TRAIN_REPORT_SCHEMA_VERSION,
@@ -1382,6 +1427,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--report", default="")
     parser.add_argument("--overwrite-output-dir", action="store_true")
+    parser.add_argument("--resume-from-checkpoint")
     args = parser.parse_args(argv)
 
     config_path = Path(args.config).expanduser().resolve()
@@ -1404,6 +1450,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 config,
                 config_path=config_path,
                 overwrite_output_dir=args.overwrite_output_dir,
+                resume_from_checkpoint=args.resume_from_checkpoint,
             )
     except (OSError, RuntimeError, ValueError) as exc:
         parser.error(str(exc))

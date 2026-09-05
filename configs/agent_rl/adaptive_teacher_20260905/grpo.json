@@ -1,0 +1,74 @@
+{
+  "schema_version": "agent-grpo-train-config-v1",
+  "model": {
+    "name_or_path": "/root/autodl-tmp/e1-20260905/models/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "init_adapter": "/root/autodl-tmp/e1-20260905/results/e1_sft/adapter",
+    "torch_dtype": "bfloat16",
+    "trust_remote_code": false,
+    "quant_type": "nf4",
+    "double_quant": true
+  },
+  "finalizer": {
+    "name_or_path": "/root/autodl-tmp/e1-20260905/models/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "torch_dtype": "bfloat16",
+    "max_new_tokens": 64
+  },
+  "data": {
+    "data_dir": "/root/autodl-tmp/e1-20260905/workspace/data/agent_rl/hotpotqa_train_2k_v3",
+    "task_file": "tasks_train.jsonl",
+    "max_tasks": 128,
+    "retrieval_top_k": 8,
+    "retrieval": {
+      "backend": "hybrid-rerank",
+      "top_k": 8,
+      "candidate_top_k": 15,
+      "output_top_k": 6,
+      "rrf_k": 60,
+      "embedding_model": "/root/autodl-tmp/e1-20260905/models/bge-small-en-v1.5",
+      "embedding_device": "cuda",
+      "embedding_batch_size": 64,
+      "reranker_model": "/root/autodl-tmp/e1-20260905/models/bge-reranker-base",
+      "reranker_device": "cuda",
+      "reranker_batch_size": 16,
+      "lancedb_uri_name": "lancedb",
+      "lancedb_table": "chunks",
+      "parent_child_expansion": false
+    }
+  },
+  "rollout": {
+    "group_size": 4,
+    "tasks_per_update": 2,
+    "max_steps": 5,
+    "max_new_tokens": 128,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": 0
+  },
+  "reward": {
+    "task_success": 1.0,
+    "evidence_coverage": 0.5,
+    "valid_action_format": 0.0,
+    "tool_call_cost": -0.02,
+    "invalid_action": -0.2,
+    "duplicate_call": -0.2,
+    "premature_final_answer": -0.5,
+    "budget_exhausted": -0.3
+  },
+  "training": {
+    "max_updates": 20,
+    "optimization_epochs": 2,
+    "learning_rate": 5e-06,
+    "beta": 0.04,
+    "clip_epsilon": 0.2,
+    "max_seq_length": 2048,
+    "preserve_prompt_prefix_tokens": 256,
+    "max_grad_norm": 1.0,
+    "save_steps": 10,
+    "seed": 42
+  },
+  "output": {
+    "dir": "/root/autodl-tmp/e1-20260905/results/e2_grpo"
+  }
+}

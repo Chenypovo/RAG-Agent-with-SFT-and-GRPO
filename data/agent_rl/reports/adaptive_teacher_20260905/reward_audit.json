@@ -1,0 +1,236 @@
+{
+  "passed": true,
+  "reward_config": {
+    "budget_exhausted": -0.3,
+    "duplicate_call": -0.2,
+    "evidence_coverage": 0.5,
+    "invalid_action": -0.2,
+    "premature_final_answer": -0.5,
+    "task_success": 1.0,
+    "tool_call_cost": -0.02,
+    "valid_action_format": 0.0
+  },
+  "reward_config_source": {
+    "path": "configs/agent_rl/adaptive_teacher_20260905/grpo.json",
+    "sha256": "376f254298ea72b1ec0186937364a10bea9df471c5b39b3879c6f2e9b0214b20"
+  },
+  "scenarios": [
+    {
+      "assertions": [
+        {
+          "actual": 1.46,
+          "expected": 1.48,
+          "id": "extra_unique_irrelevant_call_does_not_increase_return",
+          "operator": "<=",
+          "passed": true
+        },
+        {
+          "actual": 1.0,
+          "expected": 1.0,
+          "id": "irrelevant_chunk_does_not_increase_coverage",
+          "operator": "==",
+          "passed": true
+        }
+      ],
+      "id": "extra_unique_irrelevant_retrieval",
+      "measurements": {
+        "baseline": {
+          "answer": "Paris",
+          "coverage": 1.0,
+          "final_reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": 0.0,
+            "evidence_coverage": 0.5,
+            "invalid_action": 0.0,
+            "premature_final_answer": 0.0,
+            "task_success": 1.0,
+            "tool_call_cost": 0.0,
+            "valid_action_format": 0.0
+          },
+          "stop_reason": "final_answer",
+          "tool_calls": 1,
+          "total_reward": 1.48
+        },
+        "with_extra_retrieval": {
+          "answer": "Paris",
+          "coverage": 1.0,
+          "final_reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": 0.0,
+            "evidence_coverage": 0.5,
+            "invalid_action": 0.0,
+            "premature_final_answer": 0.0,
+            "task_success": 1.0,
+            "tool_call_cost": 0.0,
+            "valid_action_format": 0.0
+          },
+          "stop_reason": "final_answer",
+          "tool_calls": 2,
+          "total_reward": 1.46
+        }
+      },
+      "passed": true,
+      "requirement": "An additional unique but irrelevant retrieval must not increase total return."
+    },
+    {
+      "assertions": [
+        {
+          "actual": "Paris",
+          "expected": "Paris",
+          "id": "finalizer_answer_is_correct",
+          "operator": "==",
+          "passed": true
+        },
+        {
+          "actual": 0.0,
+          "expected": 0.0,
+          "id": "incomplete_evidence_gets_no_task_success",
+          "operator": "==",
+          "passed": true
+        },
+        {
+          "actual": -0.5,
+          "expected": 0.0,
+          "id": "incomplete_evidence_is_penalized",
+          "operator": "<",
+          "passed": true
+        }
+      ],
+      "id": "correct_answer_incomplete_evidence",
+      "measurements": {
+        "episode": {
+          "answer": "Paris",
+          "coverage": 0.5,
+          "final_reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": 0.0,
+            "evidence_coverage": 0.25,
+            "invalid_action": 0.0,
+            "premature_final_answer": -0.5,
+            "task_success": 0.0,
+            "tool_call_cost": 0.0,
+            "valid_action_format": 0.0
+          },
+          "stop_reason": "final_answer",
+          "tool_calls": 1,
+          "total_reward": -0.27
+        }
+      },
+      "passed": true,
+      "requirement": "A correct answer without all required evidence must not earn task_success."
+    },
+    {
+      "assertions": [
+        {
+          "actual": 0.5,
+          "expected": 0.5,
+          "id": "duplicate_call_does_not_increase_coverage",
+          "operator": "==",
+          "passed": true
+        },
+        {
+          "actual": -0.2,
+          "expected": 0.0,
+          "id": "duplicate_call_is_penalized",
+          "operator": "<",
+          "passed": true
+        },
+        {
+          "actual": 0.0,
+          "expected": 0.0,
+          "id": "failed_retrieval_does_not_add_coverage",
+          "operator": "==",
+          "passed": true
+        },
+        {
+          "actual": 0.0,
+          "expected": 0.0,
+          "id": "forged_evidence_argument_is_rejected",
+          "operator": "==",
+          "passed": true
+        },
+        {
+          "actual": 0.0,
+          "expected": 0.0,
+          "id": "citation_text_is_not_structured_evidence",
+          "operator": "==",
+          "passed": true
+        }
+      ],
+      "id": "duplicate_failed_and_forged_evidence",
+      "measurements": {
+        "duplicate": {
+          "coverage_after": 0.5,
+          "coverage_before": 0.5,
+          "reward": -0.2,
+          "reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": -0.2,
+            "evidence_coverage": 0.0,
+            "invalid_action": 0.0,
+            "premature_final_answer": 0.0,
+            "task_success": 0.0,
+            "tool_call_cost": 0.0,
+            "valid_action_format": 0.0
+          }
+        },
+        "failed_retrieval": {
+          "coverage_after": 0.0,
+          "reward": -0.22,
+          "reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": 0.0,
+            "evidence_coverage": 0.0,
+            "invalid_action": -0.2,
+            "premature_final_answer": 0.0,
+            "task_success": 0.0,
+            "tool_call_cost": -0.02,
+            "valid_action_format": 0.0
+          }
+        },
+        "forged_action_args": {
+          "coverage_after": 0.0,
+          "reward": -0.22,
+          "reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": 0.0,
+            "evidence_coverage": 0.0,
+            "invalid_action": -0.2,
+            "premature_final_answer": 0.0,
+            "task_success": 0.0,
+            "tool_call_cost": -0.02,
+            "valid_action_format": 0.0
+          }
+        },
+        "forged_observation_text": {
+          "coverage_after": 0.0,
+          "reward": -0.02,
+          "reward_breakdown": {
+            "budget_exhausted": 0.0,
+            "duplicate_call": 0.0,
+            "evidence_coverage": 0.0,
+            "invalid_action": 0.0,
+            "premature_final_answer": 0.0,
+            "task_success": 0.0,
+            "tool_call_cost": -0.02,
+            "valid_action_format": 0.0
+          }
+        }
+      },
+      "passed": true,
+      "requirement": "Duplicate, failed, and policy-forged evidence paths must not increase coverage."
+    }
+  ],
+  "schema_version": "agent-rl-reward-hacking-audit-v2",
+  "scope": {
+    "environment": "PersonalRAGEnv",
+    "gpu_required": false,
+    "model_required": false,
+    "network_required": false
+  },
+  "summary": {
+    "failed_count": 0,
+    "passed_count": 3,
+    "scenario_count": 3
+  }
+}

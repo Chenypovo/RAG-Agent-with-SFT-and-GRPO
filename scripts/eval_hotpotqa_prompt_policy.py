@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -32,6 +33,8 @@ from app.agent_rl.hf_backend import TransformersChatBackend  # noqa: E402
 from app.agent_rl.policies import PROMPT_ONLY_POLICY_VERSION, PromptOnlyPolicy  # noqa: E402
 from app.agent_rl.rollouts import run_policy_episode  # noqa: E402
 from app.agent_rl.tasks import load_tasks  # noqa: E402
+from app.agent_rl.run_journal import CandidateJournal, atomic_json  # noqa: E402
+from app.agent_rl.behaviour_audit import audit_behaviour  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.vectordb.bm25_store import BM25Store  # noqa: E402
 
@@ -84,7 +87,13 @@ def main() -> None:
     parser.add_argument("--output", default="")
     parser.add_argument("--trajectories", default="")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+    run_started = time.perf_counter()
+    if args.completion_backend == "transformers":
+        import torch
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
 
     if (
         args.retrieval_top_k <= 0
@@ -235,7 +244,33 @@ def main() -> None:
         seed=args.seed,
         env_version="personal-rag-hotpotqa-prompt-v1",
     )
-    rollouts = [run_policy_episode(env, task, policy, seed=args.seed) for task in tasks]
+    journal = None
+    if args.completion_backend == "transformers":
+        journal = CandidateJournal(trajectory_path.with_suffix(".episodes"), {
+            "config": {k: v for k, v in vars(args).items() if k not in {"resume", "overwrite", "output", "trajectories"}},
+            "inputs": provenance, "retrieval_artifacts": retrieval_artifacts,
+            "adapter": controller_backend.adapter_provenance,
+            "prompt_code_sha256": sha256_file(Path(PROJECT_ROOT) / "app/agent_rl/policies.py"),
+            "dependencies": dependency_versions(("torch", "transformers", "peft", "lancedb")),
+        }, resume=args.resume)
+        journal.restore()
+    rollouts = []
+    for index, task in enumerate(tasks):
+        existing = journal.candidates_for(index, task.task_id) if journal else []
+        if existing:
+            rollout = existing[0]
+        else:
+            episode_started = time.perf_counter()
+            rollout = run_policy_episode(env, task, policy, seed=args.seed)
+            if journal:
+                journal.append(index, 0, rollout, time.perf_counter() - episode_started)
+        rollouts.append(rollout)
+        if journal:
+            progress = {"completed_tasks": index + 1, "total_tasks": len(tasks),
+                "evaluation_seconds": sum(r["runtime_seconds"] for r in journal.records),
+                "peak_reserved_bytes": torch.cuda.max_memory_reserved()}
+            atomic_json(journal.directory / "progress.json", progress)
+            print(json.dumps(progress), flush=True)
 
     report = {
         "schema_version": "prompt-policy-eval-v1",
@@ -265,6 +300,7 @@ def main() -> None:
         "device_map": args.device_map if args.completion_backend == "transformers" else None,
         "dtype": args.dtype if args.completion_backend == "transformers" else None,
         "policy_version": PROMPT_ONLY_POLICY_VERSION,
+        "policy_code_sha256": sha256_file(Path(PROJECT_ROOT) / "app/agent_rl/policies.py"),
         "finalizer_version": FROZEN_FINALIZER_VERSION,
         "env_version": env.env_version,
         "seed": args.seed,
@@ -293,6 +329,13 @@ def main() -> None:
         "retrieval_artifact_sha256": retrieval_artifacts,
         "max_steps": args.max_steps,
         "evaluation": aggregate_policy_rollouts(rollouts),
+        "behaviour": audit_behaviour(rollouts, gold_by_task={t.task_id: t.gold_evidence_ids for t in tasks}),
+        "runtime": {
+            "total_seconds_this_process": time.perf_counter() - run_started,
+            "evaluation_seconds": sum(r["runtime_seconds"] for r in journal.records) if journal else None,
+            "peak_allocated_bytes": max([torch.cuda.max_memory_allocated()] + [r["peak_allocated_bytes"] for r in journal.records]) if journal else None,
+            "peak_reserved_bytes": max([torch.cuda.max_memory_reserved()] + [r["peak_reserved_bytes"] for r in journal.records]) if journal else None,
+        },
         "config": {
             "data_dir": str(data_dir),
             "partition": args.partition,

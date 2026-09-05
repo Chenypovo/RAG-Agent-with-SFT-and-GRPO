@@ -7,7 +7,13 @@ from app.agent_rl.policies import PolicyDecision, PromptOnlyPolicy
 from app.agent_rl.rewards import RewardBreakdown, RewardConfig
 from app.agent_rl.rollouts import PolicyRollout, run_policy_episode
 from app.agent_rl.tasks import AgentRLTask, load_tasks
-from app.agent_rl.teacher import ScriptedTeacherPolicy
+from app.agent_rl.teacher import (
+    ScriptedTeacherPolicy,
+    TeacherCandidateSelection,
+    VerifierGuidedTeacherPolicy,
+    generate_teacher_candidates,
+    select_teacher_rollout,
+)
 
 __all__ = [
     "AgentAction",
@@ -20,6 +26,10 @@ __all__ = [
     "RewardBreakdown",
     "RewardConfig",
     "ScriptedTeacherPolicy",
+    "TeacherCandidateSelection",
+    "VerifierGuidedTeacherPolicy",
+    "generate_teacher_candidates",
     "load_tasks",
     "run_policy_episode",
+    "select_teacher_rollout",
 ]

@@ -255,6 +255,44 @@ def test_prompt_policy_compacts_history_and_marks_duplicate_recovery():
     assert "evidence_ids" not in state
 
 
+def test_prompt_policy_retains_four_retrieval_observations_for_adaptive_teacher():
+    captured = {}
+
+    def complete(system_prompt, user_prompt):
+        captured["user"] = user_prompt
+        return '{"final_answer": true}'
+
+    PromptOnlyPolicy(complete).decide({
+        "question": "Resolve a multi-hop chain.",
+        "available_tools": [{"name": "retrieve_docs"}],
+        "remaining_steps": 1,
+        "last_message": "evidence four",
+        "history": [
+            {
+                "step_index": index,
+                "tool": "retrieve_docs",
+                "args": {"query": f"query {index}"},
+                "ok": True,
+                "error": None,
+                "observation": f"evidence {index}",
+            }
+            for index in range(1, 5)
+        ],
+    })
+    payload = captured["user"].split("Environment observation:\n", 1)[1].split(
+        "\n\nChoose the next single action", 1
+    )[0]
+    state = json.loads(payload)
+
+    assert state["retrieved_evidence"] == [
+        "evidence 1",
+        "evidence 2",
+        "evidence 3",
+        "evidence 4",
+    ]
+    assert len(state["previous_tool_calls"]) == 4
+
+
 def test_finalizer_compaction_keeps_valid_json():
     captured = {}
 

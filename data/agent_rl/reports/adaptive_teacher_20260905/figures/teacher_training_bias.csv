@@ -1,0 +1,21 @@
+cohort,n_trajectories,retrieval_attempts,count,percentage
+E0 scripted teacher,1617,1,0,0.0
+E0 scripted teacher,1617,2,1617,100.0
+E0 scripted teacher,1617,3,0,0.0
+E0 scripted teacher,1617,4,0,0.0
+E0 scripted teacher,1617,5,0,0.0
+Frozen 7B: all candidates,4669,1,0,0.0
+Frozen 7B: all candidates,4669,2,195,4.17648318697794
+Frozen 7B: all candidates,4669,3,560,11.994002998500749
+Frozen 7B: all candidates,4669,4,1474,31.56992932105376
+Frozen 7B: all candidates,4669,5,2440,52.25958449346755
+Frozen 7B: selected candidates,1617,1,0,0.0
+Frozen 7B: selected candidates,1617,2,57,3.5250463821892395
+Frozen 7B: selected candidates,1617,3,222,13.729128014842301
+Frozen 7B: selected candidates,1617,4,917,56.70995670995671
+Frozen 7B: selected candidates,1617,5,421,26.03586889301175
+E1 SFT: retained trajectories,949,1,0,0.0
+E1 SFT: retained trajectories,949,2,31,3.266596417281349
+E1 SFT: retained trajectories,949,3,142,14.963119072708114
+E1 SFT: retained trajectories,949,4,671,70.70600632244468
+E1 SFT: retained trajectories,949,5,105,11.06427818756586

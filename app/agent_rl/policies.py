@@ -22,7 +22,10 @@ Rules:
 - Read tool observations before choosing the next action.
 - For multi-hop questions, use different standalone retrieval queries.
 - Do not repeat an identical tool call.
-- If retrieved evidence directly answers the question, choose final_answer immediately.
+- Before stopping, check that the collected evidence answers every part of the question
+  and resolves any bridge entity needed by a multi-hop question.
+- If evidence is missing, contradictory, or a retrieval failed, use a new standalone
+  query while steps remain; do not stop because a fixed number of calls was reached.
 - After a duplicate-call error, never repeat that call; choose a different query or final_answer.
 - Choose final_answer only when the collected evidence is sufficient.
 - Do not include thoughts, plans, Markdown, or extra keys.
@@ -138,7 +141,10 @@ class PromptOnlyPolicy:
                 "error": event.get("error"),
             })
             if event.get("ok") and event.get("observation"):
-                evidence_observations.append(str(event["observation"])[:8_000])
+                # max_steps=5 permits four useful calls plus a stop action. Keep
+                # all four compact observations so a teacher/student can decide
+                # adaptively instead of forgetting the first hop after step two.
+                evidence_observations.append(str(event["observation"])[:5_000])
 
         last_message = str(observation.get("last_message", ""))
         state: Dict[str, Any] = {
@@ -146,16 +152,18 @@ class PromptOnlyPolicy:
             "remaining_steps": observation.get("remaining_steps"),
             "available_tools": observation.get("available_tools", []),
             "previous_tool_calls": calls,
-            "retrieved_evidence": evidence_observations[-2:],
+            "retrieved_evidence": evidence_observations[-4:],
             "last_message": last_message[:512],
         }
         if "duplicate call" in last_message.lower():
             state["required_next_action"] = (
                 "Do not repeat any previous_tool_calls. If retrieved_evidence already "
-                "answers the question, choose final_answer now; otherwise use a different query."
+                "answers every part of the question, choose final_answer now; otherwise "
+                "use a different query."
             )
         elif calls and evidence_observations:
             state["decision_hint"] = (
-                "If retrieved_evidence directly answers the question, choose final_answer now."
+                "Choose final_answer only if retrieved_evidence answers every part of the "
+                "question; otherwise continue with a different standalone query."
             )
         return state

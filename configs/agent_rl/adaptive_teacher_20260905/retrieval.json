@@ -1,0 +1,16 @@
+{
+  "backend": "hybrid-rerank",
+  "top_k": 8,
+  "candidate_top_k": 15,
+  "output_top_k": 6,
+  "rrf_k": 60,
+  "embedding_model": "/root/autodl-tmp/e1-20260905/models/bge-small-en-v1.5",
+  "embedding_device": "cuda",
+  "embedding_batch_size": 64,
+  "reranker_model": "/root/autodl-tmp/e1-20260905/models/bge-reranker-base",
+  "reranker_device": "cuda",
+  "reranker_batch_size": 16,
+  "lancedb_uri_name": "lancedb",
+  "lancedb_table": "chunks",
+  "parent_child_expansion": false
+}

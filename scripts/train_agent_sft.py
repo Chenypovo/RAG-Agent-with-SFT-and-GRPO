@@ -15,6 +15,7 @@ import json
 import math
 import os
 import sys
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
@@ -335,6 +336,8 @@ def run_training(
 
     if not torch.cuda.is_available():
         raise RuntimeError("QLoRA training requires a CUDA GPU")
+    run_started = time.perf_counter()
+    torch.cuda.reset_peak_memory_stats()
     if output_dir.exists() and any(output_dir.iterdir()) and not overwrite_output_dir and resume_from_checkpoint is None:
         raise RuntimeError(f"output directory is not empty: {output_dir}; use --overwrite-output-dir or --resume-from-checkpoint")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -455,6 +458,12 @@ def run_training(
         "tokenization": tokenization_stats,
         "train_metrics": dict(result.metrics),
         "adapter_path": str(output_dir / "adapter"),
+        "runtime": {
+            "total_seconds_this_process": time.perf_counter() - run_started,
+            "training_seconds": result.metrics.get("train_runtime"),
+            "peak_allocated_bytes": int(torch.cuda.max_memory_allocated()),
+            "peak_reserved_bytes": int(torch.cuda.max_memory_reserved()),
+        },
     }
     (output_dir / "train_report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8"

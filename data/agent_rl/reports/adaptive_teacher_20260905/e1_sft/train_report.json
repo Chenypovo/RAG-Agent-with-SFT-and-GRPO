@@ -1,0 +1,33 @@
+{
+  "adapter_path": "/root/autodl-tmp/e1-20260905/results/e1_sft/adapter",
+  "config_path": "/root/autodl-tmp/e1-20260905/workspace/configs/agent_rl/adaptive_teacher_20260905/sft.json",
+  "config_sha256": "bc665146bd4676ab64e47d60a32e2c25dd47be52df568c79611cdb74abd13f58",
+  "model": {
+    "name_or_path": "/root/autodl-tmp/e1-20260905/models/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "torch_dtype": "bfloat16",
+    "trust_remote_code": false
+  },
+  "output_dir": "/root/autodl-tmp/e1-20260905/results/e1_sft",
+  "runtime": {
+    "peak_allocated_bytes": 7019414016,
+    "peak_reserved_bytes": 16716398592,
+    "total_seconds_this_process": 2483.595038728323,
+    "training_seconds": 2461.8322
+  },
+  "schema_version": "agent-sft-train-report-v1",
+  "tokenization": {
+    "examples": 4541,
+    "truncated_prompts": 749
+  },
+  "train_metrics": {
+    "epoch": 2.0,
+    "total_flos": 1.0388395970445312e+17,
+    "train_loss": 0.19550443692526348,
+    "train_runtime": 2461.8322,
+    "train_samples_per_second": 3.689,
+    "train_steps_per_second": 0.231
+  },
+  "train_path": "/root/autodl-tmp/e1-20260905/results/e1_sft_data/train.jsonl",
+  "train_sha256": "738db0a160ee03e6d1912d26e0840ddb3af965872dd45be063a41ad882abac30"
+}

@@ -1,0 +1,51 @@
+{
+  "artifacts": {
+    "input": {
+      "path": "/root/autodl-tmp/e1-20260905/results/e1_teacher/rollouts.jsonl",
+      "sha256": "98365c3711b40fd97d5d544c74ad63aae516aa9064bbc5d969eeefb00ddde1cc"
+    },
+    "output": {
+      "path": "/root/autodl-tmp/e1-20260905/results/e1_sft_data/train.jsonl",
+      "sha256": "738db0a160ee03e6d1912d26e0840ddb3af965872dd45be063a41ad882abac30"
+    },
+    "report": {
+      "path": "/root/autodl-tmp/e1-20260905/results/e1_sft_data/report.json",
+      "sha256": "6c3b8562f2cb2a25fd0afa4898e00aa9c0ac7f52e15fb8da077bf5b52cd95b84",
+      "sha256_scope": "canonical JSON before the artifacts.report checksum field"
+    }
+  },
+  "augmented_examples": 0,
+  "base_action_counts": {
+    "final_answer": 844,
+    "tool": 3697
+  },
+  "base_examples": 4541,
+  "config": {
+    "evidence_metric": null,
+    "min_evidence": 1.0,
+    "min_success": 1.0,
+    "output_format": "messages",
+    "pre_final_tool_repeat": 1,
+    "require_clean_transitions": true,
+    "success_metric": "CompleteSentenceEvidence"
+  },
+  "decisions_seen": 7823,
+  "episodes_filtered": 668,
+  "episodes_kept": 949,
+  "episodes_seen": 1617,
+  "examples_written": 4541,
+  "filter_counts": {
+    "below_success_threshold": 165,
+    "duplicate_call_transition": 399,
+    "invalid_action_transition": 103,
+    "parse_error": 1
+  },
+  "kept_policy_versions": {
+    "verifier-guided-llm-teacher-v1": 949
+  },
+  "output_action_counts": {
+    "final_answer": 844,
+    "tool": 3697
+  },
+  "schema_version": "agent-sft-build-report-v1"
+}

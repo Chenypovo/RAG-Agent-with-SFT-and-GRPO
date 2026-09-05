@@ -1,0 +1,3 @@
+# Preserve frozen scientific exports byte-for-byte, including generator whitespace.
+data/agent_rl/reports/adaptive_teacher_20260905/figures/*.svg -text -whitespace
+data/agent_rl/reports/adaptive_teacher_20260905/figures/*.csv -text -whitespace
